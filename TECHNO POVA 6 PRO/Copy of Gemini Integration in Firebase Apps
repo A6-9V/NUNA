@@ -1,0 +1,202 @@
+{
+  "runSettings": {
+    "temperature": 0.2,
+    "model": "models/gemini-2.5-pro",
+    "topP": 0.95,
+    "topK": 64,
+    "maxOutputTokens": 65536,
+    "safetySettings": [{
+      "category": "HARM_CATEGORY_HARASSMENT",
+      "threshold": "OFF"
+    }, {
+      "category": "HARM_CATEGORY_HATE_SPEECH",
+      "threshold": "OFF"
+    }, {
+      "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+      "threshold": "OFF"
+    }, {
+      "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+      "threshold": "OFF"
+    }],
+    "enableCodeExecution": false,
+    "enableSearchAsATool": true,
+    "enableBrowseAsATool": false,
+    "enableAutoFunctionResponse": false,
+    "thinkingBudget": -1,
+    "googleSearch": {
+    }
+  },
+  "systemInstruction": {
+  },
+  "chunkedPrompt": {
+    "chunks": [{
+      "text": "Sample Firebase AI App\nApp ID \n1:101358046978:web:9b0f17fa2bfcae793a3c1b\nCan you check this link . I want to know which version of Gemini and tell me more information if can fine .",
+      "role": "user",
+      "tokenCount": 70
+    }, {
+      "text": "**Pinpointing the AI Version**\n\nI\u0027ve acknowledged the user\u0027s Firebase App ID and the query about the Gemini version within a \"Sample Firebase AI App.\" My next step involves a focused Google search using the query \"Sample Firebase AI.\" I hope this will reveal the required information to help the user.\n\n\n**Analyzing Search Results**\n\nI\u0027ve initiated searches using \"Sample Firebase AI App Gemini version,\" \"Firebase Generative AI apps Gemini,\" and the provided App ID. I\u0027m sifting through the results now. My aim is to identify specific Gemini model mentions or any version details tied to Firebase sample apps. The goal is a concrete answer for the user.\n\n\n**Pinpointing Gemini Version**\n\nI\u0027m currently focused on the specific Gemini version within the \"Sample Firebase AI App,\" given the provided Firebase App ID. Initial findings suggest Firebase offers various AI integrations, but pinpointing the exact Gemini iteration remains a challenge. Further investigation into documentation and code samples is underway to determine the applicable version.\n\n\n**Investigating Firebase AI App**\n\nMy preliminary analysis highlights Firebase\u0027s diverse Gemini integrations, including Firebase AI Logic and Genkit. I\u0027ve noted the availability of different Gemini model versions and the potential for up-to-date model use. However, the provided Firebase App ID yielded no specific \"Sample Firebase AI App\" details, hinting at a unique user project. pinpointing the exact Gemini version necessitates deeper context.\n\n\n**Outlining Gemini Implementations**\n\nMy investigation has shifted towards a comprehensive overview of Gemini\u0027s integration options within Firebase. I\u0027m focusing on providing details of Firebase AI Logic and Genkit, outlining model variations such as Pro, Flash, and Nano. Since the App ID didn\u0027t point to a public sample, I\u0027ll emphasize how the specific Gemini version would be defined in the app\u0027s code. I\u0027m preparing to offer guidance on locating this information within a user\u0027s project.\n\n\n",
+      "role": "model",
+      "tokenCount": 589,
+      "isThought": true,
+      "thinkingBudget": -1,
+      "thoughtSignatures": ["", "", "", "", ""],
+      "parts": [{
+        "text": "**Pinpointing the AI Version**\n\nI\u0027ve acknowledged the user\u0027s Firebase App ID and the query about the Gemini version within a \"Sample Firebase AI App.\" My next step involves a focused Google search using the query \"Sample Firebase AI.\" I hope this will reveal the required information to help the user.\n\n\n",
+        "thought": true
+      }, {
+        "text": "**Analyzing Search Results**\n\nI\u0027ve initiated searches using \"Sample Firebase AI App Gemini version,\" \"Firebase Generative AI apps Gemini,\" and the provided App ID. I\u0027m sifting through the results now. My aim is to identify specific Gemini model mentions or any version details tied to Firebase sample apps. The goal is a concrete answer for the user.\n\n\n",
+        "thought": true
+      }, {
+        "text": "**Pinpointing Gemini Version**\n\nI\u0027m currently focused on the specific Gemini version within the \"Sample Firebase AI App,\" given the provided Firebase App ID. Initial findings suggest Firebase offers various AI integrations, but pinpointing the exact Gemini iteration remains a challenge. Further investigation into documentation and code samples is underway to determine the applicable version.\n\n\n",
+        "thought": true
+      }, {
+        "text": "**Investigating Firebase AI App**\n\nMy preliminary analysis highlights Firebase\u0027s diverse Gemini integrations, including Firebase AI Logic and Genkit. I\u0027ve noted the availability of different Gemini model versions and the potential for up-to-date model use. However, the provided Firebase App ID yielded no specific \"Sample Firebase AI App\" details, hinting at a unique user project. pinpointing the exact Gemini version necessitates deeper context.\n\n\n",
+        "thought": true
+      }, {
+        "text": "**Outlining Gemini Implementations**\n\nMy investigation has shifted towards a comprehensive overview of Gemini\u0027s integration options within Firebase. I\u0027m focusing on providing details of Firebase AI Logic and Genkit, outlining model variations such as Pro, Flash, and Nano. Since the App ID didn\u0027t point to a public sample, I\u0027ll emphasize how the specific Gemini version would be defined in the app\u0027s code. I\u0027m preparing to offer guidance on locating this information within a user\u0027s project.\n\n\n",
+        "thought": true
+      }]
+    }, {
+      "text": "### Understanding Gemini Integration in Firebase AI Applications\n\nWhile the provided App ID, `1:101358046978:web:9b0f17fa2bfcae793a3c1b`, uniquely identifies a specific Firebase web application, it does not publicly disclose the particular version of the Gemini model being used. The selection of the Gemini model is a choice made by the developer during the application\u0027s development. However, we can explore the various ways Gemini is integrated with Firebase and the different models available.\n\nFirebase offers a suite of tools to build generative AI features into applications, primarily through **Firebase AI Logic** and the **Genkit** framework.\n\n#### Firebase AI Logic for Client-Side Integration\n\nFor applications that call the Gemini API directly from the client-side (web or mobile), Firebase AI Logic provides the necessary SDKs. This approach allows developers to incorporate generative AI functionalities without needing to manage a separate backend infrastructure. When using Firebase AI Logic, developers can choose to connect to the Gemini API through either Vertex AI or the Gemini Developer API.\n\n#### Genkit for Server-Side Implementations\n\nFor more complex, server-side AI workflows, Firebase offers Genkit, an open-source framework. Genkit provides robust capabilities and supports various programming languages, including JavaScript (Node.js), Python, and Go. A key feature of Genkit is its ability to dynamically look up the latest Gemini models, ensuring the application can stay current without requiring manual package updates.\n\n#### Available Gemini Models\n\nAndroid developers, for example, can leverage a range of Gemini models to power their applications:\n\n*   **Gemini Nano:** For on-device tasks, enabling generative AI capabilities directly on the user\u0027s device.\n*   **Gemini Flash and Gemini Pro:** Powerful cloud-based models suitable for a wide array of generative AI tasks.\n*   **Imagen:** For generating and editing images.\n\n#### Firebase Studio: An AI-Powered Development Environment\n\nGoogle also provides **Firebase Studio**, a cloud-based workspace designed for building full-stack AI applications with Gemini. This environment comes with AI-optimized templates and allows developers to use natural language to design and prototype their apps.\n\nIn conclusion, the specific version of Gemini used in any \"Sample Firebase AI App\" is determined by the developer\u0027s implementation within the app\u0027s source code. The Firebase ecosystem provides the flexibility to integrate various Gemini models to best suit the application\u0027s needs. To identify the exact model in use, one would need to inspect the application\u0027s source code where the Gemini API is being called.",
+      "role": "model",
+      "grounding": {
+        "corroborationSegments": [{
+          "index": 652,
+          "uri": "https://www.google.com/url?sa\u003dE\u0026q\u003dhttps%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQHpxMpdiq1FJx25EmmyWtqFYvIbFu6oQLXoa_4F_16htRrOtvWDpL8oyX4FnkeFhW2v3nt5uU6fmAFCQ_4BBNeOVfJewiwycPAcdYZX_z3C_1MFzcWhdrh58FAbyz2jdl7n1BiIcb9qLdL_GmnTEv3g",
+          "footnoteNumber": 1
+        }, {
+          "index": 841,
+          "uri": "https://www.google.com/url?sa\u003dE\u0026q\u003dhttps%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQHpxMpdiq1FJx25EmmyWtqFYvIbFu6oQLXoa_4F_16htRrOtvWDpL8oyX4FnkeFhW2v3nt5uU6fmAFCQ_4BBNeOVfJewiwycPAcdYZX_z3C_1MFzcWhdrh58FAbyz2jdl7n1BiIcb9qLdL_GmnTEv3g",
+          "footnoteNumber": 1
+        }, {
+          "index": 841,
+          "uri": "https://www.google.com/url?sa\u003dE\u0026q\u003dhttps%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQH4jI81ZKtpmNiOEs0T-DIml8GbEQ5cgeXTGGx9IqkYoxZu0c_IXMxfK8_vkfxCO02v6oRD7o6bwQ-6sCK3wwvnJNE-FZP--u5m_7h3hv0-euxwsCx3KqApqyFIral7LbAY4swP",
+          "footnoteNumber": 2
+        }, {
+          "index": 979,
+          "uri": "https://www.google.com/url?sa\u003dE\u0026q\u003dhttps%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQHpxMpdiq1FJx25EmmyWtqFYvIbFu6oQLXoa_4F_16htRrOtvWDpL8oyX4FnkeFhW2v3nt5uU6fmAFCQ_4BBNeOVfJewiwycPAcdYZX_z3C_1MFzcWhdrh58FAbyz2jdl7n1BiIcb9qLdL_GmnTEv3g",
+          "footnoteNumber": 1
+        }, {
+          "index": 1114,
+          "uri": "https://www.google.com/url?sa\u003dE\u0026q\u003dhttps%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQHpxMpdiq1FJx25EmmyWtqFYvIbFu6oQLXoa_4F_16htRrOtvWDpL8oyX4FnkeFhW2v3nt5uU6fmAFCQ_4BBNeOVfJewiwycPAcdYZX_z3C_1MFzcWhdrh58FAbyz2jdl7n1BiIcb9qLdL_GmnTEv3g",
+          "footnoteNumber": 1
+        }, {
+          "index": 1254,
+          "uri": "https://www.google.com/url?sa\u003dE\u0026q\u003dhttps%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQHpxMpdiq1FJx25EmmyWtqFYvIbFu6oQLXoa_4F_16htRrOtvWDpL8oyX4FnkeFhW2v3nt5uU6fmAFCQ_4BBNeOVfJewiwycPAcdYZX_z3C_1MFzcWhdrh58FAbyz2jdl7n1BiIcb9qLdL_GmnTEv3g",
+          "footnoteNumber": 1
+        }, {
+          "index": 1382,
+          "uri": "https://www.google.com/url?sa\u003dE\u0026q\u003dhttps%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQHpxMpdiq1FJx25EmmyWtqFYvIbFu6oQLXoa_4F_16htRrOtvWDpL8oyX4FnkeFhW2v3nt5uU6fmAFCQ_4BBNeOVfJewiwycPAcdYZX_z3C_1MFzcWhdrh58FAbyz2jdl7n1BiIcb9qLdL_GmnTEv3g",
+          "footnoteNumber": 1
+        }, {
+          "index": 1554,
+          "uri": "https://www.google.com/url?sa\u003dE\u0026q\u003dhttps%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQHpxMpdiq1FJx25EmmyWtqFYvIbFu6oQLXoa_4F_16htRrOtvWDpL8oyX4FnkeFhW2v3nt5uU6fmAFCQ_4BBNeOVfJewiwycPAcdYZX_z3C_1MFzcWhdrh58FAbyz2jdl7n1BiIcb9qLdL_GmnTEv3g",
+          "footnoteNumber": 1
+        }, {
+          "index": 1685,
+          "uri": "https://www.google.com/url?sa\u003dE\u0026q\u003dhttps%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQErV2o5ehvXVaee5IgA-drBw5e3gQNZUVHG1IBP00kqZkiw8xbV-YJICzso5bSAx39Cb7nYRkE2x98qy3KmG1uEQU1nYX8Y7-0Soe_5dapQi8yXmgIRMM525yMS",
+          "footnoteNumber": 3
+        }, {
+          "index": 1961,
+          "uri": "https://www.google.com/url?sa\u003dE\u0026q\u003dhttps%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQHpxMpdiq1FJx25EmmyWtqFYvIbFu6oQLXoa_4F_16htRrOtvWDpL8oyX4FnkeFhW2v3nt5uU6fmAFCQ_4BBNeOVfJewiwycPAcdYZX_z3C_1MFzcWhdrh58FAbyz2jdl7n1BiIcb9qLdL_GmnTEv3g",
+          "footnoteNumber": 1
+        }, {
+          "index": 2151,
+          "uri": "https://www.google.com/url?sa\u003dE\u0026q\u003dhttps%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQGTXwqbcIO1vZwcTccJNb0EBvY_6aX3iGoDAKlWPadsJU16IZKObbaBPi5QK2c7eWkfpfE4bxyPv9MFHP3EwTvjfDj-q_ZMiBFTMUoMBg7iR7rOEFfi9UAVGnbUVYcwcS6DE_mV0fdcHHJjt0S8sZ0knfdOZZhowwG5gqjQmIYZUruADb8zXFcqp4UWdvo8kD26L5n05W6emkWAA0uZSPabkkw9tPPYsnKxXyLqZ_3TGqja6iZTrqg%3D",
+          "footnoteNumber": 4
+        }, {
+          "index": 2151,
+          "uri": "https://www.google.com/url?sa\u003dE\u0026q\u003dhttps%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQFTRdIbBLItM03e0bzm7waTEwEtsmJsiFgAazKIgdFOm5wzdyW367SiNrV-Z2YTAY0af14T1uYykU2LgBktJAPqyyBqyT6EAZSCSJjf_Cw7NxqOKQ%3D%3D",
+          "footnoteNumber": 5
+        }, {
+          "index": 2284,
+          "uri": "https://www.google.com/url?sa\u003dE\u0026q\u003dhttps%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQGTXwqbcIO1vZwcTccJNb0EBvY_6aX3iGoDAKlWPadsJU16IZKObbaBPi5QK2c7eWkfpfE4bxyPv9MFHP3EwTvjfDj-q_ZMiBFTMUoMBg7iR7rOEFfi9UAVGnbUVYcwcS6DE_mV0fdcHHJjt0S8sZ0knfdOZZhowwG5gqjQmIYZUruADb8zXFcqp4UWdvo8kD26L5n05W6emkWAA0uZSPabkkw9tPPYsnKxXyLqZ_3TGqja6iZTrqg%3D",
+          "footnoteNumber": 4
+        }, {
+          "index": 2284,
+          "uri": "https://www.google.com/url?sa\u003dE\u0026q\u003dhttps%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQGrTTSimpWBDcnDfMwXxfJbgE2iT6m7Br_JtPBRBVpEpmqestqpt8qhGk-VCdcxLAiBb5aqwjHzD2gJ5LgAO8SsO91rV9F46hBfdBU0XYca2YQsq31OmT4_5L2uo4S3JCiJWrGVTmFuc8aVMjM-6BOjLWgP1E5pq8Khwl9sBPGsCCv4wnF5TUSY93pqJbElbmuBUG_7jYFj2a7NOhEZ8w%3D%3D",
+          "footnoteNumber": 6
+        }],
+        "webSearchQueries": ["Firebase AI App Gemini version", "1:101358046978:web:9b0f17fa2bfcae793a3c1b", "Firebase Generative AI sample app", "Integrate Gemini API with Firebase"],
+        "groundingSources": [{
+          "referenceNumber": 1,
+          "uri": "https://www.google.com/url?sa\u003dE\u0026q\u003dhttps%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQHpxMpdiq1FJx25EmmyWtqFYvIbFu6oQLXoa_4F_16htRrOtvWDpL8oyX4FnkeFhW2v3nt5uU6fmAFCQ_4BBNeOVfJewiwycPAcdYZX_z3C_1MFzcWhdrh58FAbyz2jdl7n1BiIcb9qLdL_GmnTEv3g",
+          "title": "firebase.blog"
+        }, {
+          "referenceNumber": 2,
+          "uri": "https://www.google.com/url?sa\u003dE\u0026q\u003dhttps%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQH4jI81ZKtpmNiOEs0T-DIml8GbEQ5cgeXTGGx9IqkYoxZu0c_IXMxfK8_vkfxCO02v6oRD7o6bwQ-6sCK3wwvnJNE-FZP--u5m_7h3hv0-euxwsCx3KqApqyFIral7LbAY4swP",
+          "title": "google.com"
+        }, {
+          "referenceNumber": 3,
+          "uri": "https://www.google.com/url?sa\u003dE\u0026q\u003dhttps%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQErV2o5ehvXVaee5IgA-drBw5e3gQNZUVHG1IBP00kqZkiw8xbV-YJICzso5bSAx39Cb7nYRkE2x98qy3KmG1uEQU1nYX8Y7-0Soe_5dapQi8yXmgIRMM525yMS",
+          "title": "android.com"
+        }, {
+          "referenceNumber": 4,
+          "uri": "https://www.google.com/url?sa\u003dE\u0026q\u003dhttps%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQGTXwqbcIO1vZwcTccJNb0EBvY_6aX3iGoDAKlWPadsJU16IZKObbaBPi5QK2c7eWkfpfE4bxyPv9MFHP3EwTvjfDj-q_ZMiBFTMUoMBg7iR7rOEFfi9UAVGnbUVYcwcS6DE_mV0fdcHHJjt0S8sZ0knfdOZZhowwG5gqjQmIYZUruADb8zXFcqp4UWdvo8kD26L5n05W6emkWAA0uZSPabkkw9tPPYsnKxXyLqZ_3TGqja6iZTrqg%3D",
+          "title": "google.com"
+        }, {
+          "referenceNumber": 5,
+          "uri": "https://www.google.com/url?sa\u003dE\u0026q\u003dhttps%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQFTRdIbBLItM03e0bzm7waTEwEtsmJsiFgAazKIgdFOm5wzdyW367SiNrV-Z2YTAY0af14T1uYykU2LgBktJAPqyyBqyT6EAZSCSJjf_Cw7NxqOKQ%3D%3D",
+          "title": "firebase.studio"
+        }, {
+          "referenceNumber": 6,
+          "uri": "https://www.google.com/url?sa\u003dE\u0026q\u003dhttps%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQGrTTSimpWBDcnDfMwXxfJbgE2iT6m7Br_JtPBRBVpEpmqestqpt8qhGk-VCdcxLAiBb5aqwjHzD2gJ5LgAO8SsO91rV9F46hBfdBU0XYca2YQsq31OmT4_5L2uo4S3JCiJWrGVTmFuc8aVMjM-6BOjLWgP1E5pq8Khwl9sBPGsCCv4wnF5TUSY93pqJbElbmuBUG_7jYFj2a7NOhEZ8w%3D%3D",
+          "title": "googleblog.com"
+        }]
+      },
+      "finishReason": "STOP",
+      "tokenCount": 538,
+      "parts": [{
+        "text": "### Understanding Gemini Integration in Firebase AI Applications\n\nWhile the provided App ID, `1:1013580"
+      }, {
+        "text": "46978:web:9b0f17fa2bfcae793a3"
+      }, {
+        "text": "c1b`, uniquely identifies a specific Firebase web application, it does not publicly disclose the particular version of the Gemini model being used."
+      }, {
+        "text": " The selection of the Gemini model is a choice made by the developer during the application\u0027s development. However, we can explore"
+      }, {
+        "text": " the various ways Gemini is integrated with Firebase and the different models available.\n\nFirebase offers a suite of tools to build generative"
+      }, {
+        "text": " AI features into applications, primarily through **Firebase AI Logic** and the **Genkit** framework."
+      }, {
+        "text": "\n\n#### Firebase AI Logic for Client-Side Integration\n\nFor applications that call the Gemini API directly from the client-side"
+      }, {
+        "text": " (web or mobile), Firebase AI Logic provides the necessary SDKs. This approach allows"
+      }, {
+        "text": " developers to incorporate generative AI functionalities without needing to manage a separate backend infrastructure. When using Firebase AI Logic, developers"
+      }, {
+        "text": " can choose to connect to the Gemini API through either Vertex AI or the Gemini Developer API.\n\n#### Gen"
+      }, {
+        "text": "kit for Server-Side Implementations\n\nFor more complex, server-side AI workflows, Firebase offers Genkit, an open"
+      }, {
+        "text": "-source framework. Genkit provides robust capabilities and supports various programming languages, including JavaScript (Node.js),"
+      }, {
+        "text": " Python, and Go. A key feature of Genkit is its ability to dynamically look up the latest"
+      }, {
+        "text": " Gemini models, ensuring the application can stay current without requiring manual package updates.\n\n#### Available Gemini Models\n\n"
+      }, {
+        "text": "Android developers, for example, can leverage a range of Gemini models to power their applications:\n\n*   **Gem"
+      }, {
+        "text": "ini Nano:** For on-device tasks, enabling generative AI capabilities directly on the user\u0027s device.\n*   "
+      }, {
+        "text": "**Gemini Flash and Gemini Pro:** Powerful cloud-based models suitable for a wide array of generative AI tasks.\n"
+      }, {
+        "text": "*   **Imagen:** For generating and editing images.\n\n#### Firebase Studio: An AI-Powered Development"
+      }, {
+        "text": " Environment\n\nGoogle also provides **Firebase Studio**, a cloud-based workspace designed for building full-stack AI applications with Gemini. This environment comes with AI-optimized templates and allows developers to use natural language to design and prototype their"
+      }, {
+        "text": " apps.\n\nIn conclusion, the specific version of Gemini used in any \"Sample Firebase AI App"
+      }, {
+        "text": "\" is determined by the developer\u0027s implementation within the app\u0027s source code. The Firebase ecosystem provides the flexibility to integrate various"
+      }, {
+        "text": " Gemini models to best suit the application\u0027s needs. To identify the exact model in use, one would need to inspect"
+      }, {
+        "text": " the application\u0027s source code where the Gemini API is being called."
+      }]
+    }],
+    "pendingInputs": [{
+      "text": "",
+      "role": "user"
+    }]
+  }
+}

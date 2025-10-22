@@ -1,0 +1,50 @@
+# Sensitive credentials and keys
+*.pem
+*.json
+*.csv
+rootkey*
+rsa-*
+pk-*
+cert-*
+*key*.csv
+sharp-doodad-*
+flash-student-*
+
+# Secrets directory
+Secrets/
+
+# Log files
+*.log
+*.txt
+log_*
+
+# Temporary files
+*_tmp.*
+qr_tmp.*
+
+# Duplicates (files with (1), (2), etc.)
+* (*).* 
+
+# Google Drive metadata
+desktop.ini
+.DS_Store
+
+# Google Docs shortcuts
+*.gdoc
+*.gsheet
+*.gscript
+
+# Screenshots with potential sensitive info
+Screenshot_*.jpg
+Screenshot_*.png
+chrome_qrcode_*.png
+
+# Archives
+*.zip
+
+# Large executables and installers
+*.exe
+*.deb
+*.msi
+*.dmg
+*.pkg
