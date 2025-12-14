@@ -236,7 +236,8 @@ if ($failed -eq 0 -and $errors -eq 0) {
     Write-Host "  2. Lock/unlock screen to test screen event handling" -ForegroundColor White
     Write-Host "  3. Check logs in: $logsPath" -ForegroundColor White
 } else {
-    Write-Host "⚠️  Some tests failed. Please review the results above." -ForegroundColor Yellow
+    Write-Host "WARNING: Some tests failed. Please review the results above." -ForegroundColor Yellow
 }
 
 Write-Host ""
+
