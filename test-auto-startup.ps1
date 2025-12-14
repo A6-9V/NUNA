@@ -213,11 +213,11 @@ foreach ($result in $testResults) {
         default { "White" }
     }
     $symbol = switch ($result.Status) {
-        "PASS" { "✅" }
-        "FAIL" { "❌" }
-        "WARNING" { "⚠️" }
-        "ERROR" { "🔴" }
-        default { "•" }
+        "PASS" { "[OK]" }
+        "FAIL" { "[FAIL]" }
+        "WARNING" { "[WARN]" }
+        "ERROR" { "[ERROR]" }
+        default { "[?]" }
     }
     Write-Host "  $symbol $($result.Test): $($result.Status)" -ForegroundColor $color
 }
