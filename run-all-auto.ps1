@@ -33,8 +33,21 @@ if (Test-Path $gitScript) {
 Write-Host ""
 Start-Sleep -Seconds 2
 
-# Step 3: Summary
-Write-Host "[3/3] Generating summary..." -ForegroundColor Yellow
+# Step 3: Configure GitHub Desktop (if installed)
+Write-Host "[3/4] Configuring GitHub Desktop..." -ForegroundColor Yellow
+Write-Host ""
+$desktopScript = Join-Path $PSScriptRoot "github-desktop-setup.ps1"
+if (Test-Path $desktopScript) {
+    & powershell.exe -ExecutionPolicy Bypass -File $desktopScript
+} else {
+    Write-Host "    [SKIP] GitHub Desktop script not found" -ForegroundColor Yellow
+}
+
+Write-Host ""
+Start-Sleep -Seconds 2
+
+# Step 4: Summary
+Write-Host "[4/4] Generating summary..." -ForegroundColor Yellow
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "  All Automated Tasks Complete!" -ForegroundColor Cyan
@@ -45,7 +58,10 @@ Write-Host "  [OK] Windows configuration" -ForegroundColor White
 Write-Host "  [OK] Security settings" -ForegroundColor White
 Write-Host "  [OK] Cloud services" -ForegroundColor White
 Write-Host "  [OK] Git repository" -ForegroundColor White
+Write-Host "  [OK] GitHub Desktop (if installed)" -ForegroundColor White
 Write-Host ""
 Write-Host "All decisions were made automatically using best practices." -ForegroundColor Green
+Write-Host ""
+Write-Host "GitHub Desktop Release Notes: https://desktop.github.com/release-notes/" -ForegroundColor Cyan
 Write-Host ""
 

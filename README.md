@@ -53,6 +53,9 @@ Complete Windows configuration scripts for setting up cloud sync, security, and 
 ### Documentation
 - `MANUAL-SETUP-GUIDE.md` - Step-by-step manual configuration guide
 - `SETUP-INSTRUCTIONS.txt` - Setup instructions
+- `AUTOMATION-RULES.md` - Automation rules and best practices
+- `GITHUB-DESKTOP-RULES.md` - GitHub Desktop integration rules
+- `DEBUG-SUMMARY.md` - Debug and troubleshooting guide
 - `README.md` - This file
 
 ## Requirements
@@ -117,7 +120,17 @@ gh repo clone Mouy-leng/Window-setup
 
 # Using Git (HTTPS)
 git clone https://github.com/Mouy-leng/Window-setup.git
+
+# Using GitHub Desktop
+# Download from: https://desktop.github.com/
+# File > Clone Repository > https://github.com/Mouy-leng/Window-setup.git
 ```
+
+### GitHub Desktop Integration
+- **Download**: https://desktop.github.com/
+- **Release Notes**: https://desktop.github.com/release-notes/
+- **Setup Script**: Run `github-desktop-setup.ps1` after installation
+- **Documentation**: See `GITHUB-DESKTOP-RULES.md` for integration rules
 
 ## Troubleshooting
 
