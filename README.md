@@ -36,6 +36,8 @@ Complete Windows configuration scripts for setting up cloud sync, security, and 
 - `run-cursor-admin.ps1` - Launch Cursor as Administrator
 - `run-vscode-admin.ps1` - Launch VSCode as Administrator
 - `clone-repo.ps1` - Clone this repository using GitHub CLI
+- `github-desktop-setup.ps1` - Configure GitHub Desktop integration
+- `check-github-desktop-updates.ps1` - Check GitHub Desktop version and release notes
 
 ## Files
 
