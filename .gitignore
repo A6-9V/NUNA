@@ -1,0 +1,26 @@
+# Windows
+Thumbs.db
+desktop.ini
+*.lnk
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Personal files (if any)
+*.pdf
+*.docx
+*.xlsx
+
+# System files
+.DS_Store
+
+# Security - Never commit tokens or secrets
+*.token
+*.secret
+*credentials*
+*config.local*
+git-credentials.txt
+.github-token
+

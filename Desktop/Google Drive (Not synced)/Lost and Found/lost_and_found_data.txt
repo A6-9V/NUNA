@@ -1,0 +1,3 @@
+G:\Other computers\USB and External Devices\USB UI\comet_installer_latest.exe, C:\Users\USER\AppData\Local\Google\DriveFS\lost_and_found\117476391481555474897\comet_installer_latest.exe
+G:\My Drive\.cursor\.git\FETCH_HEAD, C:\Users\USER\AppData\Local\Google\DriveFS\lost_and_found\117476391481555474897\FETCH_HEAD
+G:\My Drive\.cursor\.git\FETCH_HEAD, C:\Users\USER\AppData\Local\Google\DriveFS\lost_and_found\117476391481555474897\FETCH_HEAD (1765296665172)
