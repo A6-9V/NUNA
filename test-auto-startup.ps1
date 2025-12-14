@@ -196,10 +196,10 @@ $warnings = ($testResults | Where-Object { $_.Status -eq "WARNING" }).Count
 $errors = ($testResults | Where-Object { $_.Status -eq "ERROR" }).Count
 
 Write-Host "Total Tests: $($testResults.Count)" -ForegroundColor Yellow
-Write-Host "  ✅ Passed: $passed" -ForegroundColor Green
-Write-Host "  ❌ Failed: $failed" -ForegroundColor Red
-Write-Host "  ⚠️  Warnings: $warnings" -ForegroundColor Yellow
-Write-Host "  🔴 Errors: $errors" -ForegroundColor Red
+Write-Host "  [OK] Passed: $passed" -ForegroundColor Green
+Write-Host "  [FAIL] Failed: $failed" -ForegroundColor Red
+Write-Host "  [WARN] Warnings: $warnings" -ForegroundColor Yellow
+Write-Host "  [ERROR] Errors: $errors" -ForegroundColor Red
 Write-Host ""
 
 # Detailed results
@@ -229,7 +229,7 @@ Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
 if ($failed -eq 0 -and $errors -eq 0) {
-    Write-Host "✅ All critical tests passed!" -ForegroundColor Green
+    Write-Host "[OK] All critical tests passed!" -ForegroundColor Green
     Write-Host ""
     Write-Host "Next Steps:" -ForegroundColor Cyan
     Write-Host "  1. Restart your system to test actual restart detection" -ForegroundColor White
