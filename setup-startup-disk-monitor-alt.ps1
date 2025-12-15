@@ -109,3 +109,4 @@ Write-Host "To remove all tasks, run:" -ForegroundColor Cyan
 Write-Host "  .\setup-startup-disk-monitor-alt.ps1 -RemoveAll" -ForegroundColor White
 Write-Host ""
 
+
