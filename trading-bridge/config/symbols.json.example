@@ -1,0 +1,32 @@
+{
+  "symbols": [
+    {
+      "symbol": "EURUSD",
+      "broker": "EXNESS",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0
+    },
+    {
+      "symbol": "GBPUSD",
+      "broker": "EXNESS",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0
+    },
+    {
+      "symbol": "USDJPY",
+      "broker": "EXNESS",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0
+    }
+  ]
+}
+

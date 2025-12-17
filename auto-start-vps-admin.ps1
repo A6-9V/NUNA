@@ -99,20 +99,21 @@ try {
     $masterController = Join-Path $vpsServicesPath "master-controller.ps1"
     
     if (Test-Path $masterController) {
-        # Check if already running
-        $existingProcess = Get-Process -Name "powershell" -ErrorAction SilentlyContinue | 
+        # Check if already running using WMI (works in PowerShell 5.1)
+        $existingProcess = Get-WmiObject Win32_Process -Filter "name='powershell.exe'" -ErrorAction SilentlyContinue | 
             Where-Object { $_.CommandLine -like "*master-controller*" }
         
         if (-not $existingProcess) {
-            Start-Process powershell.exe -ArgumentList @(
+            # Start with explicit admin elevation
+            Start-Process powershell.exe -Verb RunAs -ArgumentList @(
                 "-ExecutionPolicy", "Bypass",
                 "-NoProfile",
                 "-WindowStyle", "Hidden",
                 "-File", "`"$masterController`""
             ) -WindowStyle Hidden -ErrorAction SilentlyContinue
             
-            Start-Sleep -Seconds 3
-            Write-Log "Master controller started"
+            Start-Sleep -Seconds 5
+            Write-Log "Master controller started with admin elevation"
         } else {
             Write-Log "Master controller already running"
         }
@@ -129,8 +130,10 @@ Start-Sleep -Seconds 2
 Write-Log "Step 4: Verifying services"
 try {
     $exnessProcess = Get-Process -Name "terminal64" -ErrorAction SilentlyContinue
-    $vpsProcesses = Get-Process -Name "powershell" -ErrorAction SilentlyContinue | 
-        Where-Object { $_.CommandLine -like "*vps-services*" }
+    
+    # Use WMI to check for VPS service processes
+    $vpsProcesses = Get-WmiObject Win32_Process -Filter "name='powershell.exe'" -ErrorAction SilentlyContinue | 
+        Where-Object { $_.CommandLine -like "*vps-services*" -or $_.CommandLine -like "*exness-service*" -or $_.CommandLine -like "*research-service*" -or $_.CommandLine -like "*website-service*" -or $_.CommandLine -like "*cicd-service*" -or $_.CommandLine -like "*mql5-service*" }
     
     $status = @{
         Exness = if ($exnessProcess) { "RUNNING" } else { "NOT RUNNING" }

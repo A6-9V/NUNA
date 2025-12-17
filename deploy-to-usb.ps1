@@ -365,3 +365,7 @@ if ($openFolder -eq 'Y' -or $openFolder -eq 'y') {
     Start-Process explorer.exe -ArgumentList $usbDeployPath
 }
 
+
+
+
+

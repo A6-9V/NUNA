@@ -110,3 +110,10 @@ Write-Host "  .\setup-startup-disk-monitor-alt.ps1 -RemoveAll" -ForegroundColor 
 Write-Host ""
 
 
+
+
+
+
+
+
+

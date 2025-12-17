@@ -1,0 +1,18 @@
+{
+  "brokers": [
+    {
+      "name": "EXNESS",
+      "api_url": "https://api.exness.com",
+      "account_id": "YOUR_ACCOUNT_ID",
+      "api_key": "YOUR_API_KEY_HERE",
+      "api_secret": "YOUR_API_SECRET_HERE",
+      "enabled": true,
+      "rate_limit": {
+        "requests_per_minute": 60,
+        "requests_per_second": 10
+      }
+    }
+  ],
+  "default_broker": "EXNESS"
+}
+

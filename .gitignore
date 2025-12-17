@@ -90,3 +90,21 @@ chrome_qrcode_*.png
 
 # Cursor (optional - uncomment if you don't want to track Cursor rules)
 # .cursor/
+
+# Trading Bridge - Security and Configuration
+trading-bridge/config/brokers.json
+trading-bridge/config/symbols.json
+trading-bridge/config/*.key
+trading-bridge/config/*.secret
+trading-bridge/logs/*.log
+trading-bridge/data/*.db
+trading-bridge/*.db
+trading-bridge/**/*.key
+trading-bridge/**/*.secret
+trading-bridge/**/credentials.json
+
+# Network Configuration
+network-config.json
+Network-Shortcuts/
+cleanup-log_*.txt
+Documentation/Reports/

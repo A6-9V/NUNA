@@ -1,0 +1,7 @@
+pyzmq>=25.1.0
+requests>=2.31.0
+python-dotenv>=1.0.0
+cryptography>=41.0.0
+schedule>=1.2.0
+pywin32>=306; sys_platform == 'win32'
+
