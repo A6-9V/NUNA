@@ -23,7 +23,17 @@ function Test-IsAdministrator {
 if (-not (Test-IsAdministrator)) {
     Write-Host "[INFO] Elevating to Administrator..." -ForegroundColor Yellow
 
-    $scriptPath = $MyInvocation.MyCommand.Path
+    # Resolve the current script path in a robust way
+    $scriptPath = $PSCommandPath
+    if (-not $scriptPath) {
+        $scriptPath = $MyInvocation.MyCommand.Path
+    }
+
+    if (-not $scriptPath) {
+        Write-Host "[ERROR] Unable to determine script path for elevation." -ForegroundColor Red
+        Write-Host "[INFO] Tip: Run this script directly from a .ps1 file rather than dot-sourcing it." -ForegroundColor Yellow
+        exit 1
+    }
     $arguments = "-ExecutionPolicy Bypass -NoProfile -File `"$scriptPath`""
 
     # Use the same PowerShell executable as the current session for elevation
