@@ -11,7 +11,7 @@
 #include "PythonBridge.mqh"
 
 //--- Input parameters
-input int BridgePort = 5555;           // Python bridge port (must match Python bridge)
+input int BridgePort = 5500;           // Python bridge port (must match Python bridge)
 input string BrokerName = "EXNESS";    // Broker name
 input bool AutoExecute = true;          // Auto-execute trades
 input double DefaultLotSize = 0.01;     // Default lot size if not specified

@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 class MQL5Bridge:
     """Bridge between Python trading engine and MQL5 EA"""
     
-    def __init__(self, port: int = 5555, host: str = "127.0.0.1"):
+    def __init__(self, port: int = 5500, host: str = "127.0.0.1"):
         """
         Initialize MQL5 Bridge
         

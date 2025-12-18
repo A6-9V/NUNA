@@ -54,7 +54,7 @@ logger = logging.getLogger(__name__)
 class BackgroundTradingService:
     """Main background trading service"""
     
-    def __init__(self, bridge_port: int = 5555):
+    def __init__(self, bridge_port: int = 5500):
         """
         Initialize background trading service
         
