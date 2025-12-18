@@ -26,8 +26,15 @@ if (-not (Test-IsAdministrator)) {
     $scriptPath = $MyInvocation.MyCommand.Path
     $arguments = "-ExecutionPolicy Bypass -NoProfile -File `"$scriptPath`""
 
+    # Use the same PowerShell executable as the current session for elevation
+    $psExecutable = if ($PSVersionTable.PSEdition -eq 'Core') {
+        Join-Path $PSHOME 'pwsh.exe'
+    } else {
+        'powershell.exe'
+    }
+
     try {
-        Start-Process powershell.exe -Verb RunAs -ArgumentList $arguments
+        Start-Process $psExecutable -Verb RunAs -ArgumentList $arguments
         exit 0
     } catch {
         Write-Host "[ERROR] Failed to request elevation: $($_.Exception.Message)" -ForegroundColor Red
