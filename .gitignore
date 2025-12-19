@@ -31,6 +31,10 @@ documents/
 .DS_Store
 .849C9593-D756-4E56-8D6E-42412F2A707B
 
+# Linux core dumps (can appear as a file named "core")
+core
+core.*
+
 # Security - Never commit tokens or secrets
 *.token
 *.secret
