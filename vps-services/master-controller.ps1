@@ -1,17 +1,41 @@
-﻿#Requires -RunAsAdministrator
+#Requires -RunAsAdministrator
 # Master Service Controller - Manages all 24/7 services
 $ErrorActionPreference = "Continue"
-$workspaceRoot = "C:\Users\USER\OneDrive"
-$vpsServicesPath = "C:\Users\USER\OneDrive\vps-services"
-$logsPath = "C:\Users\USER\OneDrive\vps-logs"
+$vpsServicesPath = $PSScriptRoot
+$workspaceRoot = Split-Path -Parent $vpsServicesPath
+if (-not $workspaceRoot) { $workspaceRoot = "C:\Users\USER\OneDrive" }
+$logsPath = Join-Path $workspaceRoot "vps-logs"
+
+# Ensure logs directory exists
+try {
+    if (-not (Test-Path $logsPath)) {
+        New-Item -ItemType Directory -Path $logsPath -Force | Out-Null
+    }
+} catch {}
 
 function Start-VPSService {
     param([string]$ServiceName, [string]$ScriptPath)
     
-    $process = Get-Process -Name "powershell" -ErrorAction SilentlyContinue | 
-        Where-Object { $_.CommandLine -like "*$ServiceName*" }
-    
-    if (-not $process) {
+    if (-not (Test-Path $ScriptPath)) {
+        Write-Host "[$(Get-Date)] WARNING: Service script not found: $ServiceName ($ScriptPath)" | Out-File -Append "$logsPath\master-controller.log"
+        return
+    }
+
+    $alreadyRunning = $false
+    try {
+        $procs = Get-CimInstance Win32_Process -Filter "Name='powershell.exe'" -ErrorAction SilentlyContinue
+        foreach ($p in ($procs | Where-Object { $_.CommandLine })) {
+            if ($p.CommandLine -like "*$ScriptPath*" -or $p.CommandLine -like "*$ServiceName*") {
+                $alreadyRunning = $true
+                break
+            }
+        }
+    } catch {
+        # If CIM query fails, fall back to always attempting start (safe-ish).
+        $alreadyRunning = $false
+    }
+
+    if (-not $alreadyRunning) {
         Start-Process powershell.exe -ArgumentList @(
             "-ExecutionPolicy", "Bypass",
             "-WindowStyle", "Hidden",
@@ -35,6 +59,10 @@ Start-VPSService -ServiceName "cicd-service" -ScriptPath "$vpsServicesPath\cicd-
 Start-Sleep -Seconds 2
 
 Start-VPSService -ServiceName "mql5-service" -ScriptPath "$vpsServicesPath\mql5-service.ps1"
+Start-Sleep -Seconds 2
+
+# Trading bridge sync/monitor service (optional but recommended)
+Start-VPSService -ServiceName "trading-bridge-service" -ScriptPath "$vpsServicesPath\trading-bridge-service.ps1"
 
 Write-Host "[$(Get-Date)] All services started" | Out-File -Append "$logsPath\master-controller.log"
 
@@ -47,4 +75,5 @@ while ($true) {
     Start-VPSService -ServiceName "website-service" -ScriptPath "$vpsServicesPath\website-service.ps1"
     Start-VPSService -ServiceName "cicd-service" -ScriptPath "$vpsServicesPath\cicd-service.ps1"
     Start-VPSService -ServiceName "mql5-service" -ScriptPath "$vpsServicesPath\mql5-service.ps1"
+    Start-VPSService -ServiceName "trading-bridge-service" -ScriptPath "$vpsServicesPath\trading-bridge-service.ps1"
 }
