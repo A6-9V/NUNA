@@ -4,8 +4,11 @@
 param(
     [switch]$DryRun,
     [switch]$Verbose,
-    [string[]]$ExcludeDrives = @("C:"),
-    [int]$MinFileAgeDays = 30
+    # Accepts "C", "C:", or "C:\"
+    [string[]]$ExcludeDrives = @("C"),
+    [int]$MinFileAgeDays = 30,
+    # Off by default: Deep scanning an entire drive is slow and risky.
+    [switch]$DeepScan
 )
 
 $ErrorActionPreference = "Continue"
@@ -22,13 +25,21 @@ function Write-Log {
 Write-Log "=== Drive Cleanup Started ===" -Level "INFO"
 Write-Log "Dry Run Mode: $DryRun" -Level "INFO"
 Write-Log "Excluded Drives: $($ExcludeDrives -join ', ')" -Level "INFO"
+Write-Log "Deep Scan Mode: $DeepScan" -Level "INFO"
+
+# Normalize excluded drive letters (C, D, etc.)
+$excludedDriveNames = @(
+    $ExcludeDrives |
+        ForEach-Object { $_.Trim().TrimEnd('\').TrimEnd(':').ToUpperInvariant() } |
+        Where-Object { $_ }
+) | Select-Object -Unique
 
 # Get all drives
 $drives = Get-PSDrive -PSProvider FileSystem | Where-Object { 
     $_.Used -ne $null -and 
     $_.Free -ne $null -and 
     $_.Root -notlike "*\*" -and
-    $ExcludeDrives -notcontains $_.Root
+    $excludedDriveNames -notcontains $_.Name.ToUpperInvariant()
 }
 
 $cleanupStats = @{
@@ -43,7 +54,8 @@ $cleanupStats = @{
 # Cleanup patterns
 $cleanupPatterns = @{
     TempFiles = @("*.tmp", "*.temp", "~$*", "*.bak", "*.old")
-    LogFiles = @("*.log", "*.txt")
+    # NOTE: Do NOT include "*.txt" here — it can delete real documents.
+    LogFiles = @("*.log")
     CacheFiles = @("Thumbs.db", "desktop.ini", ".DS_Store")
     BrowserCache = @("Cache", "Temp", "Cookies")
     SystemTemp = @("$env:TEMP\*", "$env:LOCALAPPDATA\Temp\*")
@@ -131,31 +143,75 @@ function Clean-Drive {
         SpaceFreed = 0
     }
     
-    # Clean temp files
-    Write-Log "Cleaning temp files on $drivePath..." -Level "INFO"
-    $tempResult = Clean-TempFiles -Path $drivePath
-    $driveStats.FilesDeleted += $tempResult.Deleted
-    $driveStats.SpaceFreed += $tempResult.SpaceFreed
-    
-    # Clean empty folders
-    Write-Log "Cleaning empty folders on $drivePath..." -Level "INFO"
-    $driveStats.FoldersDeleted = Clean-EmptyFolders -Path $drivePath
+    $systemDriveName = $env:SystemDrive.TrimEnd('\').TrimEnd(':').ToUpperInvariant()
+
+    # Clean temp files (safe locations only)
+    $pathsToClean = @()
+
+    # Per-drive "Temp" folders (common on data drives)
+    $pathsToClean += @(
+        (Join-Path $drivePath "Temp"),
+        (Join-Path $drivePath "tmp")
+    )
+
+    # System drive temp locations
+    if ($Drive.Name.ToUpperInvariant() -eq $systemDriveName) {
+        $pathsToClean += @(
+            $env:TEMP,
+            (Join-Path $env:WINDIR "Temp"),
+            (Join-Path $env:LOCALAPPDATA "Temp")
+        )
+
+        # Windows Update download cache (safe to clear; Windows will re-download)
+        $pathsToClean += @(
+            (Join-Path $env:WINDIR "SoftwareDistribution\Download")
+        )
+    }
+
+    $pathsToClean = $pathsToClean | Where-Object { $_ -and (Test-Path $_) } | Select-Object -Unique
+
+    Write-Log "Cleaning temp/cache locations on $($Drive.Name): $($pathsToClean.Count) path(s)..." -Level "INFO"
+    foreach ($path in $pathsToClean) {
+        $tempResult = Clean-TempFiles -Path $path
+        $driveStats.FilesDeleted += $tempResult.Deleted
+        $driveStats.SpaceFreed += $tempResult.SpaceFreed
+    }
+
+    # Empty folder cleanup only in DeepScan mode (can be slow on full drives)
+    if ($DeepScan) {
+        Write-Log "Deep scan enabled: cleaning empty folders on $drivePath..." -Level "INFO"
+        $driveStats.FoldersDeleted += Clean-EmptyFolders -Path $drivePath
+    }
     
     # Clean system cache files
-    Write-Log "Cleaning cache files on $drivePath..." -Level "INFO"
-    foreach ($cacheFile in $cleanupPatterns.CacheFiles) {
-        $files = Get-ChildItem -Path $drivePath -Filter $cacheFile -Recurse -ErrorAction SilentlyContinue
-        foreach ($file in $files) {
-            try {
-                if (-not $DryRun) {
-                    Remove-Item -Path $file.FullName -Force -ErrorAction Stop
+    if ($DeepScan) {
+        Write-Log "Deep scan enabled: cleaning cache marker files on $drivePath..." -Level "INFO"
+        foreach ($cacheFile in $cleanupPatterns.CacheFiles) {
+            $files = Get-ChildItem -Path $drivePath -Filter $cacheFile -Recurse -ErrorAction SilentlyContinue
+            foreach ($file in $files) {
+                try {
+                    if (-not $DryRun) {
+                        Remove-Item -Path $file.FullName -Force -ErrorAction Stop
+                    }
+                    $driveStats.FilesDeleted++
+                    $driveStats.SpaceFreed += $file.Length
+                } catch {
+                    $script:cleanupStats.Errors++
                 }
-                $driveStats.FilesDeleted++
-                $driveStats.SpaceFreed += $file.Length
-            } catch {
-                $script:cleanupStats.Errors++
             }
         }
+    }
+
+    # Recycle Bin cleanup (best-effort)
+    try {
+        if (Get-Command Clear-RecycleBin -ErrorAction SilentlyContinue) {
+            if (-not $DryRun) {
+                Clear-RecycleBin -DriveLetter $Drive.Name -Force -ErrorAction SilentlyContinue | Out-Null
+            }
+            Write-Log "Recycle Bin processed for drive $($Drive.Name):\" -Level "INFO"
+        }
+    } catch {
+        # Non-fatal
     }
     
     Write-Log "Drive $drivePath cleanup complete: $($driveStats.FilesDeleted) files, $($driveStats.FoldersDeleted) folders, $([math]::Round($driveStats.SpaceFreed/1MB, 2)) MB freed" -Level "SUCCESS"
