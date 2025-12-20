@@ -80,7 +80,7 @@ C:\Users\USER\OneDrive\
 │   └── elevate.vbs                  # UAC elevation helper
 │
 └── Security/                         # Security Files (gitignored)
-    └── git-credentials.txt           # GitHub credentials (never committed)
+    └── git-credentials.txt           # GitHub PAT fallback (never committed; prefer OAuth via GitHub CLI/Desktop)
 ```
 
 ## System Paths

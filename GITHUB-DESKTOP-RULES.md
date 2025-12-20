@@ -78,9 +78,10 @@ This document defines the rules and best practices for using GitHub Desktop with
 - Separate from command-line git credentials
 
 ### Token Management
-- Command-line scripts use Personal Access Tokens (from `git-credentials.txt`)
-- GitHub Desktop uses OAuth tokens (managed by GitHub Desktop)
-- Both methods are secure and can coexist
+- Command-line scripts should prefer GitHub CLI OAuth (`gh auth login` + `gh auth setup-git`)
+- PAT fallback (`git-credentials.txt`) is supported for automation if `gh` is unavailable
+- GitHub Desktop uses its own OAuth tokens (managed by GitHub Desktop)
+- All methods can coexist, but OAuth (Desktop/gh) reduces PAT handling risk
 
 ## Repository Rules
 

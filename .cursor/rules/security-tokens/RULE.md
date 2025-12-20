@@ -19,6 +19,11 @@ globs: ["*git*.ps1", "*credentials*", ".gitignore"]
 - **Format**: `GITHUB_TOKEN=your_token_here`
 - **Location**: Project root (local only, never committed)
 
+## Preferred Authentication (OAuth)
+
+- Prefer **GitHub CLI OAuth** (`gh auth login`) and configure git with `gh auth setup-git`.
+- Use PATs only as a fallback when OAuth isn’t possible.
+
 ## Token Usage in Scripts
 
 - Tokens are never logged or displayed
@@ -34,7 +39,8 @@ globs: ["*git*.ps1", "*credentials*", ".gitignore"]
 
 ## Git Credential Management
 
-- Use HTTPS with token authentication
+- Prefer HTTPS with **OAuth via `gh`** when available
+- PAT fallback: HTTPS with token authentication (never commit / never print)
 - Store in Windows Credential Manager after first use
 - Scripts should check for token file existence before use
 - Provide helpful error messages if token is missing

@@ -98,9 +98,29 @@ if ($changes) {
     if ($LASTEXITCODE -eq 0) {
         Write-Host "    [OK] Changes committed" -ForegroundColor Green
         
-        # Push if token is available
-        if (Test-Path "git-credentials.txt") {
-            Write-Host "    [INFO] Pushing to GitHub..." -ForegroundColor Cyan
+        # Push (prefer OAuth via GitHub CLI if available)
+        $pushed = $false
+        try {
+            $ghInstalled = Get-Command gh -ErrorAction SilentlyContinue
+            if ($ghInstalled) {
+                gh auth status -h github.com 2>$null | Out-Null
+                if ($LASTEXITCODE -eq 0) {
+                    gh auth setup-git -h github.com 2>$null | Out-Null
+                    Write-Host "    [INFO] Pushing to GitHub (OAuth via gh)..." -ForegroundColor Cyan
+                    git push origin main 2>&1 | Out-Null
+                    if ($LASTEXITCODE -eq 0) {
+                        Write-Host "    [OK] Changes pushed to GitHub" -ForegroundColor Green
+                        $pushed = $true
+                    }
+                }
+            }
+        } catch {
+            # Best-effort only
+        }
+
+        # PAT fallback (only if token file exists and OAuth push didn't happen)
+        if (-not $pushed -and (Test-Path "git-credentials.txt")) {
+            Write-Host "    [INFO] Pushing to GitHub (PAT fallback; may require credentials)..." -ForegroundColor Cyan
             git push origin main 2>&1 | Out-Null
             if ($LASTEXITCODE -eq 0) {
                 Write-Host "    [OK] Changes pushed to GitHub" -ForegroundColor Green

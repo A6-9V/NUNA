@@ -39,6 +39,23 @@ if ($LASTEXITCODE -ne 0) {
 Write-Host "[INFO] Pushing to GitHub..." -ForegroundColor Yellow
 Write-Host ""
 
+# Prefer OAuth via GitHub CLI if available (recommended)
+try {
+    $ghInstalled = Get-Command gh -ErrorAction SilentlyContinue
+    if ($ghInstalled) {
+        gh auth status -h github.com 2>$null | Out-Null
+        if ($LASTEXITCODE -eq 0) {
+            gh auth setup-git -h github.com 2>$null | Out-Null
+            Write-Host "[INFO] Using GitHub CLI OAuth credentials (gh auth setup-git)" -ForegroundColor Cyan
+        } else {
+            Write-Host "[WARNING] GitHub CLI is installed but not authenticated." -ForegroundColor Yellow
+            Write-Host "          Run: gh auth login -h github.com -p https --web" -ForegroundColor White
+        }
+    }
+} catch {
+    # Best-effort only; continue to git push (user may already have credentials configured)
+}
+
 # Try to push
 git push -u origin main 2>&1 | ForEach-Object {
     if ($_ -match "error|fatal") {

@@ -32,10 +32,10 @@ if (-not $ghInstalled) {
         Write-Host "Location: $clonePath\Window-setup" -ForegroundColor Cyan
     } else {
         Write-Host "[ERROR] Failed to clone repository." -ForegroundColor Red
-        Write-Host "You may need to provide GitHub credentials:" -ForegroundColor Yellow
-        Write-Host "  - Username: Your GitHub username" -ForegroundColor White
-        Write-Host "  - Password: Use a Personal Access Token" -ForegroundColor White
-        Write-Host "  - Get token from: https://github.com/settings/tokens" -ForegroundColor Cyan
+        Write-Host "Authentication notes:" -ForegroundColor Yellow
+        Write-Host "  - GitHub no longer supports account passwords for git over HTTPS." -ForegroundColor White
+        Write-Host "  - Recommended: use GitHub CLI OAuth login: gh auth login" -ForegroundColor White
+        Write-Host "  - Alternative: use Git Credential Manager or a fine-grained token (PAT) if required." -ForegroundColor White
     }
 } else {
     Write-Host "[OK] GitHub CLI found!" -ForegroundColor Green
@@ -46,9 +46,10 @@ if (-not $ghInstalled) {
     $authStatus = gh auth status 2>&1
     
     if ($LASTEXITCODE -ne 0) {
-        Write-Host "[WARNING] Not authenticated with GitHub." -ForegroundColor Yellow
-        Write-Host "Please authenticate:" -ForegroundColor Cyan
-        Write-Host "  gh auth login" -ForegroundColor White
+        Write-Host "[WARNING] Not authenticated with GitHub CLI." -ForegroundColor Yellow
+        Write-Host "Please authenticate (OAuth):" -ForegroundColor Cyan
+        Write-Host "  gh auth login -h github.com -p https --web" -ForegroundColor White
+        Write-Host "  # or: gh auth login -h github.com -p https --device" -ForegroundColor White
         Write-Host ""
         Write-Host "Falling back to git clone..." -ForegroundColor Yellow
         
