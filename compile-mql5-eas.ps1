@@ -16,16 +16,62 @@ Write-Host ""
 # Configuration
 $mt5TerminalPath = "C:\Program Files\MetaTrader 5 EXNESS\terminal64.exe"
 $mt5MetaEditorPath = "C:\Program Files\MetaTrader 5 EXNESS\metaeditor64.exe"
-$expertsPath = "C:\Users\USER\AppData\Roaming\MetaQuotes\Terminal\53785E099C927DB68A545C249CDBCE06\MQL5\Experts\Advisors"
-$compiledPath = "C:\Users\USER\AppData\Roaming\MetaQuotes\Terminal\53785E099C927DB68A545C249CDBCE06\MQL5\Experts\Advisors"
+
+function Resolve-TerminalDataPath {
+    if (-not $env:APPDATA) { return $null }
+    $terminalRoot = Join-Path $env:APPDATA "MetaQuotes\Terminal"
+    if (-not (Test-Path $terminalRoot)) { return $null }
+
+    $candidates = @()
+    try {
+        $dirs = Get-ChildItem -Path $terminalRoot -Directory -ErrorAction SilentlyContinue
+        foreach ($d in $dirs) {
+            $mql5Path = Join-Path $d.FullName "MQL5"
+            if (Test-Path $mql5Path) {
+                $originTxt = Join-Path $d.FullName "origin.txt"
+                $origin = $null
+                if (Test-Path $originTxt) {
+                    $origin = (Get-Content $originTxt -ErrorAction SilentlyContinue | Select-Object -First 1)
+                }
+                $candidates += [PSCustomObject]@{
+                    Path = $d.FullName
+                    Origin = $origin
+                    LastWrite = $d.LastWriteTime
+                }
+            }
+        }
+    } catch { }
+
+    if (-not $candidates -or $candidates.Count -eq 0) { return $null }
+    if ($candidates.Count -eq 1) { return $candidates[0].Path }
+
+    $exness = $candidates | Where-Object { $_.Origin -match "EXNESS|Exness|MetaTrader 5 EXNESS" }
+    if ($exness -and $exness.Count -ge 1) {
+        return ($exness | Sort-Object LastWrite -Descending | Select-Object -First 1).Path
+    }
+
+    return ($candidates | Sort-Object LastWrite -Descending | Select-Object -First 1).Path
+}
+
+$terminalDataPath = Resolve-TerminalDataPath
+if (-not $terminalDataPath) {
+    Write-Host "[ERROR] Could not locate MT5 Terminal data folder (MetaQuotes\Terminal\<hash>)." -ForegroundColor Red
+    Write-Host "[INFO] Run MT5 once, then retry this script." -ForegroundColor Yellow
+    exit 1
+}
+
+$expertsPath = Join-Path $terminalDataPath "MQL5\Experts\Advisors"
 
 # Check if MetaEditor exists
 $metaEditorFound = $false
+$programFilesX86 = $null
+try { $programFilesX86 = (Get-Item "Env:ProgramFiles(x86)").Value } catch { }
+
 $metaEditorPaths = @(
     "C:\Program Files\MetaTrader 5 EXNESS\metaeditor64.exe",
     "$env:LOCALAPPDATA\Programs\MetaTrader 5 EXNESS\metaeditor64.exe",
     "$env:PROGRAMFILES\MetaTrader 5 EXNESS\metaeditor64.exe",
-    "$env:PROGRAMFILES(X86)\MetaTrader 5 EXNESS\metaeditor64.exe"
+    $(if ($programFilesX86) { Join-Path $programFilesX86 "MetaTrader 5 EXNESS\metaeditor64.exe" })
 )
 
 foreach ($path in $metaEditorPaths) {
