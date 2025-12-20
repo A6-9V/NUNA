@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/agent-requests/agent-request.schema.json",
+  "title": "AgentRequest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "id", "created_at", "type", "title", "instructions", "routing"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Schema version",
+      "default": "1.0"
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique request id (e.g. UUID)"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["review", "fix", "debug", "maintenance", "documentation", "operations", "execute", "read", "write"]
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["low", "medium", "high", "critical"],
+      "default": "medium"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 3
+    },
+    "instructions": {
+      "type": "string",
+      "minLength": 3
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "paths": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        },
+        "notes": {
+          "type": "string",
+          "default": ""
+        }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "allowed": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "read": { "type": "boolean", "default": true },
+            "write": { "type": "boolean", "default": true },
+            "execute": { "type": "boolean", "default": false },
+            "network": { "type": "boolean", "default": false }
+          }
+        },
+        "commands": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        }
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "no_secrets": { "type": "boolean", "default": true },
+        "do_not_push": { "type": "boolean", "default": true },
+        "do_not_change_git_config": { "type": "boolean", "default": true }
+      }
+    },
+    "routing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["targets"],
+      "properties": {
+        "targets": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "cursor | github | amp | gemini | qodo | intelligence-code | kombai | other"
+              },
+              "mode": {
+                "type": "string",
+                "enum": ["local", "github-issue", "github-pr", "paste-prompt", "other"],
+                "default": "paste-prompt"
+              },
+              "notes": { "type": "string", "default": "" }
+            }
+          }
+        },
+        "github": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "create_issue": { "type": "boolean", "default": false },
+            "labels": { "type": "array", "items": { "type": "string" }, "default": [] },
+            "assignees": { "type": "array", "items": { "type": "string" }, "default": [] }
+          }
+        }
+      }
+    }
+  }
+}
+

@@ -1,9 +1,64 @@
-# Master automation script - Runs everything automatically
-# This script orchestrates all automated setup tasks
+<# 
+.SYNOPSIS
+    Master automation script - Runs everything automatically (Auto-Admin)
+.DESCRIPTION
+    Orchestrates all automated setup tasks.
+    Automatically relaunches itself with Administrator privileges when needed.
+#>
+
+#Requires -Version 5.1
+
+$ErrorActionPreference = "Continue"
+
+function Test-IsAdministrator {
+    try {
+        $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+        return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+    } catch {
+        # If we can't determine (non-Windows / restricted host), assume not admin.
+        return $false
+    }
+}
+
+if (-not (Test-IsAdministrator)) {
+    Write-Host "[INFO] Elevating to Administrator..." -ForegroundColor Yellow
+
+    # Resolve the current script path in a robust way
+    $scriptPath = $PSCommandPath
+    if (-not $scriptPath) {
+        $scriptPath = $MyInvocation.MyCommand.Path
+    }
+
+    if (-not $scriptPath) {
+        Write-Host "[ERROR] Unable to determine script path for elevation." -ForegroundColor Red
+        Write-Host "[INFO] Tip: Run this script directly from a .ps1 file rather than dot-sourcing it." -ForegroundColor Yellow
+        exit 1
+    }
+    $arguments = "-ExecutionPolicy Bypass -NoProfile -File `"$scriptPath`""
+
+    # Use the same PowerShell executable as the current session for elevation
+    $psExecutable = if ($PSVersionTable.PSEdition -eq 'Core') {
+        Join-Path $PSHOME 'pwsh.exe'
+    } else {
+        'powershell.exe'
+    }
+
+    try {
+        Start-Process $psExecutable -Verb RunAs -ArgumentList $arguments
+        exit 0
+    } catch {
+        Write-Host "[ERROR] Failed to request elevation: $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host "[INFO] Tip: Right-click PowerShell > Run as administrator, then rerun this script." -ForegroundColor Yellow
+        exit 1
+    }
+}
+
+# Running as Administrator - proceed
 
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "  Master Automation Script" -ForegroundColor Cyan
 Write-Host "  Running all tasks automatically..." -ForegroundColor Cyan
+Write-Host "  (Administrator)" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
