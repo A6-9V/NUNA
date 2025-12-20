@@ -35,9 +35,9 @@ This document defines the automation rules and intelligent defaults used by the 
 ### Git Operations (`auto-git-push.ps1`)
 
 #### Credential Management
-- **Token Storage**: Saved in `git-credentials.txt` (gitignored)
-- **Windows Credential Manager**: Tokens stored securely after first use
-- **Remote URL**: Uses HTTPS with token authentication
+- **Preferred (recommended)**: GitHub CLI **OAuth** (`gh auth login`) + `gh auth setup-git`
+- **Fallback**: `git-credentials.txt` (gitignored) for PAT-based automation if `gh` isn’t available
+- **Security**: Never print tokens; never leave tokenized remote URLs configured after a push
 
 #### Commit Strategy
 - **Auto-commit**: All changes committed automatically
@@ -47,7 +47,7 @@ This document defines the automation rules and intelligent defaults used by the 
 #### Push Strategy
 - **Automatic Push**: Pushes immediately after commit
 - **Error Handling**: Graceful failure with helpful messages
-- **Token Usage**: Uses saved token automatically
+- **Auth Strategy**: Uses OAuth via `gh` when available; otherwise PAT fallback (if configured locally)
 
 ### Cloud Services
 
@@ -72,7 +72,7 @@ This document defines the automation rules and intelligent defaults used by the 
 
 ### Scripts
 - `auto-setup.ps1` - Automated Windows configuration
-- `auto-git-push.ps1` - Automated git operations with token
+- `auto-git-push.ps1` - Automated git operations (OAuth via `gh` preferred)
 - `run-all-auto.ps1` - Master script that runs everything
 - `git-setup.ps1` - Initial git repository setup
 
@@ -90,7 +90,7 @@ This document defines the automation rules and intelligent defaults used by the 
 
 1. **User runs**: `RUN-AUTO-SETUP.bat` or `run-all-auto.ps1`
 2. **Windows Setup**: Runs automatically with intelligent defaults
-3. **Git Push**: Runs automatically using saved token
+3. **Git Push**: Runs automatically (OAuth via `gh` preferred; PAT fallback optional)
 4. **Summary**: Shows what was completed
 
 ## Error Handling
@@ -128,9 +128,9 @@ To customize automation rules, edit the respective script files:
 ## Token Management
 
 ### Adding/Updating Tokens
-1. Edit `git-credentials.txt` (local file only)
-2. Update `GITHUB_TOKEN` value
-3. Scripts will use new token automatically
+1. Preferred: run `gh auth login` (OAuth) and let `gh auth setup-git` handle git HTTPS auth.
+2. If using PAT fallback: edit `git-credentials.txt` (local file only), update `GITHUB_TOKEN`.
+3. Scripts will use OAuth when available, otherwise PAT fallback.
 
 ### Token Permissions Required
 - `repo` - Full repository access

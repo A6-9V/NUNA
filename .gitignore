@@ -31,6 +31,10 @@ documents/
 .DS_Store
 .849C9593-D756-4E56-8D6E-42412F2A707B
 
+# Linux core dumps (can appear as a file named "core")
+core
+core.*
+
 # Security - Never commit tokens or secrets
 *.token
 *.secret
@@ -62,6 +66,9 @@ Secrets/
 log-summary.txt
 logs/
 
+# Browser exports (contain sensitive history/bookmarks)
+Browser-Exports/
+
 # Temporary files
 *_tmp.*
 qr_tmp.*
@@ -81,6 +88,17 @@ chrome_qrcode_*.png
 
 # Archives
 *.zip
+*.7z
+*.7zip
+*.rar
+*.tar
+*.tar.gz
+*.tgz
+
+# Encrypted/backup outputs (keep out of git by default)
+Backups/
+backup/
+backups/
 
 # Large executables and installers
 *.deb
@@ -107,4 +125,9 @@ trading-bridge/**/credentials.json
 network-config.json
 Network-Shortcuts/
 cleanup-log_*.txt
+cleanup-log-*.log
+cleanup-log-*.txt
 Documentation/Reports/
+
+# VPS runtime logs
+vps-logs/

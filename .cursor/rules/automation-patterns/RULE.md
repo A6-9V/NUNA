@@ -39,9 +39,9 @@ This project follows specific automation patterns for Windows setup and git oper
 ## Git Operations Automation
 
 ### Credential Management
-- Token Storage: Saved in `git-credentials.txt` (gitignored)
-- Windows Credential Manager: Tokens stored securely after first use
-- Remote URL: Uses HTTPS with token authentication
+- Preferred (recommended): GitHub CLI OAuth (`gh auth login`) + `gh auth setup-git`
+- Fallback: `git-credentials.txt` (gitignored) for PAT-based automation if `gh` isn’t available
+- Security: Never print tokens; never leave tokenized remote URLs configured after a push
 
 ### Commit Strategy
 - Auto-commit: All changes committed automatically
@@ -51,7 +51,7 @@ This project follows specific automation patterns for Windows setup and git oper
 ### Push Strategy
 - Automatic Push: Pushes immediately after commit
 - Error Handling: Graceful failure with helpful messages
-- Token Usage: Uses saved token automatically
+- Auth Strategy: Uses OAuth via `gh` when available; otherwise PAT fallback (if configured locally)
 
 ## Cloud Services Automation
 
@@ -76,7 +76,7 @@ This project follows specific automation patterns for Windows setup and git oper
 
 1. User runs: `RUN-AUTO-SETUP.bat` or `run-all-auto.ps1`
 2. Windows Setup: Runs automatically with intelligent defaults
-3. Git Push: Runs automatically using saved token
+3. Git Push: Runs automatically (OAuth via `gh` preferred; PAT fallback optional)
 4. Summary: Shows what was completed
 
 ## References

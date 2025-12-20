@@ -50,7 +50,7 @@ public:
 //+------------------------------------------------------------------+
 PythonBridge::PythonBridge()
 {
-   m_port = 5555;
+   m_port = 5500;
    m_host = "127.0.0.1";
    m_connected = false;
 }

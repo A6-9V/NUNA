@@ -218,6 +218,8 @@ Create `%APPDATA%\Cursor\User\globalStorage\mcp.json`:
 }
 ```
 
+**Security note**: keep tokens local-only (never commit). Preferred: authenticate via GitHub CLI OAuth (`gh auth login`) and use `gh auth token` to obtain a token value for MCP if needed.
+
 ### Cursor Integration
 
 1. Open Cursor Settings

@@ -74,7 +74,11 @@ Settings are automatically copied to:
 MCP config is copied to:
 - `%APPDATA%\Cursor\User\globalStorage\mcp.json`
 
-**Important**: Add your GitHub Personal Access Token to the MCP config if using GitHub integration.
+**Important (security)**: Do **not** paste tokens into the tracked `system-setup/mcp-config.json`.
+
+- Copy the MCP config to Cursor’s local MCP config location first (or create it there), then add a token locally.
+- Preferred auth: **GitHub CLI OAuth** (`gh auth login`), then obtain a token via `gh auth token` for tools that require a token value.
+- If you must use a PAT, prefer a **fine-grained** token and keep it **local-only** (never committed).
 
 ## 📝 Usage Examples
 
