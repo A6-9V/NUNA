@@ -113,9 +113,17 @@ To change port:
 
 ### Firewall Rules
 
-Allow port 5500 (or your custom port) through Windows Firewall:
+Allow port 5500 (or your custom port) through Windows Firewall.
+
+Recommended (configures bridge + website + portal with safe defaults):
 ```powershell
-New-NetFirewallRule -DisplayName "Trading Bridge" -Direction Inbound -LocalPort 5500 -Protocol TCP -Action Allow
+# Run as Administrator
+.\open-trading-system-firewall.ps1
+```
+
+Bridge-only (secure default is loopback-only):
+```powershell
+.\trading-bridge\setup-firewall-port-5500.ps1
 ```
 
 ## VPS Configuration

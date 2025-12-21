@@ -5,7 +5,20 @@
 .DESCRIPTION
     This script creates a firewall rule to allow inbound connections on port 5500
     for the MetaTrader Exness trading bridge communication.
+
+    Security default: loopback-only (127.0.0.1). Use -AllowFromLAN only if you
+    intentionally run MT5 on another LAN machine.
+.PARAMETER AllowFromLAN
+    Allow inbound connections from LocalSubnet to port 5500 (not recommended on VPS).
+.PARAMETER IncludePublicProfile
+    Include the Public firewall profile (default: false). Prefer Domain/Private.
 #>
+
+[CmdletBinding()]
+param(
+    [switch]$AllowFromLAN,
+    [switch]$IncludePublicProfile
+)
 
 $ErrorActionPreference = "Continue"
 
@@ -28,7 +41,14 @@ if (-not $isAdmin) {
 
 $port = 5500
 $ruleName = "MetaTrader Exness Trading Bridge"
-$ruleDescription = "Allow inbound connections on port 5500 for MetaTrader Exness trading bridge communication"
+$ruleDescription = "Allow inbound TCP 5500 for MetaTrader Exness trading bridge communication (default loopback-only)"
+
+$profiles = if ($IncludePublicProfile) { @("Domain", "Private", "Public") } else { @("Domain", "Private") }
+$remoteAddresses = @("127.0.0.1")
+if ($AllowFromLAN) {
+    $remoteAddresses = @("LocalSubnet")
+    $ruleDescription = "Allow inbound TCP 5500 for MetaTrader Exness trading bridge communication (LocalSubnet)"
+}
 
 Write-Host "[1/3] Checking existing firewall rules..." -ForegroundColor Yellow
 try {
@@ -57,7 +77,8 @@ try {
         -LocalPort $port `
         -Protocol TCP `
         -Action Allow `
-        -Profile Any `
+        -Profile $profiles `
+        -RemoteAddress $remoteAddresses `
         -ErrorAction Stop
     
     Write-Host "    [OK] Firewall rule created successfully" -ForegroundColor Green
@@ -65,6 +86,8 @@ try {
     Write-Host "    [INFO] Port: $port" -ForegroundColor Cyan
     Write-Host "    [INFO] Protocol: TCP" -ForegroundColor Cyan
     Write-Host "    [INFO] Action: Allow" -ForegroundColor Cyan
+    Write-Host "    [INFO] Profiles: $($profiles -join ', ')" -ForegroundColor Cyan
+    Write-Host "    [INFO] RemoteAddress: $($remoteAddresses -join ', ')" -ForegroundColor Cyan
 }
 catch {
     Write-Host "    [ERROR] Failed to create firewall rule: $_" -ForegroundColor Red
