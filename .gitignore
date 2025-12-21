@@ -131,3 +131,7 @@ Documentation/Reports/
 
 # VPS runtime logs
 vps-logs/
+
+# Agent request I/O (contains potentially sensitive prompts/outputs)
+agent-requests/inbox/
+agent-requests/out/
