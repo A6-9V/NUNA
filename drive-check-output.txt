@@ -1,0 +1,39 @@
+========================================
+  All Drives - Disk Space Report
+========================================
+
+C: - OS
+  Total: 396.29 GB
+  Used:  178.01 GB
+  Free:  218.28 GB (55.1%)
+
+D: - DATA
+  Total: 534.08 GB
+  Used:  1.02 GB
+  Free:  533.06 GB (99.8%)
+
+E: - Lexar NS100
+  Total: 476.92 GB
+  Used:  8.91 GB
+  Free:  468.01 GB (98.1%)
+
+F: - USB U&I
+  Total: 57.72 GB
+  Used:  14.3 GB
+  Free:  43.41 GB (75.2%)
+
+G: - Google Drive
+  Total: 30 GB
+  Used:  26.86 GB
+  Free:  3.14 GB (10.5%)
+
+H: - OS
+  Total: 463.05 GB
+  Used:  45.83 GB
+  Free:  417.22 GB (90.1%)
+
+Z: - (No Label)
+  Total: 0.13 GB
+  Used:  0.11 GB
+  Free:  0.01 GB (11%)
+
