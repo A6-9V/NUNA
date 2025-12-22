@@ -53,7 +53,7 @@
   "terminal.integrated.fontSize": 12,
   "terminal.integrated.fontFamily": "Cascadia Code",
   "workbench.startupEditor": "newUntitledFile",
-  "workbench.colorTheme": "Default Dark+",
+  "workbench.colorTheme": "Default Light+",
   "workbench.iconTheme": "vs-seti",
   "extensions.autoUpdate": true,
   "extensions.autoCheckUpdates": true,

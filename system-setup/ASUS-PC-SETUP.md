@@ -309,7 +309,7 @@ main().catch(console.error);
   "terminal.integrated.defaultProfile.windows": "PowerShell",
   "terminal.integrated.cwd": "D:\\my-drive-projects",
   "workbench.startupEditor": "newUntitledFile",
-  "workbench.colorTheme": "Default Dark+",
+  "workbench.colorTheme": "Default Light+",
   "extensions.autoUpdate": true,
   "mcp.enabled": true,
   "mcp.servers": {
