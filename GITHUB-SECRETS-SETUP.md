@@ -24,11 +24,21 @@ The following OAuth credentials need to be configured for the ZOLO-A6-9VxNUNA tr
 
 ### Using PowerShell Script
 
-The easiest way to set up secrets is to use the provided automation script:
+The easiest way to set up secrets is to use the provided automation script. **Note**: You must provide your OAuth credentials as parameters:
 
 ```powershell
-# Run as Administrator (if needed for GitHub CLI)
-.\setup-github-secrets.ps1
+# Run with your OAuth credentials
+.\setup-github-secrets.ps1 `
+    -ClientId "YOUR_CLIENT_ID_HERE" `
+    -ClientSecret "YOUR_CLIENT_SECRET_HERE"
+```
+
+For the ZOLO-A6-9VxNUNA repository:
+```powershell
+.\setup-github-secrets.ps1 `
+    -Repository "Mouy-leng/ZOLO-A6-9VxNUNA-" `
+    -ClientId "YOUR_CLIENT_ID_HERE" `
+    -ClientSecret "YOUR_CLIENT_SECRET_HERE"
 ```
 
 The script will:
@@ -40,9 +50,22 @@ The script will:
 6. ✅ Verify secrets were created successfully
 7. ✅ Display usage examples
 
-### Custom Values
+### Using Batch File Wrapper
 
-You can also pass custom values to the script:
+If you prefer to use environment variables:
+
+```powershell
+# Set environment variables first
+$env:OAUTH_CLIENT_ID = "YOUR_CLIENT_ID_HERE"
+$env:OAUTH_CLIENT_SECRET = "YOUR_CLIENT_SECRET_HERE"
+
+# Then run the batch file
+.\SETUP-GITHUB-SECRETS.bat
+```
+
+### Additional Options
+
+You can specify a different repository:
 
 ```powershell
 .\setup-github-secrets.ps1 `
@@ -51,13 +74,7 @@ You can also pass custom values to the script:
     -ClientSecret "your-client-secret-here"
 ```
 
-**Example for ZOLO-A6-9VxNUNA repository:**
-```powershell
-.\setup-github-secrets.ps1 `
-    -Repository "Mouy-leng/ZOLO-A6-9VxNUNA-" `
-    -ClientId "YOUR_CLIENT_ID" `
-    -ClientSecret "YOUR_CLIENT_SECRET"
-```
+**Security Best Practice**: Store your credentials in a secure password manager and copy them only when needed.
 
 ## Method 2: Using GitHub CLI Manually
 

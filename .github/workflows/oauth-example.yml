@@ -54,10 +54,10 @@ jobs:
           echo "=========================================="
           echo "OAuth Credential Information"
           echo "=========================================="
-          echo "Client ID: ${{ secrets.CLIENT_ID }}"
-          echo "Client Secret: ***HIDDEN***"
+          echo "Client ID is configured: $([ -n "${{ secrets.CLIENT_ID }}" ] && echo 'Yes' || echo 'No')"
+          echo "Client Secret is configured: $([ -n "${{ secrets.CLIENT_SECRET }}" ] && echo 'Yes' || echo 'No')"
           echo ""
-          echo "Note: GitHub automatically masks secret values in logs"
+          echo "Note: Actual secret values are never displayed for security"
       
       - name: Example OAuth usage
         run: |

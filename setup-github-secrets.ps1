@@ -89,17 +89,44 @@ function Set-GitHubSecret {
     Write-Host "`n[INFO] Setting secret: $SecretName" -ForegroundColor Cyan
     
     try {
-        # Use gh secret set with --body parameter
-        $result = echo $SecretValue | gh secret set $SecretName --repo $Repo 2>&1
+        # Create a temporary secure file
+        $tempFile = [System.IO.Path]::GetTempFileName()
         
-        if ($LASTEXITCODE -eq 0) {
-            Write-Host "[OK] Secret '$SecretName' set successfully for repository '$Repo'" -ForegroundColor Green
-            return $true
+        try {
+            # Write secret to temp file with restricted permissions
+            $SecretValue | Out-File -FilePath $tempFile -NoNewline -Encoding UTF8
+            
+            # Set file permissions to be readable only by current user (Windows)
+            if ($IsWindows -or $PSVersionTable.PSVersion.Major -le 5) {
+                $acl = Get-Acl $tempFile
+                $acl.SetAccessRuleProtection($true, $false)
+                $rule = New-Object System.Security.AccessControl.FileSystemAccessRule(
+                    [System.Security.Principal.WindowsIdentity]::GetCurrent().Name,
+                    "Read",
+                    "Allow"
+                )
+                $acl.SetAccessRule($rule)
+                Set-Acl $tempFile $acl
+            }
+            
+            # Use gh secret set with file input
+            $result = gh secret set $SecretName --repo $Repo --body "$(Get-Content $tempFile -Raw)" 2>&1
+            
+            if ($LASTEXITCODE -eq 0) {
+                Write-Host "[OK] Secret '$SecretName' set successfully for repository '$Repo'" -ForegroundColor Green
+                return $true
+            }
+            else {
+                Write-Host "[ERROR] Failed to set secret '$SecretName'" -ForegroundColor Red
+                Write-Host "        Error: $result" -ForegroundColor Red
+                return $false
+            }
         }
-        else {
-            Write-Host "[ERROR] Failed to set secret '$SecretName'" -ForegroundColor Red
-            Write-Host "        Error: $result" -ForegroundColor Red
-            return $false
+        finally {
+            # Clean up temp file
+            if (Test-Path $tempFile) {
+                Remove-Item $tempFile -Force -ErrorAction SilentlyContinue
+            }
         }
     }
     catch {
