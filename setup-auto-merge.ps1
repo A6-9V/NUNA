@@ -113,7 +113,7 @@ Write-Host "[5/5] Checking for open pull requests..." -ForegroundColor Yellow
 try {
     $prs = gh pr list --repo "$owner/$repo" --state open --json number,title,author,headRefName,autoMergeRequest --limit 10 | ConvertFrom-Json
     
-    if ($prs.Count -gt 0) {
+    if ($prs -and $prs.Count -gt 0) {
         Write-Host "  Found $($prs.Count) open pull request(s):" -ForegroundColor Cyan
         Write-Host ""
         

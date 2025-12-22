@@ -18,7 +18,9 @@ permissions:
 jobs:
   auto-merge:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.draft == false
+    if: >
+      github.event.pull_request &&
+      github.event.pull_request.draft == false
 
     steps:
       - name: Checkout repository
@@ -76,9 +78,8 @@ jobs:
 
             console.log(`Status state: ${statuses.state}`);
 
-            if (statuses.state !== 'success' &&
-                statuses.state !== 'pending') {
-              console.log('Status checks have not passed');
+            if (statuses.state !== 'success') {
+              console.log('Status checks have not passed yet');
               return false;
             }
 
@@ -102,7 +103,7 @@ jobs:
             core.setOutput('can_merge', 'true');
             return true;
 
-      - name: Enable auto-merge
+      - name: Update PR branch and add comment
         if: steps.pr_status.outputs.can_merge == 'true'
         uses: actions/github-script@v7
         with:
