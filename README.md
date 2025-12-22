@@ -108,6 +108,8 @@ This will:
 - ✅ Multi-remote repository support
 - ✅ Automated git operations
 - ✅ Secure credential management
+- ✅ Auto-merge for pull requests
+- ✅ GitHub Actions workflows
 
 ### Security Validation
 - ✅ Comprehensive security checks
@@ -156,6 +158,7 @@ Sensitive files including credentials, API keys, certificates, and logs are auto
 - **SYSTEM-INFO.md** - System specifications
 - **WORKSPACE-SETUP.md** - Workspace setup guide
 - **VPS-SETUP-GUIDE.md** - VPS 24/7 trading system guide
+- **AUTO-MERGE-SETUP-GUIDE.md** - Automatic PR merging setup
 - **AUTOMATION-RULES.md** - Automation patterns
 - **GITHUB-DESKTOP-RULES.md** - GitHub Desktop integration
 - **MANUAL-SETUP-GUIDE.md** - Manual setup instructions
