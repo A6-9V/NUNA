@@ -311,7 +311,7 @@ $report.MouyLengRepos = $mouyLengRepos
 if ($mouyLengRepos.Count -gt 0) {
     Write-Host ""
     foreach ($repo in $mouyLengRepos) {
-        $repoName = if ($repo.name) { $repo.name } else { $repo.name }
+        $repoName = $repo.name
         Write-Host "  Repository: $mouyLengUser/$repoName" -ForegroundColor Cyan
         
         $prs = Get-PullRequests -Owner $mouyLengUser -Repo $repoName
@@ -356,7 +356,7 @@ $report.A69VRepos = $a69vRepos
 if ($a69vRepos.Count -gt 0) {
     Write-Host ""
     foreach ($repo in $a69vRepos) {
-        $repoName = if ($repo.name) { $repo.name } else { $repo.name }
+        $repoName = $repo.name
         Write-Host "  Repository: $a69vOrg/$repoName" -ForegroundColor Cyan
         
         $prs = Get-PullRequests -Owner $a69vOrg -Repo $repoName
@@ -527,7 +527,7 @@ $reportContent += @"
 
 if ($report.InjectedRepos.Count -gt 0) {
     foreach ($injected in $report.InjectedRepos) {
-        $reportContent += "`n- **$($injected.Owner)/$($injected.Repo)** → `$($injected.InjectionPath)`"
+        $reportContent += "`n- **$($injected.Owner)/$($injected.Repo)** → $($injected.InjectionPath)"
     }
 } else {
     $reportContent += "`n- No repositories were injected"
