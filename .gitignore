@@ -138,3 +138,8 @@ agent-requests/out/
 
 # Temporary repository clones for injection
 injected-repos/
+
+# Repository automation generated files
+repo-automation-*.log
+repo-automation-*.md
+repo-automation-report-*.md
