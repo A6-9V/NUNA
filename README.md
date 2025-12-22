@@ -151,6 +151,24 @@ Sensitive files including credentials, API keys, certificates, and logs are auto
 - Temporary files
 - Personal directories and media files
 
+### GitHub Secrets Setup
+
+For OAuth credentials and other sensitive configuration, use GitHub Secrets:
+
+```powershell
+# Automated setup with your credentials
+.\setup-github-secrets.ps1 `
+    -ClientId "YOUR_CLIENT_ID" `
+    -ClientSecret "YOUR_CLIENT_SECRET"
+
+# Or use environment variables
+$env:OAUTH_CLIENT_ID = "YOUR_CLIENT_ID"
+$env:OAUTH_CLIENT_SECRET = "YOUR_CLIENT_SECRET"
+.\SETUP-GITHUB-SECRETS.bat
+```
+
+See **GITHUB-SECRETS-SETUP.md** for complete instructions on setting up GitHub repository secrets for secure credential management in GitHub Actions workflows.
+
 ## 📚 Documentation
 
 - **DEVICE-SKELETON.md** - Complete device structure blueprint
@@ -161,6 +179,7 @@ Sensitive files including credentials, API keys, certificates, and logs are auto
 - **AUTO-MERGE-SETUP-GUIDE.md** - Automatic PR merging setup
 - **AUTOMATION-RULES.md** - Automation patterns
 - **GITHUB-DESKTOP-RULES.md** - GitHub Desktop integration
+- **GITHUB-SECRETS-SETUP.md** - GitHub secrets and OAuth setup
 - **MANUAL-SETUP-GUIDE.md** - Manual setup instructions
 
 ## 🏢 Organization

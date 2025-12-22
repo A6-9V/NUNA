@@ -61,6 +61,8 @@ flash-student-*
 
 # Secrets directory
 Secrets/
+# Allow README.md in Secrets directory for documentation
+!Secrets/README.md
 
 # Project scanner output files (keep config, ignore results)
 log-summary.txt
