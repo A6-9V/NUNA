@@ -114,10 +114,12 @@ backups/
 # Trading Bridge - Security and Configuration
 trading-bridge/config/brokers.json
 trading-bridge/config/symbols.json
+trading-bridge/config/mql_io.json
 trading-bridge/config/*.key
 trading-bridge/config/*.secret
 trading-bridge/logs/*.log
 trading-bridge/data/*.db
+trading-bridge/data/mql_io/
 trading-bridge/*.db
 trading-bridge/**/*.key
 trading-bridge/**/*.secret
@@ -145,3 +147,8 @@ injected-repos/
 repo-automation-*.log
 repo-automation-*.md
 repo-automation-report-*.md
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
