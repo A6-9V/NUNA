@@ -272,6 +272,7 @@ class RiskCalculator:
     def calculate_pending_order(self,
                                entry_price: float,
                                direction: str,
+                               symbol: str,
                                distance_points: int = 10) -> Dict:
         """
         Calculate pending order parameters
@@ -279,24 +280,30 @@ class RiskCalculator:
         Args:
             entry_price: Desired entry price
             direction: 'BUY' or 'SELL'
+            symbol: Trading symbol
             distance_points: Distance in points from current price
             
         Returns:
             Pending order parameters
         """
+        # Get symbol-specific pip size
+        symbol_type = self.get_symbol_type(symbol)
+        pip_size = self.pip_values.get(symbol_type, 0.0001)
+        
         if direction.upper() == 'BUY':
             # Buy Stop (enter on breakout above)
             order_type = 'BUY_STOP'
-            order_price = entry_price + (distance_points * 0.0001)
+            order_price = entry_price + (distance_points * pip_size)
         else:  # SELL
             # Sell Stop (enter on breakout below)
             order_type = 'SELL_STOP'
-            order_price = entry_price - (distance_points * 0.0001)
+            order_price = entry_price - (distance_points * pip_size)
         
         return {
             'order_type': order_type,
             'order_price': round(order_price, 5),
-            'distance_points': distance_points
+            'distance_points': distance_points,
+            'pip_size': pip_size
         }
     
     def calculate_position_sizing(self,

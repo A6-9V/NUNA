@@ -408,13 +408,85 @@ class SMCStrategy:
     
     def _calculate_ob_strength(self, candles: List[Dict], index: int) -> float:
         """Calculate order block strength (0-1)"""
-        # Simple implementation - can be enhanced
-        return 0.7  # Placeholder
+        if index < 1 or index >= len(candles) - 1:
+            return 0.5
+        
+        current = candles[index]
+        next_candle = candles[index + 1]
+        
+        # Calculate strength based on:
+        # 1. Size of the impulse move after OB (50% weight)
+        # 2. Volume comparison if available (30% weight)
+        # 3. Number of candles the OB holds (20% weight)
+        
+        strength = 0.0
+        
+        # 1. Impulse move strength
+        ob_size = abs(current['high'] - current['low'])
+        impulse_size = abs(next_candle['high'] - next_candle['low'])
+        if ob_size > 0:
+            impulse_ratio = min(impulse_size / ob_size, 3.0) / 3.0  # Normalize to 0-1
+            strength += impulse_ratio * 0.5
+        
+        # 2. Volume strength (if available)
+        if 'volume' in current and 'volume' in next_candle:
+            avg_volume = sum(c.get('volume', 0) for c in candles[max(0, index-5):index]) / 5
+            if avg_volume > 0:
+                volume_ratio = min(current['volume'] / avg_volume, 2.0) / 2.0
+                strength += volume_ratio * 0.3
+        else:
+            strength += 0.15  # Default if no volume data
+        
+        # 3. Holding power (how many candles respect the OB)
+        held_count = 0
+        for i in range(index + 1, min(index + 10, len(candles))):
+            if current['type'] == 'bullish' and candles[i]['low'] >= current['low']:
+                held_count += 1
+            elif current['type'] == 'bearish' and candles[i]['high'] <= current['high']:
+                held_count += 1
+            else:
+                break
+        strength += min(held_count / 5.0, 1.0) * 0.2
+        
+        return min(strength, 1.0)
     
     def _calculate_liquidity_strength(self, candles: List[Dict], index: int, level_type: str) -> float:
         """Calculate liquidity zone strength (0-1)"""
-        # Simple implementation - can be enhanced
-        return 0.6  # Placeholder
+        if index < 10 or index >= len(candles) - 10:
+            return 0.5
+        
+        current = candles[index]
+        level = current['high'] if level_type == 'high' else current['low']
+        
+        strength = 0.0
+        
+        # 1. Number of times level was tested (40% weight)
+        touch_count = 0
+        for i in range(max(0, index - 20), min(index + 20, len(candles))):
+            if i == index:
+                continue
+            candle = candles[i]
+            if level_type == 'high':
+                if abs(candle['high'] - level) / level < 0.001:  # Within 0.1%
+                    touch_count += 1
+            else:
+                if abs(candle['low'] - level) / level < 0.001:
+                    touch_count += 1
+        
+        strength += min(touch_count / 5.0, 1.0) * 0.4
+        
+        # 2. Time since formation (30% weight) - older = stronger
+        lookback = index
+        age_ratio = min(lookback / 50.0, 1.0)
+        strength += age_ratio * 0.3
+        
+        # 3. Distance from current price (30% weight) - closer = stronger
+        current_price = candles[-1]['close']
+        distance = abs(level - current_price) / current_price
+        proximity_score = max(1.0 - (distance * 10), 0.0)  # Closer levels score higher
+        strength += proximity_score * 0.3
+        
+        return min(strength, 1.0)
     
     def _calculate_ema(self, candles: List[Dict], period: int) -> float:
         """Calculate Exponential Moving Average"""
