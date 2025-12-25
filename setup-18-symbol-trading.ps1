@@ -253,7 +253,7 @@ $startupConfig = @{
     enabled = $true
     auto_start_trading = $false
     auto_start_communications = $true
-    capital = 100
+    capital = 28
     max_symbols = 3
     risk_per_trade_percent = 1.0
 }

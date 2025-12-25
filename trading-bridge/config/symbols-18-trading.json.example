@@ -3,8 +3,8 @@
     "account_number": "411534497",
     "broker": "EXNESS",
     "server": "Exness-MT5Real8",
-    "initial_capital": 100,
-    "current_capital": 100,
+    "initial_capital": 28,
+    "current_capital": 28,
     "auto_adjust_capital": true
   },
   "trading_strategy": {
