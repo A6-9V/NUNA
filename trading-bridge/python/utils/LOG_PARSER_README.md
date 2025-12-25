@@ -199,6 +199,13 @@ python parse_mt5_log.py -i log.txt --save-to-data
 Files are saved as JSON with timestamp in filename:
 - `mt5_log_20251225_035812.json`
 
+By default, files are saved to `trading-bridge/data/logs/`. You can customize this location by setting the `MT5_LOG_DATA_DIR` environment variable:
+
+```bash
+export MT5_LOG_DATA_DIR=/path/to/custom/logs
+python parse_mt5_log.py -i log.txt --save-to-data
+```
+
 This allows you to build a history of MT5 connection events for analysis.
 
 ## Use Cases

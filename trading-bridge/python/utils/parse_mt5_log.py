@@ -3,6 +3,7 @@
 CLI tool for parsing MT5 mobile app logs
 """
 import sys
+import os
 import json
 import csv
 import argparse
@@ -152,8 +153,16 @@ def output_csv(entries, file=None):
 
 def save_to_data_dir(entries):
     """Save entries to data directory"""
-    # Create data directory
-    data_dir = Path(__file__).parent.parent.parent / 'data' / 'logs'
+    # Get data directory - try environment variable first, then default
+    data_dir_env = os.environ.get('MT5_LOG_DATA_DIR')
+    if data_dir_env:
+        data_dir = Path(data_dir_env)
+    else:
+        # Default to trading-bridge/data/logs relative to script location
+        script_dir = Path(__file__).resolve().parent
+        trading_bridge_dir = script_dir.parent.parent
+        data_dir = trading_bridge_dir / 'data' / 'logs'
+    
     data_dir.mkdir(parents=True, exist_ok=True)
     
     # Generate filename with timestamp
