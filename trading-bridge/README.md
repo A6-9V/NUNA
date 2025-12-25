@@ -94,11 +94,12 @@ trading-bridge/
 ├── python/
 │   ├── bridge/          # MQL5 bridge
 │   ├── brokers/         # Broker API implementations
-│   ├── mql_io/          # MQL.io service (NEW)
+│   ├── mql_io/          # MQL.io service
 │   ├── strategies/      # Trading strategies
 │   ├── trader/          # Multi-symbol trader
 │   ├── services/        # Background services
-│   └── security/        # Credential management
+│   ├── security/        # Credential management
+│   └── utils/           # Utilities (log parser, etc.)
 ├── mql5/
 │   ├── Experts/         # MQL5 Expert Advisors
 │   └── Include/         # MQL5 includes
@@ -129,6 +130,11 @@ trading-bridge/
 
 ### Background Service
 - **background_service.py** - Main service that runs 24/7
+
+### Utilities
+- **log_parser.py** - Parse MT5 mobile app logs
+- **parse_mt5_log.py** - CLI tool for log parsing
+- See `python/utils/LOG_PARSER_README.md` for details
 
 ## Configuration
 
