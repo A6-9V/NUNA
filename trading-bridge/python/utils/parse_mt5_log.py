@@ -188,14 +188,14 @@ def main():
         print("No log entries found", file=sys.stderr)
         return 1
     
-    # Apply filters
+    # Apply filters cumulatively
     if args.account:
-        entries = parser.filter_by_account(args.account)
+        entries = [e for e in entries if e.account_id == args.account]
     
     if args.event:
         try:
             event_type = EventType(args.event)
-            entries = parser.filter_by_event_type(event_type)
+            entries = [e for e in entries if e.event_type == event_type]
         except ValueError:
             print(f"Invalid event type: {args.event}", file=sys.stderr)
             print(f"Valid types: {[e.value for e in EventType]}", file=sys.stderr)
@@ -209,9 +209,13 @@ def main():
         end = datetime.fromisoformat(args.end)
         entries = [e for e in entries if e.timestamp <= end]
     
-    # Show summary if requested
+    # Show summary if requested (from filtered entries)
     if args.summary:
+        # Temporarily set parser entries to filtered entries for summary
+        original_entries = parser.entries
+        parser.entries = entries
         summary = parser.get_summary()
+        parser.entries = original_entries
         print(json.dumps(summary, indent=2))
         return 0
     
