@@ -119,6 +119,7 @@ trading-bridge/config/*.key
 trading-bridge/config/*.secret
 trading-bridge/logs/*.log
 trading-bridge/data/*.db
+trading-bridge/data/logs/
 trading-bridge/data/mql_io/
 trading-bridge/*.db
 trading-bridge/**/*.key
