@@ -286,7 +286,8 @@ Total Lines of Code/Documentation: ~3,900 lines
 {
   "account_info": {
     "account_number": "411534497",
-    "initial_capital": 100
+    "initial_capital": 100,
+    "current_capital": 28
   },
   "trading_strategy": {
     "name": "SMC_TrendBreakout_MultiTimeframe",

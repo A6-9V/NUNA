@@ -237,7 +237,7 @@ Edit `trading-bridge/config/symbols.json`:
 {
   "account_info": {
     "initial_capital": 100,
-    "current_capital": 100
+    "current_capital": 28
   }
 }
 ```
