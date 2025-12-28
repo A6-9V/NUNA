@@ -18,11 +18,13 @@ Safety:
 from __future__ import annotations
 
 import argparse
+import itertools
 import os
 import sys
 import tempfile
 import time
 import zipfile
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Tuple
@@ -312,6 +314,42 @@ def ensure_folder_path(
     return cur_id
 
 
+def upload_one_file(
+    local_file: Path,
+    *,
+    src_root: Path,
+    client: GraphClient,
+    dest_folder_id: str,
+    onedrive_folder: str,
+    children_cache: Dict[str, Dict[str, str]],
+    folder_id_cache: Dict[str, str],
+    chunk_size: int,
+) -> Tuple[str, int]:
+    rel_path = local_file.relative_to(src_root)
+    parent_rel = rel_path.parent
+    # This function is run in a thread, so directory creation needs to be safe.
+    # The main thread pre-creates all directories, so this call should be cached.
+    ensure_folder_path(
+        client,
+        base_parent_id=dest_folder_id,
+        rel_folder=parent_rel,
+        children_cache=children_cache,
+        folder_id_cache=folder_id_cache,
+    )
+
+    drive_path = f"{onedrive_folder}/{rel_path.as_posix()}"
+    size = local_file.stat().st_size
+    if size <= 4 * 1024 * 1024:
+        client.put_file_simple(drive_path, local_file)
+    else:
+        client.upload_large_file(
+            drive_path,
+            local_file,
+            chunk_size=chunk_size,
+        )
+    return (str(rel_path), size)
+
+
 def main(argv: List[str]) -> int:
     p = argparse.ArgumentParser(
         prog="dropbox_to_onedrive.py",
@@ -354,6 +392,12 @@ def main(argv: List[str]) -> int:
         "--keep-extracted",
         action="store_true",
         help="Keep extracted files (writes to ./dropbox-extracted/)",
+    )
+    p.add_argument(
+        "--parallel",
+        type=int,
+        default=1,
+        help="Number of parallel uploads to run (default: 1, sequential). Improves performance for many small files.",
     )
     args = p.parse_args(argv)
 
@@ -426,34 +470,73 @@ def main(argv: List[str]) -> int:
 
             print(f"Uploading into OneDrive folder: {args.onedrive_folder}")
 
-            uploaded = 0
-            for local_file in files:
-                rel_path = local_file.relative_to(src_root)
-                parent_rel = rel_path.parent
-                # ensure folders exist under dest folder
+            # --- OPTIMIZATION: Parallel uploads ---
+            # To make parallel uploads safe, first discover all unique directories
+            # and create them sequentially. This avoids race conditions where
+            # multiple threads might try to create the same folder.
+            # This is a performance optimization for folders with many files,
+            # as network I/O can be done concurrently.
+            print("Pre-creating directories...")
+            all_dirs = sorted(
+                list(
+                    {
+                        p.relative_to(src_root).parent
+                        for p in files
+                        if p.relative_to(src_root).parent != Path(".")
+                    }
+                )
+            )
+            for d in all_dirs:
                 ensure_folder_path(
                     client,
                     base_parent_id=dest_folder_id,
-                    rel_folder=parent_rel,
+                    rel_folder=d,
                     children_cache=children_cache,
                     folder_id_cache=folder_id_cache,
                 )
 
-                drive_path = f"{args.onedrive_folder}/{rel_path.as_posix()}"
-                size = local_file.stat().st_size
-                if size <= 4 * 1024 * 1024:
-                    client.put_file_simple(drive_path, local_file)
-                else:
-                    client.upload_large_file(
-                        drive_path,
+            # Now, upload files in parallel.
+            workers = min(max(1, args.parallel), 32)
+            uploaded_count = 0
+            if workers > 1:
+                print(f"Uploading with {workers} parallel workers...")
+                with ThreadPoolExecutor(max_workers=workers) as ex:
+                    # Create an iterator of upload tasks.
+                    # Use itertools.repeat for arguments that are the same for all tasks.
+                    tasks = ex.map(
+                        upload_one_file,
+                        files,
+                        itertools.repeat(src_root),
+                        itertools.repeat(client),
+                        itertools.repeat(dest_folder_id),
+                        itertools.repeat(args.onedrive_folder),
+                        itertools.repeat(children_cache),
+                        itertools.repeat(folder_id_cache),
+                        itertools.repeat(chunk_size),
+                    )
+                    for _, size in tasks:
+                        uploaded_count += 1
+                        if uploaded_count % 25 == 0:
+                            print(f"Uploaded {uploaded_count}/{len(files)}...")
+            else:
+                # Sequential upload for --parallel=1
+                print("Uploading sequentially...")
+                for local_file in files:
+                    upload_one_file(
                         local_file,
+                        src_root=src_root,
+                        client=client,
+                        dest_folder_id=dest_folder_id,
+                        onedrive_folder=args.onedrive_folder,
+                        children_cache=children_cache,
+                        folder_id_cache=folder_id_cache,
                         chunk_size=chunk_size,
                     )
-                uploaded += 1
-                if uploaded % 25 == 0:
-                    print(f"Uploaded {uploaded}/{len(files)}...")
+                    uploaded_count += 1
+                    if uploaded_count % 25 == 0:
+                        print(f"Uploaded {uploaded_count}/{len(files)}...")
 
-            print(f"Done. Uploaded {uploaded} files into '{args.onedrive_folder}'.")
+            print(f"Done. Uploaded {uploaded_count} files into '{args.onedrive_folder}'.")
             return 0
         finally:
             if not args.keep_extracted and "tmp_extract_ctx" in locals() and tmp_extract_ctx:
