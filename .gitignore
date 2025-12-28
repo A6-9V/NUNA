@@ -1,0 +1,14 @@
+# Google OAuth secrets/tokens (never commit)
+credentials.json
+token.json
+
+# Local reports / plans
+gdrive-report*.csv
+gdrive-report*.json
+gdrive-plan*.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.python-version
