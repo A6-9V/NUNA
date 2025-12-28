@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -r requirements.txt
+
+      - name: Syntax check
+        run: |
+          python3 -m compileall -q gdrive_cleanup.py
+
+      - name: CLI help smoke test
+        run: |
+          python3 gdrive_cleanup.py --help
+          python3 gdrive_cleanup.py audit --help
+          python3 gdrive_cleanup.py duplicates --help
+          python3 gdrive_cleanup.py trash --help

@@ -26,7 +26,7 @@ In Google Cloud Console:
 ### 2) Install dependencies
 
 ```bash
-python -m venv .venv
+python3 -m venv .venv
 . .venv/bin/activate
 pip install -r requirements.txt
 ```
@@ -36,13 +36,13 @@ pip install -r requirements.txt
 ### Audit: find largest files (read-only)
 
 ```bash
-python gdrive_cleanup.py audit --top 25 --show-links
+python3 gdrive_cleanup.py audit --top 25 --show-links
 ```
 
 Export a full CSV/JSON inventory:
 
 ```bash
-python gdrive_cleanup.py audit --csv gdrive-report.csv --json gdrive-report.json
+python3 gdrive_cleanup.py audit --csv gdrive-report.csv --json gdrive-report.json
 ```
 
 ### Find duplicates (read-only)
@@ -50,7 +50,7 @@ python gdrive_cleanup.py audit --csv gdrive-report.csv --json gdrive-report.json
 This uses Drive’s `md5Checksum`, which typically exists for **uploaded binary files** (photos, videos, PDFs, zips, etc.). Many Google Docs formats won’t have an MD5.
 
 ```bash
-python gdrive_cleanup.py duplicates --show 20 --show-per-group 10
+python3 gdrive_cleanup.py duplicates --show 20 --show-per-group 10
 ```
 
 It also writes a review file by default:
@@ -73,13 +73,13 @@ It also writes a review file by default:
 2) Dry-run first (no changes):
 
 ```bash
-python gdrive_cleanup.py trash --ids-json ids_to_trash.json --confirm "TRASH 2 FILES"
+python3 gdrive_cleanup.py trash --ids-json ids_to_trash.json --confirm "TRASH 2 FILES"
 ```
 
 3) Apply (moves items to Trash):
 
 ```bash
-python gdrive_cleanup.py trash --ids-json ids_to_trash.json --confirm "TRASH 2 FILES" --apply
+python3 gdrive_cleanup.py trash --ids-json ids_to_trash.json --confirm "TRASH 2 FILES" --apply
 ```
 
 ## Optional filtering with Drive queries
