@@ -97,3 +97,39 @@ All commands accept `--query`, which is passed to Drive’s `files.list(q=...)`.
 
 - This tool includes “Shared drives” results as well (`supportsAllDrives=true`). If you don’t have permission to trash an item, it will fail and be reported.
 - The token cache (`token.json`) and OAuth secrets (`credentials.json`) are ignored by git via `.gitignore`.
+
+## Dropbox → OneDrive import
+
+If you have a Dropbox shared-folder link and want it copied into your OneDrive, use `dropbox_to_onedrive.py`.
+
+### OneDrive setup (Microsoft Graph)
+
+1) In Azure Portal → **App registrations** → **New registration**
+   - Supported account types: pick what matches you (or use “Accounts in any organizational directory and personal Microsoft accounts”)
+2) In the app → **Authentication**
+   - Enable **Allow public client flows** (device-code login)
+3) In the app → **API permissions** → **Microsoft Graph** → **Delegated permissions**
+   - Add: `Files.ReadWrite.All`
+   - Add: `User.Read`
+
+Then copy the **Application (client) ID** and set it as an environment variable:
+
+```bash
+export ONEDRIVE_CLIENT_ID="YOUR_CLIENT_ID"
+```
+
+### Run the import
+
+Dry-run (no uploads, just shows what will be uploaded):
+
+```bash
+python3 dropbox_to_onedrive.py --dropbox-url "<DROPBOX_SHARED_FOLDER_URL>" --dry-run
+```
+
+Upload into a named folder in your OneDrive root:
+
+```bash
+python3 dropbox_to_onedrive.py --dropbox-url "<DROPBOX_SHARED_FOLDER_URL>" --onedrive-folder "Dropbox Import"
+```
+
+The script will print a **device login code** and URL the first time; complete that in your browser to authorize OneDrive access.
