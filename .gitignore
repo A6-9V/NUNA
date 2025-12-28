@@ -2,10 +2,17 @@
 credentials.json
 token.json
 
+# OneDrive / Microsoft Graph tokens (never commit)
+.onedrive_token_cache.json
+
 # Local reports / plans
 gdrive-report*.csv
 gdrive-report*.json
 gdrive-plan*.json
+
+# Optional Dropbox import artifacts
+dropbox-download.zip
+dropbox-extracted/
 
 # Python
 __pycache__/
