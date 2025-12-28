@@ -133,3 +133,14 @@ python3 dropbox_to_onedrive.py --dropbox-url "<DROPBOX_SHARED_FOLDER_URL>" --one
 ```
 
 The script will print a **device login code** and URL the first time; complete that in your browser to authorize OneDrive access.
+
+## Optional: run a Windows VM locally (Docker/KVM)
+
+If you need a **real Windows environment** (for example, to use Windows-only tooling alongside this repo), you can run a local Windows VM using the upstream project `dockur/windows`:
+
+- Repo: `https://github.com/dockur/windows`
+
+Notes:
+
+- This requires a **Linux host with hardware virtualization** enabled and access to **KVM** (`/dev/kvm`).
+- Follow the upstream README for the current recommended `docker run` / compose configuration and Windows version/ISO options.
