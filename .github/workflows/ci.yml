@@ -32,3 +32,4 @@ jobs:
           "${{ steps.setup-python.outputs.python-path }}" gdrive_cleanup.py audit --help
           "${{ steps.setup-python.outputs.python-path }}" gdrive_cleanup.py duplicates --help
           "${{ steps.setup-python.outputs.python-path }}" gdrive_cleanup.py trash --help
+          "${{ steps.setup-python.outputs.python-path }}" gdrive_cleanup.py trash-query --help

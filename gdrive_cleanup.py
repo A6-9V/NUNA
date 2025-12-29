@@ -210,6 +210,120 @@ def write_json(path: str, payload: Any) -> None:
         json.dump(payload, f, indent=2, sort_keys=True)
 
 
+def drive_single_quote(value: str) -> str:
+    """
+    Quote a value for Drive query strings using single quotes.
+    Drive query syntax uses single-quoted string literals.
+    """
+    escaped = value.replace("\\", "\\\\").replace("'", "\\'")
+    return f"'{escaped}'"
+
+
+def and_query(parts: Iterable[Optional[str]]) -> Optional[str]:
+    xs = [p.strip() for p in parts if p and p.strip()]
+    if not xs:
+        return None
+    if len(xs) == 1:
+        return xs[0]
+    return " and ".join(f"({x})" for x in xs)
+
+
+def cmd_trash_query(args: argparse.Namespace) -> int:
+    # This command modifies Drive, so it uses the broader scope.
+    scopes = SCOPES_TRASH
+    creds = load_credentials(
+        credentials_path=args.credentials,
+        token_path=args.token,
+        scopes=scopes,
+    )
+    service = drive_service(creds=creds)
+
+    name_q = None
+    if args.name_contains:
+        name_q = f"name contains {drive_single_quote(args.name_contains)}"
+
+    folder_filter = None
+    if not args.include_folders:
+        folder_filter = "mimeType != 'application/vnd.google-apps.folder'"
+
+    final_q = and_query([args.query, name_q, folder_filter])
+
+    matched: List[DriveFile] = []
+    try:
+        for f in iter_files(
+            service,
+            q=final_q,
+            include_trashed=args.include_trashed,
+            page_size=args.page_size,
+        ):
+            matched.append(f)
+            if args.limit and len(matched) >= args.limit:
+                break
+    except HttpError as ex:
+        eprint("Drive API error:", ex)
+        return 2
+
+    n = len(matched)
+    print(f"Matched files: {n}")
+    if final_q:
+        print(f"Query used: {final_q}")
+    print("")
+
+    if n == 0:
+        print("Nothing to do.")
+        return 0
+
+    show_n = min(args.show, n)
+    print(f"Showing {show_n}/{n}:")
+    for f in matched[:show_n]:
+        print(f"- {human_bytes(f.size)}  {f.name}  ({f.id})")
+        if args.show_links and f.webViewLink:
+            print(f"  link: {f.webViewLink}")
+
+    if args.ids_out:
+        write_json(args.ids_out, {"fileIds": [x.id for x in matched]})
+        print("")
+        print(f"Wrote IDs JSON: {args.ids_out}")
+
+    expected = f"TRASH {n} FILES"
+    print("")
+    print(f"To proceed, re-run with: --confirm \"{expected}\" --apply")
+
+    # If user hasn't provided the confirm string, stop here.
+    if args.confirm is None:
+        return 0
+
+    if args.confirm != expected:
+        eprint("Refusing to proceed without exact confirmation string.")
+        eprint(f"Provide: --confirm \"{expected}\"")
+        return 2
+
+    # Dry-run unless --apply
+    if not args.apply:
+        print("Dry-run only (no changes). Re-run with --apply to execute.")
+        return 0
+
+    ok = 0
+    failed: List[Tuple[str, str]] = []
+    for f in matched:
+        try:
+            service.files().update(fileId=f.id, body={"trashed": True}).execute()
+            ok += 1
+        except HttpError as ex:
+            failed.append((f.id, str(ex)))
+
+    print(f"Trashed: {ok}/{n}")
+    if failed:
+        print("")
+        print("Failures:")
+        for fid, msg in failed[:25]:
+            print(f"- {fid}: {msg}")
+        if len(failed) > 25:
+            print(f"... and {len(failed) - 25} more")
+        return 3
+    return 0
+
+
 def cmd_audit(args: argparse.Namespace) -> int:
     scopes = SCOPES_READONLY
     creds = load_credentials(
@@ -435,6 +549,41 @@ def build_parser() -> argparse.ArgumentParser:
     t.add_argument("--apply", action="store_true", help="Actually perform the trash operation")
     t.add_argument("--confirm", required=True, help="Must exactly match: TRASH <n> FILES")
     t.set_defaults(func=cmd_trash)
+
+    tq = sub.add_parser(
+        "trash-query",
+        help="Move all files matching a query to trash (dry-run by default; requires confirm + --apply)",
+    )
+    tq.add_argument(
+        "--name-contains",
+        default=None,
+        help="Convenience filter: match files where name contains this substring (case-insensitive)",
+    )
+    tq.add_argument(
+        "--include-folders",
+        action="store_true",
+        help="Include folders (default: exclude folders as a safety measure)",
+    )
+    tq.add_argument(
+        "--limit",
+        type=int,
+        default=0,
+        help="Optional safety limit (0 = no limit)",
+    )
+    tq.add_argument("--show", type=int, default=25, help="How many matched files to print")
+    tq.add_argument("--show-links", action="store_true", help="Print webViewLink for shown items")
+    tq.add_argument(
+        "--ids-out",
+        default=None,
+        help="Write matched file IDs as JSON: {\"fileIds\": [..]}",
+    )
+    tq.add_argument("--apply", action="store_true", help="Actually perform the trash operation")
+    tq.add_argument(
+        "--confirm",
+        default=None,
+        help="Must exactly match: TRASH <n> FILES (printed by the dry-run step)",
+    )
+    tq.set_defaults(func=cmd_trash_query)
 
     return p
 

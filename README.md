@@ -82,6 +82,22 @@ python3 gdrive_cleanup.py trash --ids-json ids_to_trash.json --confirm "TRASH 2 
 python3 gdrive_cleanup.py trash --ids-json ids_to_trash.json --confirm "TRASH 2 FILES" --apply
 ```
 
+### Trash by search (example: delete all “pgoto”)
+
+If you meant “delete everything matching **pgoto**”, this command will **move matching items to Trash** (not permanent delete).
+
+1) Dry-run to see what would be trashed (prints the required confirmation string):
+
+```bash
+python3 gdrive_cleanup.py trash-query --name-contains pgoto --show 50 --ids-out pgoto_ids.json
+```
+
+2) Re-run with the exact confirm string it prints and `--apply`:
+
+```bash
+python3 gdrive_cleanup.py trash-query --name-contains pgoto --confirm "TRASH <n> FILES" --apply
+```
+
 ## Optional filtering with Drive queries
 
 All commands accept `--query`, which is passed to Drive’s `files.list(q=...)`. Examples:
