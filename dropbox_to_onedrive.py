@@ -90,9 +90,11 @@ def pick_extracted_root(extract_dir: Path) -> Path:
 
 
 def iter_files(root: Path) -> Iterable[Path]:
-    for p in root.rglob("*"):
-        if p.is_file():
-            yield p
+    # Use os.walk for performance. It's faster than rglob for deeply nested
+    # directories as it avoids repeatedly stating every directory entry.
+    for dirpath, _, filenames in os.walk(root):
+        for filename in filenames:
+            yield Path(dirpath) / filename
 
 
 def encode_drive_path(path: str) -> str:
