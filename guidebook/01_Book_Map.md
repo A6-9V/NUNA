@@ -36,7 +36,35 @@ This section illustrates the connections between your local machine, the cloud s
 
 This section provides instructions on how to set up the repository and where to find the key scripts.
 
-### Setup Instructions
+### Automated Setup
+
+This repository includes setup scripts to automate the creation of a virtual environment and the installation of dependencies.
+
+**For Linux and macOS:**
+
+```bash
+# Make the script executable
+chmod +x setup.sh
+
+# Run the setup script
+./setup.sh
+```
+
+**For Windows:**
+
+```batch
+# Run the setup script
+setup.bat
+```
+
+After the setup is complete, you will need to activate the virtual environment in your current shell:
+
+*   **Linux and macOS:** `source .venv/bin/activate`
+*   **Windows:** `.venv\Scripts\activate.bat`
+
+### Manual Setup
+
+If you prefer to set up the environment manually, follow these steps:
 
 1.  **Clone the repository:**
     ```bash
@@ -44,10 +72,13 @@ This section provides instructions on how to set up the repository and where to 
     cd REPOSITORY
     ```
 
-2.  **Create a virtual environment:**
+2.  **Create and activate a virtual environment:**
     ```bash
     python3 -m venv .venv
+    # On Linux/macOS
     source .venv/bin/activate
+    # On Windows
+    .venv\Scripts\activate.bat
     ```
 
 3.  **Install dependencies:**
@@ -55,9 +86,12 @@ This section provides instructions on how to set up the repository and where to 
     pip install -r requirements.txt
     ```
 
-4.  **Set up OAuth credentials:**
-    *   For `gdrive_cleanup.py`, follow the instructions in the `README.md` to create `credentials.json`.
-    *   For `dropbox_to_onedrive.py`, follow the instructions in the `README.md` to set the `ONEDRIVE_CLIENT_ID` environment variable.
+### Next Steps: OAuth Credentials
+
+After setting up the environment, you will need to configure the necessary OAuth credentials for the scripts to function:
+
+*   For `gdrive_cleanup.py`, follow the instructions in the `README.md` to create `credentials.json`.
+*   For `dropbox_to_onedrive.py`, follow the instructions in the `README.md` to set the `ONEDRIVE_CLIENT_ID` environment variable.
 
 ### File and Script Locations
 
