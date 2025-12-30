@@ -436,8 +436,15 @@ def main(argv: List[str]) -> int:
                 zf.extractall(extract_dir)
             src_root = pick_extracted_root(extract_dir)
 
-            files = list(iter_files(src_root))
-            total = sum(p.stat().st_size for p in files)
+            # --- OPTIMIZATION: Single-pass file scan ---
+            # Instead of creating a list and then summing its size,
+            # do both in a single pass over the file iterator.
+            # This avoids a second iteration over the file list.
+            files = []
+            total = 0
+            for p in iter_files(src_root):
+                files.append(p)
+                total += p.stat().st_size
             print(f"Files to upload: {len(files)} (total {human_bytes(total)})")
 
             if args.dry_run:
