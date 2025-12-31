@@ -27,11 +27,12 @@ import zipfile
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Tuple
+from typing import Dict, Iterable, List, Optional, Set, Tuple
 from urllib.parse import parse_qsl, quote, urlencode, urlparse, urlunparse
 
 import msal
 import requests
+from tqdm import tqdm
 
 
 GRAPH_BASE = "https://graph.microsoft.com/v1.0"
@@ -226,18 +227,52 @@ def load_onedrive_auth(
     return GraphAuth(access_token=str(result["access_token"]))
 
 
-def list_children(client: GraphClient, *, parent_id: str) -> List[dict]:
+def list_children(client: GraphClient, *, parent_id: str, next_link: Optional[str] = None) -> dict:
+    if next_link:
+        # Graph API's nextLink is a full URL, so we don't use GRAPH_BASE
+        r = client._s.get(next_link, timeout=120)
+        r.raise_for_status()
+        return r.json()
+
     if parent_id == "root":
-        data = client.get_json(
+        return client.get_json(
             "/me/drive/root/children",
             params={"$select": "id,name,folder,file", "$top": 999},
         )
     else:
-        data = client.get_json(
+        return client.get_json(
             f"/me/drive/items/{parent_id}/children",
             params={"$select": "id,name,folder,file", "$top": 999},
         )
-    return list(data.get("value") or [])
+
+
+def get_existing_files_recursive(
+    client: GraphClient, *, item_id: str, current_path: Path, existing_paths: Set[Path]
+) -> None:
+    """Recursively find all file paths in a OneDrive folder."""
+    next_link = None
+    while True:
+        data = list_children(client, parent_id=item_id, next_link=next_link)
+        for item in data.get("value", []):
+            name = item.get("name")
+            if not isinstance(name, str):
+                continue
+
+            new_path = current_path / name
+            if item.get("file"):
+                existing_paths.add(new_path)
+            elif item.get("folder"):
+                folder_id = item.get("id")
+                if isinstance(folder_id, str):
+                    get_existing_files_recursive(
+                        client,
+                        item_id=folder_id,
+                        current_path=new_path,
+                        existing_paths=existing_paths,
+                    )
+        next_link = data.get("@odata.nextLink")
+        if not next_link:
+            break
 
 
 def get_or_create_folder(
@@ -250,7 +285,7 @@ def get_or_create_folder(
     # Cache by parent_id: { folder_name -> folder_id }
     if parent_id not in children_cache:
         mapping: Dict[str, str] = {}
-        for ch in list_children(client, parent_id=parent_id):
+        for ch in list_children(client, parent_id=parent_id).get("value", []):
             if ch.get("folder") is None:
                 continue
             nm = ch.get("name")
@@ -401,6 +436,7 @@ def main(argv: List[str]) -> int:
         default=1,
         help="Number of parallel uploads to run (default: 1, sequential). Improves performance for many small files.",
     )
+    p.add_argument("--skip-duplicates", action="store_true", help="Do not upload files that already exist in the destination")
     args = p.parse_args(argv)
 
     if not args.client_id:
@@ -471,6 +507,29 @@ def main(argv: List[str]) -> int:
                 client, parent_id="root", name=args.onedrive_folder, children_cache=children_cache
             )
 
+            if args.skip_duplicates:
+                print("Checking for existing files in OneDrive (this may take a while for large folders)...")
+                existing_paths: Set[Path] = set()
+                get_existing_files_recursive(
+                    client,
+                    item_id=dest_folder_id,
+                    current_path=Path(),
+                    existing_paths=existing_paths,
+                )
+                if existing_paths:
+                    print(f"Found {len(existing_paths)} existing files. Skipping duplicates.")
+                    files_to_upload = [
+                        f
+                        for f in files
+                        if f.relative_to(src_root) not in existing_paths
+                    ]
+                    if len(files_to_upload) < len(files):
+                        skipped = len(files) - len(files_to_upload)
+                        print(f"Skipping {skipped} files that already exist.")
+                        files = files_to_upload
+                else:
+                    print("No existing files found in destination.")
+
             chunk_size = max(1, int(args.chunk_mb)) * 1024 * 1024
             # Graph best practice: chunk size multiple of 320 KiB
             if chunk_size % 327_680 != 0:
@@ -507,43 +566,44 @@ def main(argv: List[str]) -> int:
             # Now, upload files in parallel.
             workers = min(max(1, args.parallel), 32)
             uploaded_count = 0
-            if workers > 1:
-                print(f"Uploading with {workers} parallel workers...")
-                with ThreadPoolExecutor(max_workers=workers) as ex:
-                    # Create an iterator of upload tasks.
-                    # Use itertools.repeat for arguments that are the same for all tasks.
-                    tasks = ex.map(
-                        upload_one_file,
-                        files,
-                        itertools.repeat(src_root),
-                        itertools.repeat(client),
-                        itertools.repeat(dest_folder_id),
-                        itertools.repeat(args.onedrive_folder),
-                        itertools.repeat(children_cache),
-                        itertools.repeat(folder_id_cache),
-                        itertools.repeat(chunk_size),
-                    )
-                    for _, size in tasks:
+            if not files:
+                print("No files to upload.")
+                return 0
+
+            with tqdm(total=len(files), unit="file") as pbar:
+                if workers > 1:
+                    print(f"Uploading with {workers} parallel workers...")
+                    with ThreadPoolExecutor(max_workers=workers) as ex:
+                        tasks = ex.map(
+                            upload_one_file,
+                            files,
+                            itertools.repeat(src_root),
+                            itertools.repeat(client),
+                            itertools.repeat(dest_folder_id),
+                            itertools.repeat(args.onedrive_folder),
+                            itertools.repeat(children_cache),
+                            itertools.repeat(folder_id_cache),
+                            itertools.repeat(chunk_size),
+                        )
+                        for _, size in tasks:
+                            uploaded_count += 1
+                            pbar.update(1)
+                else:
+                    # Sequential upload for --parallel=1
+                    print("Uploading sequentially...")
+                    for local_file in files:
+                        upload_one_file(
+                            local_file,
+                            src_root=src_root,
+                            client=client,
+                            dest_folder_id=dest_folder_id,
+                            onedrive_folder=args.onedrive_folder,
+                            children_cache=children_cache,
+                            folder_id_cache=folder_id_cache,
+                            chunk_size=chunk_size,
+                        )
                         uploaded_count += 1
-                        if uploaded_count % 25 == 0:
-                            print(f"Uploaded {uploaded_count}/{len(files)}...")
-            else:
-                # Sequential upload for --parallel=1
-                print("Uploading sequentially...")
-                for local_file in files:
-                    upload_one_file(
-                        local_file,
-                        src_root=src_root,
-                        client=client,
-                        dest_folder_id=dest_folder_id,
-                        onedrive_folder=args.onedrive_folder,
-                        children_cache=children_cache,
-                        folder_id_cache=folder_id_cache,
-                        chunk_size=chunk_size,
-                    )
-                    uploaded_count += 1
-                    if uploaded_count % 25 == 0:
-                        print(f"Uploaded {uploaded_count}/{len(files)}...")
+                        pbar.update(1)
 
             print(f"Done. Uploaded {uploaded_count} files into '{args.onedrive_folder}'.")
             return 0
