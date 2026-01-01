@@ -228,6 +228,58 @@ def and_query(parts: Iterable[Optional[str]]) -> Optional[str]:
     return " and ".join(f"({x})" for x in xs)
 
 
+# --- OPTIMIZATION: Batch trash requests ---
+# For improved performance when trashing many files, this function uses batch
+# requests to minimize HTTP overhead. Instead of one API call per file, it
+# groups up to 100 trash operations into a single multipart HTTP request.
+# This significantly reduces latency from network round-trips.
+def _trash_batch_callback(
+    request_id: str,
+    response: Any,
+    exception: Optional[HttpError],
+    *,
+    failed_list: List[Tuple[str, str]],
+) -> None:
+    """Callback for batch API requests to collect failures."""
+    if exception:
+        failed_list.append((request_id, str(exception)))
+
+
+def trash_files_batch(
+    service, *, file_ids: List[str]
+) -> Tuple[int, List[Tuple[str, str]]]:
+    """Trash a list of file IDs using batch requests for performance."""
+    if not file_ids:
+        return (0, [])
+    failed: List[Tuple[str, str]] = []
+    batch = service.new_batch_http_request(
+        callback=lambda req_id, resp, exc: _trash_batch_callback(
+            req_id, resp, exc, failed_list=failed
+        )
+    )
+
+    for i, fid in enumerate(file_ids):
+        batch.add(
+            service.files().update(fileId=fid, body={"trashed": True}),
+            request_id=fid,
+        )
+        # Batch supports up to 100 calls. Execute every 100.
+        if (i + 1) % 100 == 0:
+            batch.execute()
+            # Create a new batch for the next set of requests.
+            batch = service.new_batch_http_request(
+                callback=lambda req_id, resp, exc: _trash_batch_callback(
+                    req_id, resp, exc, failed_list=failed
+                )
+            )
+    # Execute any remaining requests in the last batch.
+    if (i + 1) % 100 != 0:
+        batch.execute()
+
+    ok = len(file_ids) - len(failed)
+    return (ok, failed)
+
+
 def cmd_trash_query(args: argparse.Namespace) -> int:
     # This command modifies Drive, so it uses the broader scope.
     scopes = SCOPES_TRASH
@@ -303,14 +355,7 @@ def cmd_trash_query(args: argparse.Namespace) -> int:
         print("Dry-run only (no changes). Re-run with --apply to execute.")
         return 0
 
-    ok = 0
-    failed: List[Tuple[str, str]] = []
-    for f in matched:
-        try:
-            service.files().update(fileId=f.id, body={"trashed": True}).execute()
-            ok += 1
-        except HttpError as ex:
-            failed.append((f.id, str(ex)))
+    ok, failed = trash_files_batch(service, file_ids=[f.id for f in matched])
 
     print(f"Trashed: {ok}/{n}")
     if failed:
@@ -486,14 +531,7 @@ def cmd_trash(args: argparse.Namespace) -> int:
         print("Dry-run only (no changes). Re-run with --apply to execute.")
         return 0
 
-    ok = 0
-    failed: List[Tuple[str, str]] = []
-    for fid in file_ids:
-        try:
-            service.files().update(fileId=fid, body={"trashed": True}).execute()
-            ok += 1
-        except HttpError as ex:
-            failed.append((fid, str(ex)))
+    ok, failed = trash_files_batch(service, file_ids=file_ids)
 
     print(f"Trashed: {ok}/{n}")
     if failed:
@@ -543,7 +581,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     t = sub.add_parser(
         "trash",
-        help="Move specific file IDs to trash (requires --apply and a confirmation string)",
+        help="Move specific file IDs to trash (requires --apply and a confirmation string). Uses batch requests for performance.",
     )
     t.add_argument("--ids-json", required=True, help="JSON file containing {\"fileIds\": [..]}")
     t.add_argument("--apply", action="store_true", help="Actually perform the trash operation")
@@ -552,7 +590,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     tq = sub.add_parser(
         "trash-query",
-        help="Move all files matching a query to trash (dry-run by default; requires confirm + --apply)",
+        help="Move all files matching a query to trash (dry-run by default; requires confirm + --apply). Uses batch requests for performance.",
     )
     tq.add_argument(
         "--name-contains",
