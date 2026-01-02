@@ -1,0 +1,49 @@
+# Git ignore file for DC Sync Project
+# Prevent sensitive data from being committed
+
+# ===== SECURITY FILES =====
+.credentials
+.env
+*.key
+*.pem
+*.p12
+*_credentials.txt
+*_passwords.txt
+
+# ===== LOGS AND TEMPORARY FILES =====
+*.log
+*.tmp
+sandbox-log.txt
+debug-*.txt
+temp/
+logs/
+
+# ===== IDE AND EDITOR FILES =====
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ===== PYTHON CACHE =====
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+.coverage
+.pytest_cache/
+
+# ===== JUPYTER NOTEBOOK CHECKPOINTS =====
+.ipynb_checkpoints/
+
+# ===== WINDOWS FILES =====
+Thumbs.db
+Desktop.ini
+*.lnk
+
+# ===== PROJECT SPECIFIC =====
+production-dc-sync-log-*.txt
+real-dc-backup-*/
+actual-domain-controller-data/

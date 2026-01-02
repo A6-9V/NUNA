@@ -1,0 +1,97 @@
+# Sensitive credentials and keys
+*.pem
+*.json
+*.csv
+rootkey*
+rsa-*
+pk-*
+cert-*
+*key*.csv
+sharp-doodad-*
+flash-student-*
+
+# Security-Credentials directory (entire folder)
+Security-Credentials/
+
+# Device and system information
+DEVICE_INFO_*
+*recovery*
+*bitlocker*
+
+# Log files and system data
+*.log
+*.txt
+log_*
+
+# Personal and temporary files
+personal*
+nul
+desktop.ini
+
+# Duplicate files (numbered versions)
+*(*).txt
+*(*).gdoc
+*(*).gsheet
+*(*).csv
+*(*).pem
+*(*).json
+*(*).zip
+*(*).apk
+
+# Screenshots and temporary images
+Screenshot_*
+chrome_qrcode_*
+qr_tmp.*
+wifi_qrcode.*
+invite_qr.*
+*.tmp
+
+# Build and cache files
+*.cache
+*.pyc
+__pycache__/
+.vscode/
+.idea/
+
+# OS generated files
+Thumbs.db
+.DS_Store
+
+# Large media files
+*.mp4
+*.avi
+*.mov
+
+# Temporary files
+*_tmp.*
+qr_tmp.*
+
+# Duplicates (files with (1), (2), etc.)
+* (*).* 
+
+# Google Drive metadata
+desktop.ini
+.DS_Store
+
+# Google Docs shortcuts
+*.gdoc
+*.gsheet
+*.gscript
+
+# Screenshots with potential sensitive info
+Screenshot_*.jpg
+Screenshot_*.png
+chrome_qrcode_*.png
+
+# Archives
+*.zip
+
+# Large executables and installers
+*.exe
+*.deb
+*.msi
+*.dmg
+*.pkg
+
+# Local environment secrets
+.env

@@ -1,0 +1,79 @@
+{
+    "name": "DC-Sync-Management",
+    "version": "1.0.0",
+    "description": "Domain Controller Synchronization and Storage Management Tools",
+    "team": {
+        "name": "A6_9V",
+        "members": 3,
+        "repository": "https://github.com/A6-9V/my-drive-projects"
+    },
+    "project_structure": {
+        "sandbox": {
+            "description": "Safe testing environment for DC operations",
+            "main_files": [
+                "DC-Sync-Sandbox.ps1",
+                "DC-Sandbox-Testing.ipynb",
+                "DC-Sandbox-Launcher.ps1"
+            ]
+        },
+        "production": {
+            "description": "Production-ready DC sync and transfer tools",
+            "main_files": [
+                "DC-Sync.ps1",
+                "Transfer-Helper.ps1",
+                "DC-Sync-Jupyter-Guide.ipynb"
+            ]
+        },
+        "storage-tools": {
+            "description": "Storage management and backup utilities",
+            "main_files": [
+                "master-control.ps1",
+                "backup-c-drive.ps1",
+                "monitor-storage.ps1"
+            ]
+        }
+    },
+    "technologies": {
+        "languages": [
+            "PowerShell",
+            "Python",
+            "Markdown"
+        ],
+        "frameworks": [
+            "Jupyter",
+            "Windows PowerShell"
+        ],
+        "tools": [
+            "Git",
+            "PyCharm",
+            "VS Code",
+            "Jupyter Notebook"
+        ]
+    },
+    "setup_requirements": {
+        "python_packages": [
+            "jupyter",
+            "notebook",
+            "jupyterlab",
+            "ipython"
+        ],
+        "powershell_modules": [
+            "ActiveDirectory",
+            "DnsServer"
+        ],
+        "system_requirements": [
+            "Windows 10/11",
+            "PowerShell 5.1+",
+            "Python 3.8+"
+        ]
+    },
+    "security": {
+        "sensitive_files": [
+            ".credentials",
+            ".env",
+            "*.key"
+        ],
+        "gitignore_enabled": true,
+        "encryption_recommended": true
+    }
+}

@@ -8,6 +8,8 @@ __pycache__/
 venv/
 ENV/
 env/
+*.pyc
+*.pyo
 
 # OAuth credentials (NEVER commit these!)
 credentials.json
@@ -21,16 +23,153 @@ token.json
 *.swo
 *~
 
-# OS
+# OS / Windows
 .DS_Store
 Thumbs.db
 desktop.ini
+*.lnk
+.849C9593-D756-4E56-8D6E-42412F2A707B
 
-# Logs
+# Linux core dumps
+core
+core.*
+
+# Logs and temporary files
 *.log
 *.tmp
+*.temp
 
-# Test outputs
+# Test outputs (NUNA specific)
 gdrive-report.*
 gdrive-plan-*.json
 ids_to_trash.json
+
+# Personal files and directories
+*.pdf
+*.docx
+*.xlsx
+Desktop/
+Pictures/
+documents/
+*.exe
+*.jpg
+*.jpeg
+*.png
+*.bmp
+*.one
+*.url
+*.rdp
+*.zip
+*.xml
+*.html
+
+# Security - Never commit tokens or secrets
+*.token
+*.secret
+*credentials*
+*config.local*
+git-credentials.txt
+.github-token
+mql5-config.txt
+*.pem
+*.csv
+*.credentials.json
+*.secrets.json
+rootkey*
+rsa-*
+pk-*
+cert-*
+*key*.csv
+sharp-doodad-*
+flash-student-*
+
+# Secrets directory
+Secrets/
+# Allow README.md in Secrets directory for documentation
+!Secrets/README.md
+
+# Project scanner output files
+discovered-projects.json
+execution-summary.json
+log-summary.txt
+logs/
+
+# Browser exports (contain sensitive history/bookmarks)
+Browser-Exports/
+
+# Temporary files
+*_tmp.*
+qr_tmp.*
+
+# Duplicates (files with (1), (2), etc.)
+* (*).* 
+
+# Google Drive metadata
+*.gdoc
+*.gsheet
+*.gscript
+
+# Screenshots with potential sensitive info
+Screenshot_*.jpg
+Screenshot_*.png
+chrome_qrcode_*.png
+
+# Archives
+*.7z
+*.7zip
+*.rar
+*.tar
+*.tar.gz
+*.tgz
+
+# Encrypted/backup outputs
+Backups/
+backup/
+backups/
+
+# Large executables and installers
+*.deb
+*.msi
+*.dmg
+*.pkg
+
+# Cursor (optional - uncomment if you don't want to track Cursor rules)
+# .cursor/
+
+# Trading Bridge - Security and Configuration
+trading-bridge/config/brokers.json
+trading-bridge/config/symbols.json
+trading-bridge/config/mql_io.json
+trading-bridge/config/*.key
+trading-bridge/config/*.secret
+trading-bridge/logs/*.log
+trading-bridge/data/*.db
+trading-bridge/data/logs/
+trading-bridge/data/mql_io/
+trading-bridge/*.db
+trading-bridge/**/*.key
+trading-bridge/**/*.secret
+trading-bridge/**/credentials.json
+
+# Network Configuration
+network-config.json
+Network-Shortcuts/
+cleanup-log_*.txt
+cleanup-log-*.log
+cleanup-log-*.txt
+Documentation/Reports/
+
+# VPS runtime logs
+vps-logs/
+
+# Agent request I/O
+agent-requests/inbox/
+agent-requests/out/
+
+# Temporary repository clones for injection
+injected-repos/
+
+# Repository automation generated files
+repo-automation-*.log
+repo-automation-*.md
+repo-automation-report-*.md

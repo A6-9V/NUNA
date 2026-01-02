@@ -1,0 +1,165 @@
+{
+  "capital_tiers": [
+    {
+      "name": "micro",
+      "min_capital": 10,
+      "max_capital": 50,
+      "max_symbols": 1,
+      "risk_percent_per_trade": 0.5,
+      "recommended_symbols": ["USDJPY", "EURUSD", "GBPUSD"]
+    },
+    {
+      "name": "mini",
+      "min_capital": 51,
+      "max_capital": 150,
+      "max_symbols": 3,
+      "risk_percent_per_trade": 1.0,
+      "recommended_symbols": ["XAUUSD", "BTCUSD", "EURUSD", "USDJPY", "GBPUSD", "AUDUSD"]
+    },
+    {
+      "name": "standard",
+      "min_capital": 151,
+      "max_capital": 500,
+      "max_symbols": 6,
+      "risk_percent_per_trade": 1.5,
+      "recommended_symbols": [
+        "XAUUSD", "BTCUSD", "EURUSD", "GBPUSD", "USDJPY", "AUDUSD",
+        "USDCAD", "NZDUSD", "EURGBP"
+      ]
+    },
+    {
+      "name": "advanced",
+      "min_capital": 501,
+      "max_capital": 2000,
+      "max_symbols": 12,
+      "risk_percent_per_trade": 2.0,
+      "recommended_symbols": [
+        "XAUUSD", "BTCUSD", "ETHUSD", "EURUSD", "GBPUSD", "USDJPY",
+        "AUDUSD", "USDCAD", "NZDUSD", "EURGBP", "EURJPY", "GBPJPY",
+        "US30", "NAS100"
+      ]
+    },
+    {
+      "name": "professional",
+      "min_capital": 2001,
+      "max_capital": 999999,
+      "max_symbols": 18,
+      "risk_percent_per_trade": 2.5,
+      "recommended_symbols": [
+        "XAUUSD", "BTCUSD", "ETHUSD", "EURUSD", "GBPUSD", "USDJPY",
+        "AUDUSD", "USDCAD", "NZDUSD", "EURGBP", "EURJPY", "GBPJPY",
+        "AUDJPY", "CADJPY", "US30", "NAS100", "SPX500", "GER40"
+      ]
+    }
+  ],
+  "symbol_characteristics": {
+    "USDJPY": {
+      "type": "forex",
+      "volatility": "low",
+      "price_range": "cheap",
+      "recommended_capital": "30-100"
+    },
+    "EURUSD": {
+      "type": "forex",
+      "volatility": "medium",
+      "price_range": "medium",
+      "recommended_capital": "50-500"
+    },
+    "GBPUSD": {
+      "type": "forex",
+      "volatility": "medium",
+      "price_range": "medium",
+      "recommended_capital": "50-500"
+    },
+    "XAUUSD": {
+      "type": "commodity",
+      "volatility": "high",
+      "price_range": "expensive",
+      "recommended_capital": "100-2000"
+    },
+    "BTCUSD": {
+      "type": "crypto",
+      "volatility": "very_high",
+      "price_range": "very_expensive",
+      "recommended_capital": "100-5000"
+    },
+    "ETHUSD": {
+      "type": "crypto",
+      "volatility": "very_high",
+      "price_range": "expensive",
+      "recommended_capital": "100-5000"
+    },
+    "AUDUSD": {
+      "type": "forex",
+      "volatility": "medium",
+      "price_range": "medium",
+      "recommended_capital": "50-500"
+    },
+    "USDCAD": {
+      "type": "forex",
+      "volatility": "low",
+      "price_range": "medium",
+      "recommended_capital": "50-500"
+    },
+    "NZDUSD": {
+      "type": "forex",
+      "volatility": "medium",
+      "price_range": "medium",
+      "recommended_capital": "50-500"
+    },
+    "EURGBP": {
+      "type": "forex",
+      "volatility": "low",
+      "price_range": "medium",
+      "recommended_capital": "50-500"
+    },
+    "EURJPY": {
+      "type": "forex",
+      "volatility": "medium",
+      "price_range": "medium",
+      "recommended_capital": "100-1000"
+    },
+    "GBPJPY": {
+      "type": "forex",
+      "volatility": "high",
+      "price_range": "medium",
+      "recommended_capital": "100-1000"
+    },
+    "AUDJPY": {
+      "type": "forex",
+      "volatility": "medium",
+      "price_range": "medium",
+      "recommended_capital": "100-1000"
+    },
+    "CADJPY": {
+      "type": "forex",
+      "volatility": "medium",
+      "price_range": "medium",
+      "recommended_capital": "100-1000"
+    },
+    "US30": {
+      "type": "index",
+      "volatility": "high",
+      "price_range": "very_expensive",
+      "recommended_capital": "500-5000"
+    },
+    "NAS100": {
+      "type": "index",
+      "volatility": "high",
+      "price_range": "expensive",
+      "recommended_capital": "500-5000"
+    },
+    "SPX500": {
+      "type": "index",
+      "volatility": "medium",
+      "price_range": "expensive",
+      "recommended_capital": "500-5000"
+    },
+    "GER40": {
+      "type": "index",
+      "volatility": "medium",
+      "price_range": "expensive",
+      "recommended_capital": "500-5000"
+    }
+  }
+}

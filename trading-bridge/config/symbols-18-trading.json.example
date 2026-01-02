@@ -1,0 +1,554 @@
+{
+  "account_info": {
+    "account_number": "411534497",
+    "broker": "EXNESS",
+    "server": "Exness-MT5Real8",
+    "initial_capital": 100,
+    "current_capital": 28,
+    "auto_adjust_capital": true
+  },
+  "trading_strategy": {
+    "name": "SMC_TrendBreakout_MultiTimeframe",
+    "description": "Smart Money Concepts + Trend Breakout + Small Timeframe Indicators",
+    "components": {
+      "smc": {
+        "enabled": true,
+        "order_blocks": true,
+        "fair_value_gaps": true,
+        "liquidity_zones": true,
+        "breaker_blocks": true
+      },
+      "trend_breakout": {
+        "enabled": true,
+        "structure_break": true,
+        "choch": true,
+        "bos": true
+      },
+      "indicators": {
+        "primary_timeframe": "H1",
+        "secondary_timeframe": "M15",
+        "entry_timeframe": "M5",
+        "ema_fast": 9,
+        "ema_slow": 21,
+        "rsi_period": 14,
+        "rsi_overbought": 70,
+        "rsi_oversold": 30
+      }
+    }
+  },
+  "risk_management": {
+    "max_risk_per_trade_percent": 1.0,
+    "max_daily_loss_percent": 5.0,
+    "max_open_positions": 3,
+    "auto_calculate_lot_size": true,
+    "use_trailing_stop": true,
+    "trailing_stop_points": 50,
+    "break_even_points": 30
+  },
+  "symbols": [
+    {
+      "symbol": "USDJPY",
+      "broker": "EXNESS",
+      "enabled": true,
+      "priority": 1,
+      "capital_tier": "micro",
+      "risk_percent": 0.5,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 1.0,
+      "strategy": {
+        "smc_enabled": true,
+        "trend_breakout_enabled": true,
+        "indicators_enabled": true,
+        "timeframes": ["H1", "M15", "M5"]
+      },
+      "tp_sl_config": {
+        "tp_ratio": 2.0,
+        "sl_atr_multiplier": 1.5,
+        "use_dynamic_tp": true,
+        "use_dynamic_sl": true
+      },
+      "pending_orders": {
+        "use_pending": true,
+        "entry_type": "stop_order",
+        "distance_points": 10
+      }
+    },
+    {
+      "symbol": "EURUSD",
+      "broker": "EXNESS",
+      "enabled": true,
+      "priority": 2,
+      "capital_tier": "mini",
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 2.0,
+      "strategy": {
+        "smc_enabled": true,
+        "trend_breakout_enabled": true,
+        "indicators_enabled": true,
+        "timeframes": ["H1", "M15", "M5"]
+      },
+      "tp_sl_config": {
+        "tp_ratio": 2.0,
+        "sl_atr_multiplier": 1.5,
+        "use_dynamic_tp": true,
+        "use_dynamic_sl": true
+      },
+      "pending_orders": {
+        "use_pending": true,
+        "entry_type": "stop_order",
+        "distance_points": 10
+      }
+    },
+    {
+      "symbol": "GBPUSD",
+      "broker": "EXNESS",
+      "enabled": true,
+      "priority": 3,
+      "capital_tier": "mini",
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 2.0,
+      "strategy": {
+        "smc_enabled": true,
+        "trend_breakout_enabled": true,
+        "indicators_enabled": true,
+        "timeframes": ["H1", "M15", "M5"]
+      },
+      "tp_sl_config": {
+        "tp_ratio": 2.0,
+        "sl_atr_multiplier": 1.5,
+        "use_dynamic_tp": true,
+        "use_dynamic_sl": true
+      },
+      "pending_orders": {
+        "use_pending": true,
+        "entry_type": "stop_order",
+        "distance_points": 10
+      }
+    },
+    {
+      "symbol": "XAUUSD",
+      "broker": "EXNESS",
+      "enabled": true,
+      "priority": 4,
+      "capital_tier": "mini",
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 1.0,
+      "strategy": {
+        "smc_enabled": true,
+        "trend_breakout_enabled": true,
+        "indicators_enabled": true,
+        "timeframes": ["H1", "M15", "M5"]
+      },
+      "tp_sl_config": {
+        "tp_ratio": 2.5,
+        "sl_atr_multiplier": 2.0,
+        "use_dynamic_tp": true,
+        "use_dynamic_sl": true
+      },
+      "pending_orders": {
+        "use_pending": true,
+        "entry_type": "stop_order",
+        "distance_points": 20
+      }
+    },
+    {
+      "symbol": "BTCUSD",
+      "broker": "EXNESS",
+      "enabled": true,
+      "priority": 5,
+      "capital_tier": "mini",
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 0.5,
+      "strategy": {
+        "smc_enabled": true,
+        "trend_breakout_enabled": true,
+        "indicators_enabled": true,
+        "timeframes": ["H1", "M15", "M5"]
+      },
+      "tp_sl_config": {
+        "tp_ratio": 3.0,
+        "sl_atr_multiplier": 2.5,
+        "use_dynamic_tp": true,
+        "use_dynamic_sl": true
+      },
+      "pending_orders": {
+        "use_pending": true,
+        "entry_type": "stop_order",
+        "distance_points": 50
+      }
+    },
+    {
+      "symbol": "AUDUSD",
+      "broker": "EXNESS",
+      "enabled": true,
+      "priority": 6,
+      "capital_tier": "standard",
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 2.0,
+      "strategy": {
+        "smc_enabled": true,
+        "trend_breakout_enabled": true,
+        "indicators_enabled": true,
+        "timeframes": ["H1", "M15", "M5"]
+      },
+      "tp_sl_config": {
+        "tp_ratio": 2.0,
+        "sl_atr_multiplier": 1.5,
+        "use_dynamic_tp": true,
+        "use_dynamic_sl": true
+      },
+      "pending_orders": {
+        "use_pending": true,
+        "entry_type": "stop_order",
+        "distance_points": 10
+      }
+    },
+    {
+      "symbol": "USDCAD",
+      "broker": "EXNESS",
+      "enabled": true,
+      "priority": 7,
+      "capital_tier": "standard",
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 2.0,
+      "strategy": {
+        "smc_enabled": true,
+        "trend_breakout_enabled": true,
+        "indicators_enabled": true,
+        "timeframes": ["H1", "M15", "M5"]
+      },
+      "tp_sl_config": {
+        "tp_ratio": 2.0,
+        "sl_atr_multiplier": 1.5,
+        "use_dynamic_tp": true,
+        "use_dynamic_sl": true
+      },
+      "pending_orders": {
+        "use_pending": true,
+        "entry_type": "stop_order",
+        "distance_points": 10
+      }
+    },
+    {
+      "symbol": "NZDUSD",
+      "broker": "EXNESS",
+      "enabled": true,
+      "priority": 8,
+      "capital_tier": "standard",
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 2.0,
+      "strategy": {
+        "smc_enabled": true,
+        "trend_breakout_enabled": true,
+        "indicators_enabled": true,
+        "timeframes": ["H1", "M15", "M5"]
+      },
+      "tp_sl_config": {
+        "tp_ratio": 2.0,
+        "sl_atr_multiplier": 1.5,
+        "use_dynamic_tp": true,
+        "use_dynamic_sl": true
+      },
+      "pending_orders": {
+        "use_pending": true,
+        "entry_type": "stop_order",
+        "distance_points": 10
+      }
+    },
+    {
+      "symbol": "EURGBP",
+      "broker": "EXNESS",
+      "enabled": true,
+      "priority": 9,
+      "capital_tier": "standard",
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 2.0,
+      "strategy": {
+        "smc_enabled": true,
+        "trend_breakout_enabled": true,
+        "indicators_enabled": true,
+        "timeframes": ["H1", "M15", "M5"]
+      },
+      "tp_sl_config": {
+        "tp_ratio": 2.0,
+        "sl_atr_multiplier": 1.5,
+        "use_dynamic_tp": true,
+        "use_dynamic_sl": true
+      },
+      "pending_orders": {
+        "use_pending": true,
+        "entry_type": "stop_order",
+        "distance_points": 10
+      }
+    },
+    {
+      "symbol": "EURJPY",
+      "broker": "EXNESS",
+      "enabled": true,
+      "priority": 10,
+      "capital_tier": "advanced",
+      "risk_percent": 1.5,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 2.0,
+      "strategy": {
+        "smc_enabled": true,
+        "trend_breakout_enabled": true,
+        "indicators_enabled": true,
+        "timeframes": ["H1", "M15", "M5"]
+      },
+      "tp_sl_config": {
+        "tp_ratio": 2.0,
+        "sl_atr_multiplier": 1.5,
+        "use_dynamic_tp": true,
+        "use_dynamic_sl": true
+      },
+      "pending_orders": {
+        "use_pending": true,
+        "entry_type": "stop_order",
+        "distance_points": 15
+      }
+    },
+    {
+      "symbol": "GBPJPY",
+      "broker": "EXNESS",
+      "enabled": true,
+      "priority": 11,
+      "capital_tier": "advanced",
+      "risk_percent": 1.5,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 2.0,
+      "strategy": {
+        "smc_enabled": true,
+        "trend_breakout_enabled": true,
+        "indicators_enabled": true,
+        "timeframes": ["H1", "M15", "M5"]
+      },
+      "tp_sl_config": {
+        "tp_ratio": 2.0,
+        "sl_atr_multiplier": 2.0,
+        "use_dynamic_tp": true,
+        "use_dynamic_sl": true
+      },
+      "pending_orders": {
+        "use_pending": true,
+        "entry_type": "stop_order",
+        "distance_points": 20
+      }
+    },
+    {
+      "symbol": "AUDJPY",
+      "broker": "EXNESS",
+      "enabled": true,
+      "priority": 12,
+      "capital_tier": "advanced",
+      "risk_percent": 1.5,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 2.0,
+      "strategy": {
+        "smc_enabled": true,
+        "trend_breakout_enabled": true,
+        "indicators_enabled": true,
+        "timeframes": ["H1", "M15", "M5"]
+      },
+      "tp_sl_config": {
+        "tp_ratio": 2.0,
+        "sl_atr_multiplier": 1.5,
+        "use_dynamic_tp": true,
+        "use_dynamic_sl": true
+      },
+      "pending_orders": {
+        "use_pending": true,
+        "entry_type": "stop_order",
+        "distance_points": 15
+      }
+    },
+    {
+      "symbol": "CADJPY",
+      "broker": "EXNESS",
+      "enabled": true,
+      "priority": 13,
+      "capital_tier": "advanced",
+      "risk_percent": 1.5,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 2.0,
+      "strategy": {
+        "smc_enabled": true,
+        "trend_breakout_enabled": true,
+        "indicators_enabled": true,
+        "timeframes": ["H1", "M15", "M5"]
+      },
+      "tp_sl_config": {
+        "tp_ratio": 2.0,
+        "sl_atr_multiplier": 1.5,
+        "use_dynamic_tp": true,
+        "use_dynamic_sl": true
+      },
+      "pending_orders": {
+        "use_pending": true,
+        "entry_type": "stop_order",
+        "distance_points": 15
+      }
+    },
+    {
+      "symbol": "ETHUSD",
+      "broker": "EXNESS",
+      "enabled": true,
+      "priority": 14,
+      "capital_tier": "advanced",
+      "risk_percent": 1.5,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 0.5,
+      "strategy": {
+        "smc_enabled": true,
+        "trend_breakout_enabled": true,
+        "indicators_enabled": true,
+        "timeframes": ["H1", "M15", "M5"]
+      },
+      "tp_sl_config": {
+        "tp_ratio": 2.5,
+        "sl_atr_multiplier": 2.0,
+        "use_dynamic_tp": true,
+        "use_dynamic_sl": true
+      },
+      "pending_orders": {
+        "use_pending": true,
+        "entry_type": "stop_order",
+        "distance_points": 30
+      }
+    },
+    {
+      "symbol": "US30",
+      "broker": "EXNESS",
+      "enabled": true,
+      "priority": 15,
+      "capital_tier": "professional",
+      "risk_percent": 2.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 1.0,
+      "strategy": {
+        "smc_enabled": true,
+        "trend_breakout_enabled": true,
+        "indicators_enabled": true,
+        "timeframes": ["H1", "M15", "M5"]
+      },
+      "tp_sl_config": {
+        "tp_ratio": 2.5,
+        "sl_atr_multiplier": 2.0,
+        "use_dynamic_tp": true,
+        "use_dynamic_sl": true
+      },
+      "pending_orders": {
+        "use_pending": true,
+        "entry_type": "stop_order",
+        "distance_points": 50
+      }
+    },
+    {
+      "symbol": "NAS100",
+      "broker": "EXNESS",
+      "enabled": true,
+      "priority": 16,
+      "capital_tier": "professional",
+      "risk_percent": 2.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 1.0,
+      "strategy": {
+        "smc_enabled": true,
+        "trend_breakout_enabled": true,
+        "indicators_enabled": true,
+        "timeframes": ["H1", "M15", "M5"]
+      },
+      "tp_sl_config": {
+        "tp_ratio": 2.5,
+        "sl_atr_multiplier": 2.0,
+        "use_dynamic_tp": true,
+        "use_dynamic_sl": true
+      },
+      "pending_orders": {
+        "use_pending": true,
+        "entry_type": "stop_order",
+        "distance_points": 50
+      }
+    },
+    {
+      "symbol": "SPX500",
+      "broker": "EXNESS",
+      "enabled": true,
+      "priority": 17,
+      "capital_tier": "professional",
+      "risk_percent": 2.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 1.0,
+      "strategy": {
+        "smc_enabled": true,
+        "trend_breakout_enabled": true,
+        "indicators_enabled": true,
+        "timeframes": ["H1", "M15", "M5"]
+      },
+      "tp_sl_config": {
+        "tp_ratio": 2.5,
+        "sl_atr_multiplier": 2.0,
+        "use_dynamic_tp": true,
+        "use_dynamic_sl": true
+      },
+      "pending_orders": {
+        "use_pending": true,
+        "entry_type": "stop_order",
+        "distance_points": 40
+      }
+    },
+    {
+      "symbol": "GER40",
+      "broker": "EXNESS",
+      "enabled": true,
+      "priority": 18,
+      "capital_tier": "professional",
+      "risk_percent": 2.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 1.0,
+      "strategy": {
+        "smc_enabled": true,
+        "trend_breakout_enabled": true,
+        "indicators_enabled": true,
+        "timeframes": ["H1", "M15", "M5"]
+      },
+      "tp_sl_config": {
+        "tp_ratio": 2.5,
+        "sl_atr_multiplier": 2.0,
+        "use_dynamic_tp": true,
+        "use_dynamic_sl": true
+      },
+      "pending_orders": {
+        "use_pending": true,
+        "entry_type": "stop_order",
+        "distance_points": 40
+      }
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+# Example workflow demonstrating the use of GitHub Secrets
+# This workflow shows how to access and use CLIENT_ID and CLIENT_SECRET
+# that were set up using the setup-github-secrets.ps1 script
+
+name: OAuth Integration Example
+
+# Minimal permissions for security
+permissions:
+  contents: read
+
+on:
+  # Allow manual trigger
+  workflow_dispatch:
+  
+  # Or trigger on push (commented out by default)
+  # push:
+  #   branches: [ main ]
+
+jobs:
+  oauth-example:
+    name: OAuth Authentication Example
+    runs-on: ubuntu-latest
+    
+    # Minimal permissions for this job
+    permissions:
+      contents: read
+    
+    # Set secrets as environment variables for the entire job
+    env:
+      CLIENT_ID: ${{ secrets.CLIENT_ID }}
+      CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Verify secrets are available
+        run: |
+          echo "=========================================="
+          echo "Verifying OAuth Credentials"
+          echo "=========================================="
+          
+          if [ -z "$CLIENT_ID" ]; then
+            echo "❌ ERROR: CLIENT_ID is not set"
+            exit 1
+          else
+            echo "✅ CLIENT_ID is available"
+          fi
+          
+          if [ -z "$CLIENT_SECRET" ]; then
+            echo "❌ ERROR: CLIENT_SECRET is not set"
+            exit 1
+          else
+            echo "✅ CLIENT_SECRET is available"
+          fi
+          
+          echo ""
+          echo "All OAuth credentials are properly configured!"
+      
+      - name: Display credential info (masked)
+        run: |
+          echo "=========================================="
+          echo "OAuth Credential Information"
+          echo "=========================================="
+          echo "Client ID is configured: $([ -n "${{ secrets.CLIENT_ID }}" ] && echo 'Yes' || echo 'No')"
+          echo "Client Secret is configured: $([ -n "${{ secrets.CLIENT_SECRET }}" ] && echo 'Yes' || echo 'No')"
+          echo ""
+          echo "Note: Actual secret values are never displayed for security"
+      
+      - name: Example OAuth usage
+        run: |
+          echo "=========================================="
+          echo "Example OAuth Authentication Flow"
+          echo "=========================================="
+          echo ""
+          echo "In a real application, you would:"
+          echo "1. Use CLIENT_ID to identify your application"
+          echo "2. Use CLIENT_SECRET to authenticate"
+          echo "3. Exchange for an access token"
+          echo "4. Make authenticated API requests"
+          echo ""
+          echo "Example (pseudocode):"
+          echo "  curl -X POST https://api.example.com/oauth/token \\"
+          echo "    -d client_id=\$CLIENT_ID \\"
+          echo "    -d client_secret=\$CLIENT_SECRET \\"
+          echo "    -d grant_type=client_credentials"
+        env:
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+
+  # Example job showing direct usage in specific steps
+  oauth-in-steps:
+    name: OAuth in Individual Steps
+    runs-on: ubuntu-latest
+    
+    # Minimal permissions for this job
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Step with explicit environment variables
+        env:
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+        run: |
+          echo "This step has access to OAuth credentials"
+          echo "CLIENT_ID is available: $([ -n "$CLIENT_ID" ] && echo 'Yes' || echo 'No')"
+          echo "CLIENT_SECRET is available: $([ -n "$CLIENT_SECRET" ] && echo 'Yes' || echo 'No')"
+      
+      - name: Step without explicit environment variables
+        run: |
+          echo "This step does NOT have access to secrets"
+          echo "CLIENT_ID is available: $([ -n "$CLIENT_ID" ] && echo 'Yes' || echo 'No')"
+          echo "CLIENT_SECRET is available: $([ -n "$CLIENT_SECRET" ] && echo 'Yes' || echo 'No')"
+
+  # Example job for different environments
+  oauth-production:
+    name: Production OAuth Example
+    runs-on: ubuntu-latest
+    # Uncomment to use GitHub environments
+    # environment: production
+    
+    # Minimal permissions for this job
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Production authentication
+        env:
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+        run: |
+          echo "=========================================="
+          echo "Production Environment"
+          echo "=========================================="
+          echo "Using production OAuth credentials"
+          echo "Ready for production API calls"
+          # Your production deployment script here

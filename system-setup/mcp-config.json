@@ -1,0 +1,46 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "D:\\"
+      ],
+      "env": {}
+    },
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": ""
+      }
+    },
+    "drive-scanner": {
+      "command": "powershell",
+      "args": [
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "D:\\my-drive-projects\\project-scanner\\project-scanner.ps1",
+        "-OutputPath",
+        "D:\\my-drive-projects\\project-scanner\\discovered-projects.json"
+      ],
+      "env": {}
+    },
+    "storage-manager": {
+      "command": "powershell",
+      "args": [
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "D:\\my-drive-projects\\storage-management\\storage-tools\\monitor-storage.ps1"
+      ],
+      "env": {}
+    }
+  }
+}
+

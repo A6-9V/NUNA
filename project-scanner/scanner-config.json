@@ -1,0 +1,81 @@
+{
+  "excludedDirectories": [
+    "Windows",
+    "System32",
+    "SysWOW64",
+    "Program Files\\Windows",
+    "Program Files (x86)\\Windows",
+    "$Recycle.Bin",
+    "System Volume Information",
+    "Recovery",
+    "Boot",
+    "PerfLogs",
+    "node_modules",
+    ".git",
+    ".vs",
+    "bin",
+    "obj",
+    "__pycache__",
+    ".venv",
+    "venv",
+    "env"
+  ],
+  "projectTypePatterns": {
+    "nodejs": {
+      "markers": ["package.json"],
+      "executionCommand": "npm start",
+      "fallbackCommand": "node index.js",
+      "workingDirectory": "."
+    },
+    "python": {
+      "markers": ["requirements.txt", "setup.py", "pyproject.toml", "Pipfile"],
+      "executionCommand": "python main.py",
+      "fallbackCommand": "python app.py",
+      "workingDirectory": "."
+    },
+    "java": {
+      "markers": ["pom.xml", "build.gradle", "build.xml"],
+      "executionCommand": "mvn spring-boot:run",
+      "fallbackCommand": "java -jar target/*.jar",
+      "workingDirectory": "."
+    },
+    "rust": {
+      "markers": ["Cargo.toml"],
+      "executionCommand": "cargo run",
+      "fallbackCommand": "cargo run --release",
+      "workingDirectory": "."
+    },
+    "dotnet": {
+      "markers": ["*.sln", "*.csproj"],
+      "executionCommand": "dotnet run",
+      "fallbackCommand": "dotnet build && dotnet run",
+      "workingDirectory": "."
+    },
+    "go": {
+      "markers": ["go.mod"],
+      "executionCommand": "go run main.go",
+      "fallbackCommand": "go run .",
+      "workingDirectory": "."
+    }
+  },
+  "scriptExtensions": [".bat", ".ps1", ".sh", ".cmd", ".vbs"],
+  "applicationPaths": [
+    "Program Files",
+    "Program Files (x86)",
+    "Users\\*\\AppData\\Local",
+    "Users\\*\\AppData\\Roaming"
+  ],
+  "scanSettings": {
+    "maxDepth": 10,
+    "scanLocalDrivesOnly": true,
+    "includeHiddenFiles": false,
+    "maxFileSizeMB": 100
+  },
+  "executionSettings": {
+    "maxConcurrentJobs": 10,
+    "executionTimeoutSeconds": 300,
+    "skipSystemExecutables": true,
+    "requireConfirmation": true
+  }
+}
+

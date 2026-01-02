@@ -1,0 +1,184 @@
+{
+  "communication_teams": {
+    "whatsapp_perplexity_team": {
+      "name": "WhatsApp + Perplexity Research Team",
+      "enabled": true,
+      "phone_number": "+18334363285",
+      "description": "Primary communication channel for AI research and trade decisions",
+      "members": [
+        {
+          "role": "Research Lead",
+          "service": "Perplexity AI",
+          "api_endpoint": "https://api.perplexity.ai",
+          "capabilities": ["market_research", "news_analysis", "trend_prediction"]
+        },
+        {
+          "role": "Communication Gateway",
+          "service": "WhatsApp",
+          "phone": "+18334363285",
+          "capabilities": ["notifications", "alerts", "commands"]
+        }
+      ],
+      "notification_settings": {
+        "trade_signals": true,
+        "risk_alerts": true,
+        "daily_reports": true,
+        "emergency_alerts": true
+      }
+    },
+    "gpt_team": {
+      "name": "GPT Analysis Team",
+      "enabled": true,
+      "description": "Advanced AI analysis and strategy optimization",
+      "members": [
+        {
+          "role": "Strategy Analyst",
+          "service": "ChatGPT",
+          "model": "gpt-4",
+          "capabilities": ["strategy_analysis", "pattern_recognition", "risk_assessment"]
+        },
+        {
+          "role": "Trade Advisor",
+          "service": "GitHub Copilot",
+          "capabilities": ["code_review", "automation", "optimization"]
+        }
+      ],
+      "notification_settings": {
+        "strategy_updates": true,
+        "code_reviews": true,
+        "optimization_suggestions": true
+      }
+    },
+    "perplexity_team": {
+      "name": "Perplexity Deep Research Team",
+      "enabled": true,
+      "description": "Deep market research and fundamental analysis",
+      "members": [
+        {
+          "role": "Market Analyst",
+          "service": "Perplexity Pro",
+          "capabilities": ["fundamental_analysis", "sentiment_analysis", "economic_calendar"]
+        },
+        {
+          "role": "News Monitor",
+          "service": "Perplexity API",
+          "capabilities": ["real_time_news", "event_detection", "impact_assessment"]
+        }
+      ],
+      "notification_settings": {
+        "market_news": true,
+        "economic_events": true,
+        "sentiment_changes": true
+      }
+    },
+    "jules_google_agent": {
+      "name": "Jules - Google AI Agent",
+      "enabled": true,
+      "description": "Google AI assistant for system coordination",
+      "service": "Google AI",
+      "capabilities": ["coordination", "decision_making", "system_monitoring"],
+      "notification_settings": {
+        "system_status": true,
+        "coordination_alerts": true
+      }
+    }
+  },
+  "encrypted_domain_teams": {
+    "enabled": true,
+    "encryption_method": "AES-256-GCM",
+    "teams": [
+      {
+        "team_id": "whatsapp_perplexity",
+        "encrypted": true,
+        "members": ["WhatsApp Gateway", "Perplexity AI"],
+        "shared_key_location": "credential_manager:TEAM_WHATSAPP_PERPLEXITY_KEY"
+      },
+      {
+        "team_id": "gpt_team",
+        "encrypted": true,
+        "members": ["ChatGPT", "GitHub Copilot"],
+        "shared_key_location": "credential_manager:TEAM_GPT_KEY"
+      },
+      {
+        "team_id": "perplexity_team",
+        "encrypted": true,
+        "members": ["Perplexity Pro", "Perplexity API"],
+        "shared_key_location": "credential_manager:TEAM_PERPLEXITY_KEY"
+      }
+    ],
+    "inter_team_communication": {
+      "enabled": true,
+      "protocol": "https",
+      "authentication": "oauth2"
+    }
+  },
+  "user_accounts": {
+    "primary_account": {
+      "email": "lengkundee01@gmail.com",
+      "phone_telegram": "061755859",
+      "phone_whatsapp": "061755859",
+      "phone_telegram_2": "0963376851",
+      "phone_whatsapp_2": "0963376851",
+      "notification_preferences": {
+        "email": true,
+        "telegram": true,
+        "whatsapp": true,
+        "priority_channel": "telegram"
+      }
+    }
+  },
+  "trading_accounts": {
+    "exness_mt5": {
+      "account_number": "411534497",
+      "account_name": "ENESS MT5_AUTO-TRAD",
+      "server": "Exness-MT5Real8",
+      "password_location": "credential_manager:EXNESS_MT5_PASSWORD",
+      "auto_login": true,
+      "notifications": {
+        "trade_execution": true,
+        "balance_updates": true,
+        "margin_warnings": true
+      }
+    }
+  },
+  "notification_routing": {
+    "urgent": {
+      "channels": ["whatsapp", "telegram"],
+      "delay_seconds": 0
+    },
+    "important": {
+      "channels": ["telegram", "email"],
+      "delay_seconds": 60
+    },
+    "info": {
+      "channels": ["email"],
+      "delay_seconds": 300
+    }
+  },
+  "api_endpoints": {
+    "whatsapp": {
+      "provider": "Twilio",
+      "phone": "+18334363285",
+      "api_key_location": "credential_manager:TWILIO_API_KEY"
+    },
+    "telegram": {
+      "bot_token_location": "credential_manager:TELEGRAM_BOT_TOKEN",
+      "chat_id_location": "credential_manager:TELEGRAM_CHAT_ID"
+    },
+    "perplexity": {
+      "api_key_location": "credential_manager:PERPLEXITY_API_KEY",
+      "base_url": "https://api.perplexity.ai"
+    },
+    "openai": {
+      "api_key_location": "credential_manager:OPENAI_API_KEY",
+      "organization_location": "credential_manager:OPENAI_ORG_ID"
+    }
+  },
+  "security": {
+    "credential_storage": "windows_credential_manager",
+    "encryption_enabled": true,
+    "two_factor_auth": true,
+    "ip_whitelist_enabled": false,
+    "audit_logging": true
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "runSettings": {
+    "temperature": 1.0,
+    "model": "models/gemini-2.5-pro",
+    "topP": 0.95,
+    "topK": 64,
+    "maxOutputTokens": 65536,
+    "safetySettings": [{
+      "category": "HARM_CATEGORY_HARASSMENT",
+      "threshold": "OFF"
+    }, {
+      "category": "HARM_CATEGORY_HATE_SPEECH",
+      "threshold": "OFF"
+    }, {
+      "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+      "threshold": "OFF"
+    }, {
+      "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+      "threshold": "OFF"
+    }],
+    "enableCodeExecution": false,
+    "enableSearchAsATool": true,
+    "enableBrowseAsATool": false,
+    "enableAutoFunctionResponse": false,
+    "thinkingBudget": -1,
+    "googleSearch": {
+    }
+  },
+  "systemInstruction": {
+  },
+  "chunkedPrompt": {
+    "chunks": [{
+      "driveImage": {
+        "id": "1QxLCvBCD59hb1PRPJaAaTFdFRhI17zVH"
+      },
+      "role": "user",
+      "tokenCount": 259
+    }, {
+      "text": "**Defining Image Content**\n\nI\u0027ve homed in on the image\u0027s key element: a GitHub launch code. My next task is to precisely isolate and extract the numerical code embedded within the visual. After pinpointing that code, I plan to clarify its intended purpose and present the extracted numbers. This answers the user\u0027s initial inquiry, leveraging the image\u0027s inherent information.\n\n\n**Extracting the Launch Code**\n\nI\u0027ve successfully identified the numerical launch code within the image. My next step is to format and present this code clearly to the user. I\u0027ve noted the surrounding context, like the \"Open GitHub\" button, to potentially provide additional, related information if required.  The GitHub Octocat and rocket imagery further confirm the code\u0027s association with GitHub.\n\n\n",
+      "role": "model",
+      "tokenCount": 299,
+      "isThought": true,
+      "thinkingBudget": -1,
+      "thoughtSignatures": ["", ""],
+      "parts": [{
+        "text": "**Defining Image Content**\n\nI\u0027ve homed in on the image\u0027s key element: a GitHub launch code. My next task is to precisely isolate and extract the numerical code embedded within the visual. After pinpointing that code, I plan to clarify its intended purpose and present the extracted numbers. This answers the user\u0027s initial inquiry, leveraging the image\u0027s inherent information.\n\n\n",
+        "thought": true
+      }, {
+        "text": "**Extracting the Launch Code**\n\nI\u0027ve successfully identified the numerical launch code within the image. My next step is to format and present this code clearly to the user. I\u0027ve noted the surrounding context, like the \"Open GitHub\" button, to potentially provide additional, related information if required.  The GitHub Octocat and rocket imagery further confirm the code\u0027s association with GitHub.\n\n\n",
+        "thought": true
+      }]
+    }, {
+      "text": "Your GitHub launch code is **96591326**.\n\nThis code is used to continue the sign-up process for a GitHub account. You can enter it on the GitHub website or app, or use the provided link to proceed.",
+      "role": "model",
+      "finishReason": "STOP",
+      "tokenCount": 52,
+      "parts": [{
+        "text": "Your GitHub launch code is **96591326**.\n\nThis code is used to continue the sign"
+      }, {
+        "text": "-up process for a GitHub account. You can enter it on the GitHub website or app, or use the provided link to"
+      }, {
+        "text": " proceed."
+      }]
+    }],
+    "pendingInputs": [{
+      "text": "",
+      "role": "user"
+    }]
+  }
+}

@@ -1,0 +1,78 @@
+---
+name: Enable Auto-Merge for PRs
+
+on:
+  pull_request:
+    types: [opened, ready_for_review]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  enable-auto-merge:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+
+    steps:
+      - name: Enable auto-merge for PR
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pr = context.payload.pull_request;
+
+            try {
+              const mutation = `
+                mutation($pullRequestId: ID!) {
+                  enablePullRequestAutoMerge(input: {
+                    pullRequestId: $pullRequestId,
+                    mergeMethod: MERGE
+                  }) {
+                    pullRequest {
+                      id
+                      number
+                      autoMergeRequest {
+                        enabledAt
+                        enabledBy {
+                          login
+                        }
+                      }
+                    }
+                  }
+                }
+              `;
+
+              const result = await github.graphql(mutation, {
+                pullRequestId: pr.node_id
+              });
+
+              console.log(`✅ Auto-merge enabled for PR #${pr.number}`);
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                body: '🤖 **Auto-merge enabled!**\n\n' +
+                      'This PR will be automatically merged when:\n' +
+                      '- All required status checks pass\n' +
+                      '- All required reviews are approved\n' +
+                      '- There are no merge conflicts\n\n' +
+                      'If you need to make changes, push new commits ' +
+                      'and auto-merge will wait for checks to pass again.'
+              });
+
+            } catch (error) {
+              console.log(`⚠️ Could not enable auto-merge: ` +
+                         `${error.message}`);
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                body: 'ℹ️ Auto-merge could not be enabled ' +
+                      `automatically: ${error.message}\n\n` +
+                      'You can enable auto-merge manually by clicking ' +
+                      'the "Enable auto-merge" button if needed.'
+              });
+            }

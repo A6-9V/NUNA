@@ -1,0 +1,35 @@
+{
+  "monitor_interval": 10,
+  "log_retention_days": 30,
+  "max_operations_log": 1000,
+  "auto_restart_eas": false,
+  "enabled_features": {
+    "ea_monitoring": true,
+    "script_tracking": true,
+    "indicator_monitoring": true,
+    "auto_recovery": false
+  },
+  "api": {
+    "enabled": true,
+    "host": "localhost",
+    "port": 5501
+  },
+  "notifications": {
+    "enabled": true,
+    "telegram": {
+      "enabled": false,
+      "bot_token": "",
+      "chat_id": ""
+    }
+  },
+  "expert_advisors": {
+    "auto_load": [],
+    "restart_on_error": false,
+    "max_restart_attempts": 3
+  },
+  "logging": {
+    "level": "INFO",
+    "file_rotation": true,
+    "max_log_size_mb": 10
+  }
+}

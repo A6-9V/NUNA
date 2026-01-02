@@ -1,0 +1,82 @@
+﻿========================================
+  SYSTEM STATUS REPORT
+  Generated: 2025-12-17 00:55:39
+  System: NuNa (Windows 11 Home Single Language 25H2)
+========================================
+## 1. SYSTEM INFORMATION
+------------------------
+Computer Name: NUNA
+User: USER
+OS: Microsoft Windows 11 Home Single Language
+Architecture: 64-bit
+PowerShell Version: 5.1.26100.7344
+Execution Policy: Bypass
+## 2. SERVICE STATUS
+--------------------
+Exness MT5 Terminal: RUNNING (PID: 21440)
+Firefox: RUNNING (17 process(es))
+Python: RUNNING (4 process(es))
+VPS Services: NOT RUNNING
+## 3. FILE SYSTEM STATUS
+------------------------
+Workspace Root: EXISTS
+VPS Services: EXISTS (8 files)
+Logs Directory: EXISTS (9 files)
+ZOLO Repository: EXISTS
+## 4. SECURITY STATUS
+---------------------
+Windows Defender: ENABLED
+Firewall Profiles:
+  - Domain: True   - Private: True   - Public: True
+
+Execution Policy: Bypass
+Admin Privileges: True
+## 5. NETWORK STATUS
+--------------------
+Internet Connection: CONNECTED
+Active Network Adapters: 
+  - Wi-Fi 2: 72.2 Mbps
+## 6. APPLICATION STATUS
+------------------------
+Exness MT5: INSTALLED
+Firefox: NOT FOUND
+Python: INSTALLED (C:\Users\USER\AppData\Local\Microsoft\WindowsApps\python.exe)
+Git: INSTALLED (C:\Program Files\Git\cmd\git.exe)
+## 7. REPOSITORY STATUS
+------------------------
+ZOLO-A6-9VxNUNA: EXISTS
+  Remote: bridges3rd	https://github.com/A6-9V/I-bride_bridges3rd.git (fetch)
+  Status: HAS CHANGES
+my-drive-projects: EXISTS
+  Status: HAS CHANGES
+
+## 8. LOG FILES STATUS
+----------------------cicd-service.log: 2566 lines (Last modified: 12/17/2025 00:55:34)
+exness-service.log: 0 lines (Last modified: 12/15/2025 12:45:15)
+master-controller.log: 8 lines (Last modified: 12/17/2025 00:55:39)
+mql5-service.log: 0 lines (Last modified: 12/14/2025 20:02:54)
+research-service.log: 0 lines (Last modified: 12/14/2025 20:02:43)
+restart-detector.log: 4 lines (Last modified: 12/14/2025 22:32:25)
+trading-bridge-service.log: 0 lines (Last modified: 12/15/2025 12:45:23)
+trading-bridge-sync.log: 793 lines (Last modified: 12/17/2025 00:55:39)
+website-service.log: 949 lines (Last modified: 12/17/2025 00:55:31)
+
+========================================
+  SUMMARY
+========================================
+
+System Status: NEEDS ATTENTION
+Services Running: Exness Terminal
+Security: Windows Defender Active
+Network: Connected
+
+Recommendations:
+
+- Start VPS Services (run start-vps-system.ps1)
+
+
+
+
+========================================
+Report generated: 2025-12-17 00:55:39
+========================================

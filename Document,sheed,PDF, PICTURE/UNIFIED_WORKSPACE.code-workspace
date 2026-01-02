@@ -1,0 +1,102 @@
+{
+    "extensions": {
+        "recommendations": [
+            "ms-python.python",
+            "ms-python.debugpy",
+            "ms-vscode.powershell",
+            "ritwickdey.liveserver",
+            "eamodio.gitlens",
+            "ms-vscode.vscode-json",
+            "yzhang.markdown-all-in-one",
+            "ms-azuretools.vscode-cosmosdb",
+            "ms-vscode-remote.remote-containers",
+            "ms-vscode-remote.remote-wsl",
+            "ms-azuretools.vscode-docker",
+            "ms-toolsai.jupyter",
+            "ms-python.flake8",
+            "ms-python.black-formatter"
+        ]
+    },
+    "settings": {
+        "search.exclude": {
+            "**/backup/**": true,
+            "**/Backup_*/**": true,
+            "**/.snapshots/**": true,
+            "**/node_modules/**": true,
+            "**/__pycache__/**": true,
+            "**/Security-Credentials/**": true,
+            "**/.venv/**": true
+        },
+        "explorer.excludeGitIgnore": true,
+        "files.watcherExclude": {
+            "**/.snapshots/**": true,
+            "**/backup/**": true,
+            "**/Backup_*/**": true,
+            "**/__pycache__/**": true,
+            "**/Security-Credentials/**": true
+        },
+        "python.defaultInterpreterPath": "I:/Development/Projects/AIxML_AUTO-Trading/.venv/Scripts/python.exe",
+        "python.linting.enabled": true,
+        "python.linting.pylintEnabled": true,
+        "python.formatting.provider": "black",
+        "liveServer.settings.donotShowInfoMsg": true,
+        "liveServer.settings.donotVerifyTags": true,
+        "git.enableSmartCommit": true,
+        "git.confirmSync": false,
+        "workbench.startupEditor": "welcomePage",
+        "terminal.integrated.defaultProfile.windows": "PowerShell"
+    },
+    "folders": [
+        {
+            "name": "🤖 I: Development (Primary)",
+            "path": "I:/"
+        },
+        {
+            "name": "🏢 H: Business & Documents",
+            "path": "H:/My Drive/Document,sheed,PDF, PICTURE"
+        }
+    ],
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "Activate AI Trading Env",
+                "type": "shell",
+                "command": "I:/Development/Projects/AIxML_AUTO-Trading/.venv/Scripts/Activate.ps1",
+                "group": "build",
+                "presentation": {
+                    "echo": true,
+                    "reveal": "always",
+                    "focus": false,
+                    "panel": "shared"
+                },
+                "options": {
+                    "cwd": "I:/Development/Projects/AIxML_AUTO-Trading"
+                }
+            },
+            {
+                "label": "Run AI Trading Tests",
+                "type": "shell",
+                "command": "python -m pytest tests/",
+                "group": "test",
+                "dependsOn": "Activate AI Trading Env",
+                "options": {
+                    "cwd": "I:/Development/Projects/AIxML_AUTO-Trading"
+                }
+            }
+        ]
+    },
+    "launch": {
+        "version": "0.2.0",
+        "configurations": [
+            {
+                "name": "Debug AI Trading",
+                "type": "python",
+                "request": "launch",
+                "cwd": "I:/Development/Projects/AIxML_AUTO-Trading",
+                "python": "I:/Development/Projects/AIxML_AUTO-Trading/.venv/Scripts/python.exe",
+                "console": "integratedTerminal"
+            }
+        ]
+    }
+}

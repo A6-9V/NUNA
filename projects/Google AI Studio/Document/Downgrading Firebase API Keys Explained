@@ -1,0 +1,154 @@
+{
+  "runSettings": {
+    "temperature": 1.0,
+    "model": "models/gemini-2.5-pro",
+    "topP": 0.95,
+    "topK": 64,
+    "maxOutputTokens": 65536,
+    "safetySettings": [{
+      "category": "HARM_CATEGORY_HARASSMENT",
+      "threshold": "OFF"
+    }, {
+      "category": "HARM_CATEGORY_HATE_SPEECH",
+      "threshold": "OFF"
+    }, {
+      "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+      "threshold": "OFF"
+    }, {
+      "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+      "threshold": "OFF"
+    }],
+    "enableCodeExecution": false,
+    "enableSearchAsATool": true,
+    "enableBrowseAsATool": false,
+    "enableAutoFunctionResponse": false,
+    "thinkingBudget": -1,
+    "googleSearch": {
+    }
+  },
+  "systemInstruction": {
+  },
+  "chunkedPrompt": {
+    "chunks": [{
+      "text": "...6978\nSample Firebase AI App\n...BagM\nJul 23, 2025\nI want to downgrade this API key ",
+      "role": "user",
+      "tokenCount": 35
+    }, {
+      "text": "**Examining the Query**\n\nI\u0027m starting by searching for \"Firebase AI App\" and \"downgrade Firebase API key.\" This should give me the context and reveal the user\u0027s main goal. Then, I plan to delve into managing and restricting Firebase API keys, exploring if plan tiers affect key capabilities.\n\n\n**Investigating Key Management**\n\nI\u0027ve clarified the user\u0027s intent: downgrading a Firebase API key within the context of an AI app.  I\u0027m focusing now on Firebase and Google Cloud plan tiers, to see if they influence API key capabilities.  I plan to correlate the restrictions associated with a plan to how the user can downgrade.\n\n\n**Examining Firebase Options**\n\nI\u0027ve been looking into Firebase Studio, which seems promising as an AI-powered development tool. Also, I\u0027m now exploring how to manage and downgrade Firebase API keys. The aim is to streamline development and find the most cost-effective solution. I am now considering different key management strategies.\n\n\n**Refining the Approach**\n\nI\u0027m now zeroing in on the nuances of \"downgrading\" an API key within the Firebase context. My research shows the user likely wants to either restrict the key\u0027s permissions for security or downgrade the Firebase project\u0027s pricing plan. I\u0027m focusing on providing clear steps for both, given the initial search results. It\u0027s becoming clearer how to address the user\u0027s need.\n\n\n**Defining \"Downgrade\"**\n\nI\u0027m now focusing on the varied interpretations of \"downgrading\" an API key in Firebase. It\u0027s clear that the user may want to *limit* the key\u0027s permissions for security or *alter* the project\u0027s pricing plan. I\u0027m building out different potential scenarios. I plan to provide concise steps for restricting the API key\u0027s access and for downgrading the Firebase project. The goal is to offer a comprehensive guide, given the different meanings of \u0027downgrade.\u0027\n\n\n",
+      "role": "model",
+      "tokenCount": 468,
+      "isThought": true,
+      "thinkingBudget": -1,
+      "thoughtSignatures": ["", "", "", "", ""],
+      "parts": [{
+        "text": "**Examining the Query**\n\nI\u0027m starting by searching for \"Firebase AI App\" and \"downgrade Firebase API key.\" This should give me the context and reveal the user\u0027s main goal. Then, I plan to delve into managing and restricting Firebase API keys, exploring if plan tiers affect key capabilities.\n\n\n",
+        "thought": true
+      }, {
+        "text": "**Investigating Key Management**\n\nI\u0027ve clarified the user\u0027s intent: downgrading a Firebase API key within the context of an AI app.  I\u0027m focusing now on Firebase and Google Cloud plan tiers, to see if they influence API key capabilities.  I plan to correlate the restrictions associated with a plan to how the user can downgrade.\n\n\n",
+        "thought": true
+      }, {
+        "text": "**Examining Firebase Options**\n\nI\u0027ve been looking into Firebase Studio, which seems promising as an AI-powered development tool. Also, I\u0027m now exploring how to manage and downgrade Firebase API keys. The aim is to streamline development and find the most cost-effective solution. I am now considering different key management strategies.\n\n\n",
+        "thought": true
+      }, {
+        "text": "**Refining the Approach**\n\nI\u0027m now zeroing in on the nuances of \"downgrading\" an API key within the Firebase context. My research shows the user likely wants to either restrict the key\u0027s permissions for security or downgrade the Firebase project\u0027s pricing plan. I\u0027m focusing on providing clear steps for both, given the initial search results. It\u0027s becoming clearer how to address the user\u0027s need.\n\n\n",
+        "thought": true
+      }, {
+        "text": "**Defining \"Downgrade\"**\n\nI\u0027m now focusing on the varied interpretations of \"downgrading\" an API key in Firebase. It\u0027s clear that the user may want to *limit* the key\u0027s permissions for security or *alter* the project\u0027s pricing plan. I\u0027m building out different potential scenarios. I plan to provide concise steps for restricting the API key\u0027s access and for downgrading the Firebase project. The goal is to offer a comprehensive guide, given the different meanings of \u0027downgrade.\u0027\n\n\n",
+        "thought": true
+      }]
+    }, {
+      "text": "### Downgrading a Firebase API Key: A Guide to Securing and Managing Your Keys\n\nFor developers working with Firebase, managing API keys is a critical aspect of securing your application. While the term \"downgrade\" an API key doesn\u0027t refer to reducing its inherent capabilities, it typically involves either restricting its usage for enhanced security or moving to a different pricing plan for your Firebase project. Here’s a comprehensive look at what it means to \"downgrade\" your Firebase API key and how to go about it.\n\n#### Restricting Your API Key for Better Security\n\nA key step in securing your Firebase application is to apply restrictions to your API keys. This ensures that a key can only be used for its intended purpose, minimizing the risk of unauthorized use.\n\n**Steps to Restrict Your Firebase API Key:**\n\n1.  **Navigate to the Google Cloud Console:** You can manage all your project\u0027s API keys in the \"APIs \u0026 Services \u003e Credentials\" panel of the Google Cloud Console.\n2.  **Select Your API Key:** Identify the API key associated with your Firebase app. You can find your app\u0027s API key in the Firebase console by going to `Project settings` and scrolling down to the `Your apps` card. Select your app to view its configuration, which includes the `apiKey`.\n3.  **Apply Restrictions:** Once you\u0027ve selected the key in the Google Cloud Console, you can apply two types of restrictions:\n    *   **Application restrictions:** This limits the websites, IP addresses, or apps that can use the key. For example, you can restrict a key to only be used from your website\u0027s domain.\n    *   **API restrictions:** This specifies which APIs the key is authorized to call. It is a recommended best practice to restrict the key to only the APIs that you actually use in your app.\n\nIt\u0027s important to note that for Firebase services, API keys are primarily used to identify your Firebase project or app, not for authorizing calls to the API. Authorization is handled separately through Firebase Security Rules, Google Cloud IAM permissions, or Firebase App Check. Therefore, including Firebase API keys in your code is generally safe when used with Firebase-related APIs.\n\n#### Downgrading Your Firebase Project\u0027s Pricing Plan\n\nAnother interpretation of \"downgrading\" relates to the pricing plan of your Firebase project. If your project is on a paid plan (like the Blaze plan), you can downgrade it to the free Spark plan.\n\nThis can be relevant as unlinking an active Cloud Billing account from a project in the Google Cloud console will result in that project being downgraded to the Firebase no-cost Spark plan. Be aware that as of February 2022, the \"Flame\" pricing plan has been retired, and existing projects on that plan were downgraded to the Spark plan.\n\nTo manage your project\u0027s billing, you would typically go to the billing section of the Google Cloud Console.\n\n#### Downgrading Firebase SDK Versions\n\nWhile less likely to be what is meant by \"downgrading an API key,\" developers sometimes need to revert to older versions of Firebase SDKs due to code compatibility issues. This process is handled through your project\u0027s package manager, such as npm (Node Package Manager).\n\nFor example, to install a specific version of the Firebase tools, you would use commands like:```\nnpm uninstall -g firebase-tools\nnpm install -g firebase-tools@\u003cversion_number\u003e\n```\nSimilarly, to use a specific version of the Firebase client-side SDK in your project, you would specify the version in your `package.json` file and run `npm install`.\n\nIn conclusion, while you cannot \"downgrade\" a Firebase API key in the traditional sense, you have robust options for securing it through restrictions and for managing the costs associated with your Firebase project by adjusting your pricing plan.",
+      "role": "model",
+      "grounding": {
+        "corroborationSegments": [{
+          "index": 2614,
+          "uri": "https://www.google.com/url?sa\u003dE\u0026q\u003dhttps%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQEy8Q1QAdh9A9CLqPA2sr6r7VAzWdPKyiescZ5BhAau-5hZl0PFPQ-5P1ACJ9MQoH4OfZfrbBlq5NMlwv6upPBDjgpX4l-CjhmDimR3MqrG0PW3X6zgRKQjU3oH3BREnSh2wA%3D%3D",
+          "footnoteNumber": 1
+        }, {
+          "index": 2762,
+          "uri": "https://www.google.com/url?sa\u003dE\u0026q\u003dhttps%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQEy8Q1QAdh9A9CLqPA2sr6r7VAzWdPKyiescZ5BhAau-5hZl0PFPQ-5P1ACJ9MQoH4OfZfrbBlq5NMlwv6upPBDjgpX4l-CjhmDimR3MqrG0PW3X6zgRKQjU3oH3BREnSh2wA%3D%3D",
+          "footnoteNumber": 1
+        }],
+        "webSearchQueries": ["Firebase AI App", "downgrade Firebase API key"],
+        "groundingSources": [{
+          "referenceNumber": 1,
+          "uri": "https://www.google.com/url?sa\u003dE\u0026q\u003dhttps%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQEy8Q1QAdh9A9CLqPA2sr6r7VAzWdPKyiescZ5BhAau-5hZl0PFPQ-5P1ACJ9MQoH4OfZfrbBlq5NMlwv6upPBDjgpX4l-CjhmDimR3MqrG0PW3X6zgRKQjU3oH3BREnSh2wA%3D%3D",
+          "title": "google.com"
+        }]
+      },
+      "finishReason": "STOP",
+      "tokenCount": 805,
+      "parts": [{
+        "text": "### Downgrading a Firebase API Key: A Guide to Securing and Managing Your Keys\n\nFor developers working with Firebase"
+      }, {
+        "text": ", managing API keys is a critical aspect of securing your application. While the term \"downgrade\" an API key doesn"
+      }, {
+        "text": "\u0027t refer to reducing its inherent capabilities, it typically involves either restricting its usage for enhanced security or moving to a different"
+      }, {
+        "text": " pricing plan for your Firebase project. Here’s a comprehensive look at what it means to \"downgrade\" your Firebase"
+      }, {
+        "text": " API key and how to go about it.\n\n#### Restricting Your API Key for Better Security\n\nA key step in securing your Firebase"
+      }, {
+        "text": " application is to apply restrictions to your API keys. This ensures that a key can only be used for its intended purpose,"
+      }, {
+        "text": " minimizing the risk of unauthorized use.\n\n**Steps to Restrict Your Firebase API Key:**\n\n1.  **Navigate to the"
+      }, {
+        "text": " Google Cloud Console:** You can manage all your project\u0027s API keys in the \"APIs \u0026 Services \u003e Credentials\" panel"
+      }, {
+        "text": " of the Google Cloud Console.\n2.  **Select Your API Key:** Identify the API key associated with your Firebase app"
+      }, {
+        "text": ". You can find your app\u0027s API key in the Firebase console by going to `Project settings` and scrolling down to the "
+      }, {
+        "text": "`Your apps` card. Select your app to view its configuration, which includes the `apiKey`.\n3.  **Apply Restrictions"
+      }, {
+        "text": ":** Once you\u0027ve selected the key in the Google Cloud Console, you can apply two types of restrictions:\n    *   "
+      }, {
+        "text": "**Application restrictions:** This limits the websites, IP addresses, or apps that can use the key. For example, you can"
+      }, {
+        "text": " restrict a key to only be used from your website\u0027s domain.\n    *   **API restrictions:** This specifies"
+      }, {
+        "text": " which APIs the key is authorized to call. It is a recommended best practice to restrict the key to only the APIs that"
+      }, {
+        "text": " you actually use in your app.\n\nIt\u0027s important to note that for Firebase services, API keys are primarily used to"
+      }, {
+        "text": " identify your Firebase project or app, not for authorizing calls to the API. Authorization is handled separately through Firebase Security Rules, Google Cloud IAM"
+      }, {
+        "text": " permissions, or Firebase App Check. Therefore, including Firebase API keys in your code is generally safe when used with Firebase-related APIs"
+      }, {
+        "text": ".\n\n#### Downgrading Your Firebase Project\u0027s Pricing Plan\n\nAnother interpretation of \"downgrading\" relates"
+      }, {
+        "text": " to the pricing plan of your Firebase project. If your project is on a paid plan (like the Blaze plan), you"
+      }, {
+        "text": " can downgrade it to the free Spark plan.\n\nThis can be relevant as unlinking an active Cloud Billing account from a"
+      }, {
+        "text": " project in the Google Cloud console will result in that project being downgraded to the Firebase no-cost Spark plan. Be aware that as of February 2022, the \"Flame\" pricing plan has been retired, and existing projects on"
+      }, {
+        "text": " that plan were downgraded to the Spark plan.\n\nTo manage your project\u0027s billing, you would typically"
+      }, {
+        "text": " go to the billing section of the Google Cloud Console.\n\n#### Downgrading Firebase SDK Versions\n\nWhile less likely"
+      }, {
+        "text": " to be what is meant by \"downgrading an API key,\" developers sometimes need to revert to older versions of Firebase"
+      }, {
+        "text": " SDKs due to code compatibility issues. This process is handled through your project\u0027s package manager, such as npm ("
+      }, {
+        "text": "Node Package Manager).\n\nFor example, to install a specific version of the Firebase tools, you would use commands like:"
+      }, {
+        "text": "```\nnpm uninstall -g firebase-tools\nnpm install -g firebase-tools@\u003cversion_number\u003e\n"
+      }, {
+        "text": "```"
+      }, {
+        "text": "\nSimilarly, to use a specific version of the Firebase client-side SDK in your project, you would specify the version"
+      }, {
+        "text": " in your `package.json` file and run `npm install`.\n\nIn conclusion, while you cannot \"downgrade"
+      }, {
+        "text": "\" a Firebase API key in the traditional sense, you have robust options for securing it through restrictions and for managing the costs"
+      }, {
+        "text": " associated with your Firebase project by adjusting your pricing plan."
+      }]
+    }],
+    "pendingInputs": [{
+      "text": "",
+      "role": "user"
+    }]
+  }
+}

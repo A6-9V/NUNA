@@ -1,0 +1,108 @@
+========================================
+  Complete Windows Setup Instructions
+  For: Lengkundee01@gmail.com
+       Lengkundee01@outlook.com
+========================================
+
+WHAT THIS SCRIPT DOES:
+----------------------
+1. Closes all File Explorer windows
+2. Configures Windows Account Sync settings
+3. Sets up File Explorer preferences (show extensions, hidden files)
+4. Attempts to configure default browser
+5. Opens default apps settings
+6. Configures Windows Defender exclusions for cloud folders
+7. Sets up Windows Firewall rules for cloud sync
+8. Configures Windows Security (Controlled Folder Access)
+9. Opens account sync settings
+10. Verifies cloud sync services (OneDrive, Dropbox, Google Drive)
+
+HOW TO RUN:
+-----------
+Option 1: Double-click "RUN-COMPLETE-SETUP.bat"
+Option 2: Right-click "complete-windows-setup.ps1" > Run with PowerShell > Run as Administrator
+Option 3: Double-click "elevate.vbs" (will prompt for admin)
+
+MANUAL STEPS REQUIRED AFTER RUNNING:
+------------------------------------
+
+1. SIGN IN TO MICROSOFT ACCOUNT:
+   - Open Settings (Windows + I)
+   - Go to Accounts > Your info
+   - Sign in with: Lengkundee01@outlook.com
+   - Enable sync in Settings > Accounts > Sync your settings
+
+2. CONFIGURE ONEDRIVE:
+   - Open OneDrive from Start menu
+   - Sign in with: Lengkundee01@outlook.com
+   - Choose folders to sync
+   - Verify sync is working
+
+3. CONFIGURE GOOGLE DRIVE:
+   - Open Google Drive File Stream
+   - Sign in with: Lengkundee01@gmail.com
+   - Verify sync is working
+
+4. CONFIGURE DROPBOX (if installed):
+   - Open Dropbox
+   - Sign in with your account
+   - Verify sync is working
+
+5. SET DEFAULT BROWSER:
+   - Open Settings > Apps > Default apps
+   - Set your preferred browser (Chrome, Edge, Firefox, etc.)
+   - The script will attempt to set Chrome if available
+
+6. CONFIGURE DEFAULT APPS:
+   - Settings > Apps > Default apps
+   - Set defaults for:
+     * Email: Outlook (for Lengkundee01@outlook.com)
+     * PDF files: Your preferred PDF reader
+     * Images: Your preferred image viewer
+     * Music: Your preferred music player
+     * Video: Your preferred video player
+
+7. ENABLE BROWSER SYNC:
+   Chrome:
+   - Sign in with Lengkundee01@gmail.com
+   - Settings > Sync and Google services > Manage what you sync
+   - Enable all sync options
+   
+   Edge:
+   - Sign in with Lengkundee01@outlook.com
+   - Settings > Profiles > Sync > Turn on sync
+   
+   Firefox:
+   - Sign in with Firefox account
+   - Settings > Sync > Enable sync
+
+8. VERIFY SECURITY SETTINGS:
+   - Open Windows Security
+   - Check that cloud folders are excluded from scans
+   - Verify firewall rules are active
+   - Check Controlled Folder Access settings
+
+9. VERIFY CLOUD SYNC:
+   - Check OneDrive icon in system tray - should show synced
+   - Check Google Drive icon - should show synced
+   - Check Dropbox icon - should show synced
+   - Test by creating a file in each cloud folder
+
+TROUBLESHOOTING:
+---------------
+- If UAC prompt doesn't appear: Check Task Manager or Alt+Tab for hidden windows
+- If sync doesn't work: Verify you're signed in to each service
+- If firewall blocks sync: Check Windows Security > Firewall & network protection
+- If Defender blocks files: Check Windows Security > Virus & threat protection > Exclusions
+
+YOUR ACCOUNTS:
+-------------
+- Gmail: Lengkundee01@gmail.com
+- Outlook: Lengkundee01@outlook.com
+- Make sure both accounts are properly signed in
+
+========================================
+Setup Complete!
+========================================
+
+
