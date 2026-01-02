@@ -1,21 +1,36 @@
-# Google OAuth secrets/tokens (never commit)
-credentials.json
-token.json
-
-# OneDrive / Microsoft Graph tokens (never commit)
-.onedrive_token_cache.json
-
-# Local reports / plans
-gdrive-report*.csv
-gdrive-report*.json
-gdrive-plan*.json
-
-# Optional Dropbox import artifacts
-dropbox-download.zip
-dropbox-extracted/
-
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.so
+.Python
 .venv/
-.python-version
+venv/
+ENV/
+env/
+
+# OAuth credentials (NEVER commit these!)
+credentials.json
+token.json
+*.json.bak
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+*.tmp
+
+# Test outputs
+gdrive-report.*
+gdrive-plan-*.json
+ids_to_trash.json
