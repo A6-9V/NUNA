@@ -305,12 +305,35 @@ def cmd_trash_query(args: argparse.Namespace) -> int:
 
     ok = 0
     failed: List[Tuple[str, str]] = []
-    for f in matched:
-        try:
-            service.files().update(fileId=f.id, body={"trashed": True}).execute()
+    file_ids = [f.id for f in matched]
+
+    # Performance: Batch trash requests to avoid N+1 API calls.
+    def batch_callback(request_id: str, response: Any, exception: Optional[HttpError]) -> None:
+        nonlocal ok
+        if exception:
+            failed.append((request_id, str(exception)))
+        else:
             ok += 1
+
+    batch_size = 100  # Google Drive API limit
+    for i in range(0, len(file_ids), batch_size):
+        batch = service.new_batch_http_request(callback=batch_callback)
+        chunk = file_ids[i : i + batch_size]
+        if not chunk:
+            continue
+        for fid in chunk:
+            batch.add(
+                service.files().update(fileId=fid, body={"trashed": True}),
+                request_id=fid,
+            )
+        try:
+            batch.execute()
         except HttpError as ex:
-            failed.append((f.id, str(ex)))
+            eprint(f"Batch execution failed: {ex}")
+            # As a fallback, assume all files in this chunk failed.
+            for fid in chunk:
+                if not any(f[0] == fid for f in failed):
+                    failed.append((fid, str(ex)))
 
     print(f"Trashed: {ok}/{n}")
     if failed:
@@ -488,12 +511,37 @@ def cmd_trash(args: argparse.Namespace) -> int:
 
     ok = 0
     failed: List[Tuple[str, str]] = []
-    for fid in file_ids:
-        try:
-            service.files().update(fileId=fid, body={"trashed": True}).execute()
+
+    # Performance: Batch trash requests to avoid N+1 API calls.
+    # The Google Drive API allows up to 100 calls per batch request.
+    def batch_callback(request_id: str, response: Any, exception: Optional[HttpError]) -> None:
+        nonlocal ok
+        if exception:
+            # The request_id is the file ID we passed in.
+            failed.append((request_id, str(exception)))
+        else:
             ok += 1
+
+    batch_size = 100  # Google Drive API limit
+    for i in range(0, len(file_ids), batch_size):
+        batch = service.new_batch_http_request(callback=batch_callback)
+        chunk = file_ids[i : i + batch_size]
+        if not chunk:
+            continue
+        for fid in chunk:
+            batch.add(
+                service.files().update(fileId=fid, body={"trashed": True}),
+                request_id=fid,
+            )
+        try:
+            batch.execute()
         except HttpError as ex:
-            failed.append((fid, str(ex)))
+            eprint(f"Batch execution failed: {ex}")
+            # As a fallback, assume all files in this chunk failed.
+            for fid in chunk:
+                # Avoid duplicating errors already caught by the callback
+                if not any(f[0] == fid for f in failed):
+                    failed.append((fid, str(ex)))
 
     print(f"Trashed: {ok}/{n}")
     if failed:
