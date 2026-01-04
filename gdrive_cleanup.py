@@ -303,14 +303,8 @@ def cmd_trash_query(args: argparse.Namespace) -> int:
         print("Dry-run only (no changes). Re-run with --apply to execute.")
         return 0
 
-    ok = 0
-    failed: List[Tuple[str, str]] = []
-    for f in matched:
-        try:
-            service.files().update(fileId=f.id, body={"trashed": True}).execute()
-            ok += 1
-        except HttpError as ex:
-            failed.append((f.id, str(ex)))
+    file_ids = [f.id for f in matched]
+    ok, failed = trash_files_batch(service, file_ids=file_ids)
 
     print(f"Trashed: {ok}/{n}")
     if failed:
@@ -446,6 +440,48 @@ def cmd_duplicates(args: argparse.Namespace) -> int:
     return 0
 
 
+def trash_files_batch(
+    service,
+    *,
+    file_ids: List[str],
+) -> Tuple[int, List[Tuple[str, str]]]:
+    """
+    Trash a list of files using batch requests for performance.
+    Google Drive API limits batch requests to 100 operations.
+    """
+    if not file_ids:
+        return (0, [])
+
+    ok = 0
+    failed: List[Tuple[str, str]] = []
+
+    # --- OPTIMIZATION: Use batch API calls to trash files ---
+    # This avoids the N+1 problem of sending a separate HTTP request for each
+    # file. By grouping up to 100 trash operations into a single batch
+    # request, we significantly reduce latency and API overhead, especially
+    # for a large number of files.
+
+    def _callback(request_id: str, response: Any, exception: Optional[HttpError]) -> None:
+        nonlocal ok
+        if exception:
+            failed.append((request_id, str(exception)))
+        else:
+            ok += 1
+
+    # Chunk IDs into batches of 100 (API limit)
+    for i in range(0, len(file_ids), 100):
+        chunk = file_ids[i : i + 100]
+        batch = service.new_batch_http_request(callback=_callback)
+        for fid in chunk:
+            batch.add(
+                service.files().update(fileId=fid, body={"trashed": True}),
+                request_id=fid,
+            )
+        batch.execute()
+
+    return (ok, failed)
+
+
 def cmd_trash(args: argparse.Namespace) -> int:
     # This command modifies Drive, so it uses the broader scope.
     scopes = SCOPES_TRASH
@@ -486,14 +522,7 @@ def cmd_trash(args: argparse.Namespace) -> int:
         print("Dry-run only (no changes). Re-run with --apply to execute.")
         return 0
 
-    ok = 0
-    failed: List[Tuple[str, str]] = []
-    for fid in file_ids:
-        try:
-            service.files().update(fileId=fid, body={"trashed": True}).execute()
-            ok += 1
-        except HttpError as ex:
-            failed.append((fid, str(ex)))
+    ok, failed = trash_files_batch(service, file_ids=file_ids)
 
     print(f"Trashed: {ok}/{n}")
     if failed:
