@@ -303,14 +303,43 @@ def cmd_trash_query(args: argparse.Namespace) -> int:
         print("Dry-run only (no changes). Re-run with --apply to execute.")
         return 0
 
+    # --- OPTIMIZATION: Batch file trashing ---
+    # Instead of N individual API calls, we use a batch request to trash
+    # up to 100 files at a time. This is significantly faster and more
+    # efficient, reducing the number of HTTP requests from N to ceil(N/100).
     ok = 0
     failed: List[Tuple[str, str]] = []
-    for f in matched:
+    file_ids = [f.id for f in matched]
+
+    chunk_size = 100  # Google Drive API batch limit
+    for i in range(0, n, chunk_size):
+        chunk_ids = file_ids[i : i + chunk_size]
+        batch_failed_map: Dict[str, str] = {}
+
+        def callback(request_id: str, response: Any, exception: Optional[HttpError]) -> None:
+            if exception:
+                batch_failed_map[request_id] = str(exception)
+
+        batch = service.new_batch_http_request(callback=callback)
+        for fid in chunk_ids:
+            batch.add(
+                service.files().update(fileId=fid, body={"trashed": True}),
+                request_id=fid,
+            )
         try:
-            service.files().update(fileId=f.id, body={"trashed": True}).execute()
-            ok += 1
-        except HttpError as ex:
-            failed.append((f.id, str(ex)))
+            batch.execute()
+        except Exception as e:
+            # If the entire batch fails, mark all items in the chunk as failed.
+            for fid in chunk_ids:
+                failed.append((fid, f"Batch execution error: {e}"))
+            continue  # Go to the next chunk
+
+        # Process results from the batch callback
+        for fid in chunk_ids:
+            if fid in batch_failed_map:
+                failed.append((fid, batch_failed_map[fid]))
+            else:
+                ok += 1
 
     print(f"Trashed: {ok}/{n}")
     if failed:
@@ -486,14 +515,37 @@ def cmd_trash(args: argparse.Namespace) -> int:
         print("Dry-run only (no changes). Re-run with --apply to execute.")
         return 0
 
+    # --- OPTIMIZATION: Batch file trashing ---
+    # Re-using the same batching logic from trash-query for performance.
     ok = 0
     failed: List[Tuple[str, str]] = []
-    for fid in file_ids:
+    chunk_size = 100  # Google Drive API batch limit
+    for i in range(0, n, chunk_size):
+        chunk_ids = file_ids[i : i + chunk_size]
+        batch_failed_map: Dict[str, str] = {}
+
+        def callback(request_id: str, response: Any, exception: Optional[HttpError]) -> None:
+            if exception:
+                batch_failed_map[request_id] = str(exception)
+
+        batch = service.new_batch_http_request(callback=callback)
+        for fid in chunk_ids:
+            batch.add(
+                service.files().update(fileId=fid, body={"trashed": True}),
+                request_id=fid,
+            )
         try:
-            service.files().update(fileId=fid, body={"trashed": True}).execute()
-            ok += 1
-        except HttpError as ex:
-            failed.append((fid, str(ex)))
+            batch.execute()
+        except Exception as e:
+            for fid in chunk_ids:
+                failed.append((fid, f"Batch execution error: {e}"))
+            continue
+
+        for fid in chunk_ids:
+            if fid in batch_failed_map:
+                failed.append((fid, batch_failed_map[fid]))
+            else:
+                ok += 1
 
     print(f"Trashed: {ok}/{n}")
     if failed:
