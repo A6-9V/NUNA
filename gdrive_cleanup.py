@@ -303,14 +303,12 @@ def cmd_trash_query(args: argparse.Namespace) -> int:
         print("Dry-run only (no changes). Re-run with --apply to execute.")
         return 0
 
-    ok = 0
-    failed: List[Tuple[str, str]] = []
-    for f in matched:
-        try:
-            service.files().update(fileId=f.id, body={"trashed": True}).execute()
-            ok += 1
-        except HttpError as ex:
-            failed.append((f.id, str(ex)))
+    #
+    # ⚡ OPTIMIZATION: Use batch API to trash files instead of one by one.
+    # This avoids the N+1 problem and is much faster for many files.
+    #
+    file_ids = [f.id for f in matched]
+    ok, failed = trash_files_batch(service, file_ids=file_ids)
 
     print(f"Trashed: {ok}/{n}")
     if failed:
@@ -446,6 +444,39 @@ def cmd_duplicates(args: argparse.Namespace) -> int:
     return 0
 
 
+def trash_files_batch(
+    service,
+    file_ids: List[str],
+) -> Tuple[int, List[Tuple[str, str]]]:
+    """
+    Move a list of files to trash using batched API calls.
+    Returns (ok_count, failed_items).
+    """
+    ok = 0
+    failed: List[Tuple[str, str]] = []
+
+    def _batch_callback(request_id: str, response: Any, exception: Optional[HttpError]) -> None:
+        nonlocal ok
+        if exception:
+            # The request_id is the file ID we passed to add().
+            failed.append((request_id, str(exception)))
+        else:
+            ok += 1
+
+    # Process files in chunks of 100, as the batch API has a limit.
+    for i in range(0, len(file_ids), 100):
+        chunk = file_ids[i : i + 100]
+        batch = service.new_batch_http_request(callback=_batch_callback)
+        for fid in chunk:
+            # Pass request_id to match it up in the callback.
+            batch.add(
+                service.files().update(fileId=fid, body={"trashed": True}),
+                request_id=fid,
+            )
+        batch.execute()
+    return ok, failed
+
+
 def cmd_trash(args: argparse.Namespace) -> int:
     # This command modifies Drive, so it uses the broader scope.
     scopes = SCOPES_TRASH
@@ -486,14 +517,11 @@ def cmd_trash(args: argparse.Namespace) -> int:
         print("Dry-run only (no changes). Re-run with --apply to execute.")
         return 0
 
-    ok = 0
-    failed: List[Tuple[str, str]] = []
-    for fid in file_ids:
-        try:
-            service.files().update(fileId=fid, body={"trashed": True}).execute()
-            ok += 1
-        except HttpError as ex:
-            failed.append((fid, str(ex)))
+    #
+    # ⚡ OPTIMIZATION: Use batch API to trash files instead of one by one.
+    # This avoids the N+1 problem and is much faster for many files.
+    #
+    ok, failed = trash_files_batch(service, file_ids=file_ids)
 
     print(f"Trashed: {ok}/{n}")
     if failed:
