@@ -30,6 +30,7 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from googleapiclient.http import BatchHttpRequest
 
 
 SCOPES_READONLY = ["https://www.googleapis.com/auth/drive.metadata.readonly"]
@@ -228,6 +229,41 @@ def and_query(parts: Iterable[Optional[str]]) -> Optional[str]:
     return " and ".join(f"({x})" for x in xs)
 
 
+def trash_files_batch(
+    service,
+    *,
+    file_ids: List[str],
+) -> Tuple[int, List[Tuple[str, str]]]:
+    # ⚡ Bolt: Use BatchHttpRequest to trash files in chunks of 100,
+    # avoiding the N+1 problem of sending one API request per file.
+    # This is much faster and more efficient for large numbers of files.
+    ok = 0
+    failed: List[Tuple[str, str]] = []
+    file_ids_chunked = [file_ids[i : i + 100] for i in range(0, len(file_ids), 100)]
+
+    def _callback(request_id: str, response: Any, exception: HttpError | None) -> None:
+        nonlocal ok
+        if exception:
+            try:
+                # request_id is 'trash-<file_id>'.
+                file_id = request_id.split("-", 1)[1]
+                failed.append((file_id, str(exception)))
+            except (IndexError, AttributeError):
+                failed.append(("unknown-id", str(exception)))
+        else:
+            ok += 1
+
+    for chunk in file_ids_chunked:
+        batch = BatchHttpRequest(callback=_callback)
+        for fid in chunk:
+            batch.add(
+                service.files().update(fileId=fid, body={"trashed": True}),
+                request_id=f"trash-{fid}",
+            )
+        batch.execute()
+    return ok, failed
+
+
 def cmd_trash_query(args: argparse.Namespace) -> int:
     # This command modifies Drive, so it uses the broader scope.
     scopes = SCOPES_TRASH
@@ -303,15 +339,9 @@ def cmd_trash_query(args: argparse.Namespace) -> int:
         print("Dry-run only (no changes). Re-run with --apply to execute.")
         return 0
 
-    ok = 0
-    failed: List[Tuple[str, str]] = []
-    for f in matched:
-        try:
-            service.files().update(fileId=f.id, body={"trashed": True}).execute()
-            ok += 1
-        except HttpError as ex:
-            failed.append((f.id, str(ex)))
-
+    file_ids = [f.id for f in matched]
+    # ⚡ Bolt: Use batch trash to avoid N+1 API calls.
+    ok, failed = trash_files_batch(service, file_ids=file_ids)
     print(f"Trashed: {ok}/{n}")
     if failed:
         print("")
@@ -486,15 +516,8 @@ def cmd_trash(args: argparse.Namespace) -> int:
         print("Dry-run only (no changes). Re-run with --apply to execute.")
         return 0
 
-    ok = 0
-    failed: List[Tuple[str, str]] = []
-    for fid in file_ids:
-        try:
-            service.files().update(fileId=fid, body={"trashed": True}).execute()
-            ok += 1
-        except HttpError as ex:
-            failed.append((fid, str(ex)))
-
+    # ⚡ Bolt: Use batch trash to avoid N+1 API calls.
+    ok, failed = trash_files_batch(service, file_ids=file_ids)
     print(f"Trashed: {ok}/{n}")
     if failed:
         print("")
