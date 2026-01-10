@@ -228,6 +228,33 @@ def and_query(parts: Iterable[Optional[str]]) -> Optional[str]:
     return " and ".join(f"({x})" for x in xs)
 
 
+def _trash_files_batch(service, file_ids: List[str]) -> Tuple[int, List[Tuple[str, str]]]:
+    """Trashes a list of files using batch requests for performance."""
+    failed: List[Tuple[str, str]] = []
+
+    def callback(request_id: str, response: Any, exception: Optional[HttpError]) -> None:
+        if exception:
+            # This callback is shared by all batch executions.
+            failed.append((request_id, str(exception)))
+
+    BATCH_SIZE = 100  # Google Drive API batch limit
+    for i in range(0, len(file_ids), BATCH_SIZE):
+        chunk = file_ids[i : i + BATCH_SIZE]
+        if not chunk:
+            continue
+
+        batch = service.new_batch_http_request(callback=callback)
+        for fid in chunk:
+            batch.add(
+                service.files().update(fileId=fid, body={"trashed": True}),
+                request_id=fid,
+            )
+        batch.execute()
+
+    ok = len(file_ids) - len(failed)
+    return ok, failed
+
+
 def cmd_trash_query(args: argparse.Namespace) -> int:
     # This command modifies Drive, so it uses the broader scope.
     scopes = SCOPES_TRASH
@@ -303,14 +330,9 @@ def cmd_trash_query(args: argparse.Namespace) -> int:
         print("Dry-run only (no changes). Re-run with --apply to execute.")
         return 0
 
-    ok = 0
-    failed: List[Tuple[str, str]] = []
-    for f in matched:
-        try:
-            service.files().update(fileId=f.id, body={"trashed": True}).execute()
-            ok += 1
-        except HttpError as ex:
-            failed.append((f.id, str(ex)))
+    # Performance: Batch trash requests to avoid N+1 API calls.
+    file_ids_to_trash = [f.id for f in matched]
+    ok, failed = _trash_files_batch(service, file_ids_to_trash)
 
     print(f"Trashed: {ok}/{n}")
     if failed:
@@ -486,14 +508,8 @@ def cmd_trash(args: argparse.Namespace) -> int:
         print("Dry-run only (no changes). Re-run with --apply to execute.")
         return 0
 
-    ok = 0
-    failed: List[Tuple[str, str]] = []
-    for fid in file_ids:
-        try:
-            service.files().update(fileId=fid, body={"trashed": True}).execute()
-            ok += 1
-        except HttpError as ex:
-            failed.append((fid, str(ex)))
+    # Performance: Batch trash requests to avoid N+1 API calls.
+    ok, failed = _trash_files_batch(service, file_ids)
 
     print(f"Trashed: {ok}/{n}")
     if failed:
