@@ -228,6 +228,59 @@ def and_query(parts: Iterable[Optional[str]]) -> Optional[str]:
     return " and ".join(f"({x})" for x in xs)
 
 
+def trash_files_batch(
+    service,
+    *,
+    file_ids: List[str],
+) -> Tuple[int, List[Tuple[str, str]]]:
+    """
+    Move a list of files to trash using batch API calls for performance.
+    Returns (success_count, failures).
+    """
+    ok = 0
+    failed: List[Tuple[str, str]] = []
+
+    # API limit is 100 per batch
+    chunk_size = 100
+    chunks = [
+        file_ids[i : i + chunk_size] for i in range(0, len(file_ids), chunk_size)
+    ]
+
+    for i, chunk in enumerate(chunks):
+        batch = service.new_batch_http_request()
+        errors: Dict[str, str] = {}
+
+        def _callback(request_id: str, response: Any, exception: HttpError | None):
+            if exception:
+                errors[request_id] = str(exception)
+
+        for fid in chunk:
+            # request_id needs to be unique within a batch
+            batch.add(
+                service.files().update(fileId=fid, body={"trashed": True}),
+                callback=_callback,
+                request_id=fid,
+            )
+
+        try:
+            batch.execute()
+            # Tally results after batch executes
+            for fid in chunk:
+                if fid in errors:
+                    failed.append((fid, errors[fid]))
+                else:
+                    ok += 1
+            eprint(f"  Batch {i+1}/{len(chunks)} processed: {len(chunk)} items ({len(errors)} errors)")
+        except Exception as ex:
+            # This would be a more catastrophic failure of the whole batch
+            msg = str(ex)
+            for fid in chunk:
+                failed.append((fid, msg))
+            eprint(f"  Batch {i+1}/{len(chunks)} failed entirely: {msg}")
+
+    return (ok, failed)
+
+
 def cmd_trash_query(args: argparse.Namespace) -> int:
     # This command modifies Drive, so it uses the broader scope.
     scopes = SCOPES_TRASH
@@ -303,14 +356,9 @@ def cmd_trash_query(args: argparse.Namespace) -> int:
         print("Dry-run only (no changes). Re-run with --apply to execute.")
         return 0
 
-    ok = 0
-    failed: List[Tuple[str, str]] = []
-    for f in matched:
-        try:
-            service.files().update(fileId=f.id, body={"trashed": True}).execute()
-            ok += 1
-        except HttpError as ex:
-            failed.append((f.id, str(ex)))
+    file_ids = [f.id for f in matched]
+    print(f"Sending {len(file_ids)} files to trash...")
+    ok, failed = trash_files_batch(service, file_ids=file_ids)
 
     print(f"Trashed: {ok}/{n}")
     if failed:
@@ -486,14 +534,8 @@ def cmd_trash(args: argparse.Namespace) -> int:
         print("Dry-run only (no changes). Re-run with --apply to execute.")
         return 0
 
-    ok = 0
-    failed: List[Tuple[str, str]] = []
-    for fid in file_ids:
-        try:
-            service.files().update(fileId=fid, body={"trashed": True}).execute()
-            ok += 1
-        except HttpError as ex:
-            failed.append((fid, str(ex)))
+    print(f"Sending {n} files to trash...")
+    ok, failed = trash_files_batch(service, file_ids=file_ids)
 
     print(f"Trashed: {ok}/{n}")
     if failed:
