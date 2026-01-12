@@ -65,3 +65,7 @@ This section provides instructions on how to set up the repository and where to 
 *   `dropbox_to_onedrive.py`: The main script for importing Dropbox shared folders to OneDrive.
 *   `requirements.txt`: A list of the Python dependencies required to run the scripts.
 *   `guidebook/`: The directory containing this guide book.
+
+### GitHub Agents Setup
+
+*   `guidebook/04_org_copilot_agents_setup.md`: A comprehensive guide for setting up GitHub Copilot and Jules agents at the organization level.
