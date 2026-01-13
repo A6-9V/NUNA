@@ -18,6 +18,7 @@ from __future__ import annotations
 import argparse
 import csv
 import datetime as dt
+import heapq
 import json
 import os
 import sys
@@ -378,6 +379,57 @@ def cmd_audit(args: argparse.Namespace) -> int:
     )
     service = drive_service(creds=creds)
 
+    # --- OPTIMIZATION: Memory-efficient audit ---
+    # When not exporting to CSV/JSON, the audit can find the largest files
+    # without storing the entire file list in memory. This is critical for
+    # very large drives, as it reduces memory usage from O(N) to O(k), where N
+    # is the total number of files and k is the number of top files to show.
+    # A min-heap is used to keep track of the largest k files seen so far.
+    is_exporting = args.csv or args.json
+    if is_exporting:
+        # Fallback to the original memory-intensive method when exporting.
+        return _cmd_audit_export(args, service)
+
+    top_n_heap: List[Tuple[int, DriveFile]] = []
+    total_size = 0
+    scanned_count = 0
+    count_with_size = 0
+    try:
+        for f in iter_files(
+            service,
+            q=args.query,
+            include_trashed=args.include_trashed,
+            page_size=args.page_size,
+        ):
+            scanned_count += 1
+            if f.size is not None:
+                total_size += f.size
+                count_with_size += 1
+                # Use a min-heap to keep track of the k largest files.
+                if len(top_n_heap) < args.top:
+                    heapq.heappush(top_n_heap, (f.size, f))
+                else:
+                    heapq.heappushpop(top_n_heap, (f.size, f))
+    except HttpError as ex:
+        eprint("Drive API error:", ex)
+        return 2
+
+    # The heap contains the k largest files, sorted smallest to largest.
+    top_n_files = sorted([item[1] for item in top_n_heap], key=lambda x: x.size or -1, reverse=True)
+
+    print(f"Files scanned: {scanned_count}")
+    print(f"Total size (files with size): {human_bytes(total_size)} ({count_with_size} files)")
+    print("")
+    print(f"Top {len(top_n_files)} largest files:")
+    for f in top_n_files:
+        print(f"- {human_bytes(f.size)}  {f.name}  ({f.id})")
+        if args.show_links and f.webViewLink:
+            print(f"  link: {f.webViewLink}")
+    return 0
+
+
+def _cmd_audit_export(args: argparse.Namespace, service) -> int:
+    """Original audit implementation, used when exporting requires all files in memory."""
     files: List[DriveFile] = []
     total_size = 0
     count_with_size = 0
