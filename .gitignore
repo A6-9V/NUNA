@@ -34,3 +34,7 @@ desktop.ini
 gdrive-report.*
 gdrive-plan-*.json
 ids_to_trash.json
+
+# Local trading data (do not commit)
+trading_data/
+trading_data_config.json

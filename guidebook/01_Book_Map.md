@@ -32,6 +32,21 @@ This section illustrates the connections between your local machine, the cloud s
 *   **Next Steps:**
     *   Verify that the files have been successfully uploaded to your OneDrive.
 
+### `trading_data_manager.py`
+
+*   **Purpose:** To automate local file management for trading logs, raw exports, and reports.
+*   **Action:**
+    1.  Creates a consistent local folder structure under `trading_data/`.
+    2.  Converts `raw_csv/*.csv` into `reports/*.xlsx`.
+    3.  Moves older logs and raw files into `trash/` (quarantine).
+    4.  Archives older reports into `archive/YYYY/MM/`.
+    5.  Writes a per-run log into `automation_logs/`.
+*   **Target:** Local filesystem only (no cloud APIs).
+*   **Next Steps:**
+    *   Copy `trading_data_config.example.json` to `trading_data_config.json` and tune retention days.
+    *   Run a dry-run first: `python3 trading_data_manager.py run`
+    *   Schedule daily runs (cron / Task Scheduler) once you’re happy with the output.
+
 ## Repository Instruction and Map
 
 This section provides instructions on how to set up the repository and where to find the key scripts.
