@@ -83,6 +83,30 @@ python dropbox_to_onedrive.py --dropbox-url "<DROPBOX_SHARED_FOLDER_URL>" --oned
 
 ---
 
+## 📈 Trading Data File Management (Local)
+
+This repo also includes a safe-by-default local automation helper for trading logs/exports/reports:
+
+- Script: `trading_data_manager.py`
+- Guide: `guidebook/05_trading_data_file_management.md`
+
+**Initialize folders + write example config:**
+```bash
+python3 trading_data_manager.py init --write-example-config trading_data_config.example.json
+```
+
+**Daily run (dry-run first):**
+```bash
+python3 trading_data_manager.py run
+```
+
+**Apply (moves/converts files):**
+```bash
+python3 trading_data_manager.py run --apply
+```
+
+---
+
 ## 🔧 Troubleshooting
 
 ### Packages Not Installed?

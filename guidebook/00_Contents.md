@@ -10,6 +10,7 @@ This guide book provides a comprehensive overview of the **Google Drive Cleanup 
 | [02_gdrive_cleanup_docs.md](02_gdrive_cleanup_docs.md) | Google Drive cleanup tool documentation |
 | [03_dropbox_to_onedrive_docs.md](03_dropbox_to_onedrive_docs.md) | Dropbox to OneDrive migration guide |
 | [04_org_copilot_agents_setup.md](04_org_copilot_agents_setup.md) | **GitHub Copilot & Jules Agents: Organization Setup** |
+| [05_trading_data_file_management.md](05_trading_data_file_management.md) | Local trading logs & reports file management workflow |
 
 ## Repository Cloning Instructions
 

@@ -31,6 +31,20 @@ python3 -m venv .venv
 pip install -r requirements.txt
 ```
 
+## Local trading data file management (optional)
+
+If you also want a clean, automated workflow for **local trading logs/exports/reports**, use:
+
+- Script: `trading_data_manager.py`
+- Guide: `guidebook/05_trading_data_file_management.md`
+- Example config: `trading_data_config.example.json` (copy to `trading_data_config.json`)
+
+Dry-run:
+
+```bash
+python3 trading_data_manager.py run
+```
+
 ## Usage
 
 ### Audit: find largest files (read-only)

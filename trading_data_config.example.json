@@ -1,0 +1,27 @@
+{
+  "conversion": {
+    "csv_to_xlsx": true,
+    "delimiter": ",",
+    "encoding": "utf-8",
+    "sheet_name": "data"
+  },
+  "max_actions_per_run": 500,
+  "paths": {
+    "archive_dir": "archive",
+    "logs_dir": "logs",
+    "raw_csv_dir": "raw_csv",
+    "reports_dir": "reports",
+    "run_logs_dir": "automation_logs",
+    "trash_dir": "trash"
+  },
+  "reports": {
+    "keep_latest_per_day": true
+  },
+  "retention_days": {
+    "csv_to_trash": 14,
+    "trash_purge": 30,
+    "txt_to_trash": 14,
+    "xlsx_to_archive": 90
+  }
+}
+
