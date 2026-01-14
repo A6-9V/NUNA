@@ -45,6 +45,18 @@ DEFAULT_FIELDS = ",".join(
 )
 
 
+# --- OPTIMIZATION: Minimal fields for trash-query ---
+# To speed up the initial file scan, the `trash-query` command requests only
+# the fields essential for identifying, displaying, and trashing files. This
+# reduces the API response payload size, improving performance.
+TRASH_QUERY_FIELDS = ",".join(
+    [
+        "nextPageToken",
+        "files(id,name,size,webViewLink)",
+    ]
+)
+
+
 @dataclass(frozen=True)
 class DriveFile:
     id: str
@@ -308,6 +320,7 @@ def cmd_trash_query(args: argparse.Namespace) -> int:
             q=final_q,
             include_trashed=args.include_trashed,
             page_size=args.page_size,
+            fields=TRASH_QUERY_FIELDS,
         ):
             matched.append(f)
             if args.limit and len(matched) >= args.limit:
