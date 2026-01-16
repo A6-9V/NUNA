@@ -493,6 +493,22 @@ def _cmd_audit_export(args: argparse.Namespace, service) -> int:
 
 
 def cmd_duplicates(args: argparse.Namespace) -> int:
+    """
+    Finds duplicate files based on their md5Checksum.
+
+    This function is optimized for performance and memory efficiency by using a
+    two-pass strategy.
+
+    Pass 1: Find duplicate checksums
+      - Fetches only the `md5Checksum` for all files.
+      - Counts checksum occurrences to identify which are duplicates.
+      - This pass is fast and light on memory as it avoids storing full file metadata.
+
+    Pass 2: Fetch full metadata for duplicates
+      - Queries the API for full file details, but only for the files whose
+        checksums were identified as duplicates in Pass 1.
+      - This is efficient because it avoids fetching metadata for unique files.
+    """
     scopes = SCOPES_READONLY
     creds = load_credentials(
         credentials_path=args.credentials,
@@ -501,7 +517,9 @@ def cmd_duplicates(args: argparse.Namespace) -> int:
     )
     service = drive_service(creds=creds)
 
-    by_hash: Dict[str, List[DriveFile]] = defaultdict(list)
+    # --- Pass 1: Find duplicate md5Checksums ---
+    eprint("Pass 1: Finding duplicate checksums...")
+    checksum_counts: Dict[str, int] = defaultdict(int)
     scanned = 0
     try:
         for f in iter_files(
@@ -509,16 +527,52 @@ def cmd_duplicates(args: argparse.Namespace) -> int:
             q=args.query,
             include_trashed=args.include_trashed,
             page_size=args.page_size,
+            fields=f"nextPageToken,files(md5Checksum)",
         ):
             scanned += 1
-            if not f.md5Checksum:
-                continue
-            by_hash[f.md5Checksum].append(f)
+            if f.md5Checksum:
+                checksum_counts[f.md5Checksum] += 1
     except HttpError as ex:
-        eprint("Drive API error:", ex)
+        eprint("Drive API error during Pass 1:", ex)
         return 2
 
-    dup_groups = [g for g in by_hash.values() if len(g) >= 2]
+    duplicate_checksums = {
+        md5 for md5, count in checksum_counts.items() if count >= 2
+    }
+
+    if not duplicate_checksums:
+        print(f"Files scanned: {scanned}")
+        print("No duplicate files found.")
+        return 0
+
+    # --- Pass 2: Fetch full metadata for duplicate files ---
+    eprint(
+        f"Pass 2: Found {len(duplicate_checksums)} checksums with duplicates. Fetching file details..."
+    )
+    by_hash: Dict[str, List[DriveFile]] = defaultdict(list)
+    try:
+        # Batch queries for checksums to avoid overly long query strings.
+        # A batch size of 50 is a conservative choice.
+        checksum_list = list(duplicate_checksums)
+        for i in range(0, len(checksum_list), 50):
+            batch = checksum_list[i : i + 50]
+            md5_queries = [f"md5Checksum = {drive_single_quote(md5)}" for md5 in batch]
+            checksum_q = " or ".join(md5_queries)
+            final_q = and_query([args.query, f"({checksum_q})"])
+
+            for f in iter_files(
+                service,
+                q=final_q,
+                include_trashed=args.include_trashed,
+                page_size=args.page_size,
+            ):
+                if f.md5Checksum:
+                    by_hash[f.md5Checksum].append(f)
+    except HttpError as ex:
+        eprint("Drive API error during Pass 2:", ex)
+        return 2
+
+    dup_groups = list(by_hash.values())
     dup_groups.sort(key=lambda g: sum((x.size or 0) for x in g), reverse=True)
 
     print(f"Files scanned: {scanned}")
