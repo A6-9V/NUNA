@@ -182,6 +182,37 @@ class GraphClient:
                     continue
                 r.raise_for_status()
 
+    def delta(self, *, item_id: str) -> Iterable[dict]:
+        """
+        Iterate through all descendants of an item using the delta query.
+        This is significantly faster than recursive listings for large folders.
+        """
+        next_link = f"{GRAPH_BASE}/me/drive/items/{item_id}/delta"
+        while next_link:
+            r = self._s.get(next_link, timeout=120)
+            r.raise_for_status()
+            data = r.json()
+            yield from data.get("value", [])
+            next_link = data.get("@odata.nextLink")
+
+    def _iter_children(self, *, item_id: str) -> Iterable[dict]:
+        """Iterate through all children of an item, handling pagination."""
+        path = (
+            "/me/drive/root/children"
+            if item_id == "root"
+            else f"/me/drive/items/{item_id}/children"
+        )
+        params: Optional[Dict] = {"$select": "id,name,folder", "$top": 999}
+        url: Optional[str] = f"{GRAPH_BASE}{path}"
+        while url:
+            r = self._s.get(url, params=params, timeout=120)
+            # Params are only needed for the first request with a relative path
+            params = None
+            r.raise_for_status()
+            data = r.json()
+            yield from data.get("value", [])
+            url = data.get("@odata.nextLink")
+
 
 def load_onedrive_auth(
     *,
@@ -227,52 +258,47 @@ def load_onedrive_auth(
     return GraphAuth(access_token=str(result["access_token"]))
 
 
-def list_children(client: GraphClient, *, parent_id: str, next_link: Optional[str] = None) -> dict:
-    if next_link:
-        # Graph API's nextLink is a full URL, so we don't use GRAPH_BASE
-        r = client._s.get(next_link, timeout=120)
-        r.raise_for_status()
-        return r.json()
+def get_existing_files_delta(
+    client: GraphClient, *, item_id: str, dest_folder_name: str
+) -> Set[Path]:
+    """
+    Use Graph's `delta` query for a high-performance recursive file listing.
+    This avoids the N+1 problem of traversing the folder hierarchy manually.
+    """
+    existing_paths: Set[Path] = set()
+    # The `delta` response provides item paths relative to the drive root.
+    # We need to strip the destination folder's path to make them relative
+    # to the sync root, for accurate duplicate detection.
+    # Example: we want "sub/file.txt", not "MyImport/sub/file.txt".
+    path_prefix_to_strip = f"{dest_folder_name}/"
 
-    if parent_id == "root":
-        return client.get_json(
-            "/me/drive/root/children",
-            params={"$select": "id,name,folder,file", "$top": 999},
-        )
-    else:
-        return client.get_json(
-            f"/me/drive/items/{parent_id}/children",
-            params={"$select": "id,name,folder,file", "$top": 999},
-        )
+    for item in client.delta(item_id=item_id):
+        # The `parentReference.path` gives the full path from the drive root.
+        # Example: /drives/{id}/root:/folder/subfolder
+        path_str = item.get("parentReference", {}).get("path")
+        name = item.get("name")
+        if not path_str or not name or not item.get("file"):
+            continue
 
+        # Find the start of the path relative to the drive root.
+        colon_idx = path_str.find(":")
+        if colon_idx == -1:
+            continue
 
-def get_existing_files_recursive(
-    client: GraphClient, *, item_id: str, current_path: Path, existing_paths: Set[Path]
-) -> None:
-    """Recursively find all file paths in a OneDrive folder."""
-    next_link = None
-    while True:
-        data = list_children(client, parent_id=item_id, next_link=next_link)
-        for item in data.get("value", []):
-            name = item.get("name")
-            if not isinstance(name, str):
-                continue
+        # This gives a path like: /folder/subfolder
+        path_from_root = path_str[colon_idx + 1 :]
 
-            new_path = current_path / name
-            if item.get("file"):
-                existing_paths.add(new_path)
-            elif item.get("folder"):
-                folder_id = item.get("id")
-                if isinstance(folder_id, str):
-                    get_existing_files_recursive(
-                        client,
-                        item_id=folder_id,
-                        current_path=new_path,
-                        existing_paths=existing_paths,
-                    )
-        next_link = data.get("@odata.nextLink")
-        if not next_link:
-            break
+        # Full path of the item from the drive root.
+        full_path_from_root = f"{path_from_root}/{name}"
+
+        # Normalize to remove any leading slash for consistent matching.
+        full_path_from_root = full_path_from_root.lstrip("/")
+
+        if full_path_from_root.startswith(path_prefix_to_strip):
+            rel_path_str = full_path_from_root[len(path_prefix_to_strip) :]
+            existing_paths.add(Path(rel_path_str))
+
+    return existing_paths
 
 
 def get_or_create_folder(
@@ -285,7 +311,7 @@ def get_or_create_folder(
     # Cache by parent_id: { folder_name -> folder_id }
     if parent_id not in children_cache:
         mapping: Dict[str, str] = {}
-        for ch in list_children(client, parent_id=parent_id).get("value", []):
+        for ch in client._iter_children(item_id=parent_id):
             if ch.get("folder") is None:
                 continue
             nm = ch.get("name")
@@ -509,12 +535,13 @@ def main(argv: List[str]) -> int:
 
             if args.skip_duplicates:
                 print("Checking for existing files in OneDrive (this may take a while for large folders)...")
-                existing_paths: Set[Path] = set()
-                get_existing_files_recursive(
-                    client,
-                    item_id=dest_folder_id,
-                    current_path=Path(),
-                    existing_paths=existing_paths,
+                # --- OPTIMIZATION: High-performance duplicate check ---
+                # Use the Graph API's `delta` query to fetch the entire file
+                # list in the destination folder in a single operation. This
+                # avoids the N+1 problem of recursively listing directories,
+                # significantly speeding up the check for large, nested folders.
+                existing_paths = get_existing_files_delta(
+                    client, item_id=dest_folder_id, dest_folder_name=args.onedrive_folder
                 )
                 if existing_paths:
                     print(f"Found {len(existing_paths)} existing files. Skipping duplicates.")
