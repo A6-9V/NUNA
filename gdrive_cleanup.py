@@ -37,10 +37,17 @@ SCOPES_READONLY = ["https://www.googleapis.com/auth/drive.metadata.readonly"]
 SCOPES_TRASH = ["https://www.googleapis.com/auth/drive"]
 
 
+# --- OPTIMIZATION: Reusable constant for Drive file fields ---
+# This constant defines the full set of file metadata fields used by the
+# script. Using a constant avoids repeating this long string, making the code
+# cleaner and easier to maintain.
+DRIVE_FILE_FIELDS = "id,name,mimeType,size,md5Checksum,trashed,createdTime,modifiedTime,owners(displayName,emailAddress),parents,webViewLink"
+
+
 DEFAULT_FIELDS = ",".join(
     [
         "nextPageToken",
-        "files(id,name,mimeType,size,md5Checksum,trashed,createdTime,modifiedTime,owners(displayName,emailAddress),parents,webViewLink)",
+        f"files({DRIVE_FILE_FIELDS})",
     ]
 )
 
@@ -493,6 +500,14 @@ def _cmd_audit_export(args: argparse.Namespace, service) -> int:
 
 
 def cmd_duplicates(args: argparse.Namespace) -> int:
+    # --- OPTIMIZATION: Two-pass duplicate detection ---
+    # To minimize API data transfer, this function uses a two-pass strategy.
+    # Pass 1: Fetch only `id` and `md5Checksum` for all files, ignoring those
+    # without a checksum. This lightweight query quickly identifies hashes
+    # associated with duplicate files.
+    # Pass 2: Fetch full metadata *only* for the files identified as
+    # duplicates in the first pass. This avoids downloading unnecessary data
+    # for unique files, significantly improving performance on large drives.
     scopes = SCOPES_READONLY
     creds = load_credentials(
         credentials_path=args.credentials,
@@ -501,24 +516,53 @@ def cmd_duplicates(args: argparse.Namespace) -> int:
     )
     service = drive_service(creds=creds)
 
-    by_hash: Dict[str, List[DriveFile]] = defaultdict(list)
+    # Pass 1: Find duplicate checksums with a minimal query.
+    eprint("Pass 1: Scanning for duplicate checksums...")
+    hashes: Dict[str, List[str]] = defaultdict(list)
     scanned = 0
     try:
+        # Query for files that have an md5Checksum.
+        base_query = "md5Checksum != null"
+        final_q = and_query([args.query, base_query])
+
         for f in iter_files(
             service,
-            q=args.query,
+            q=final_q,
             include_trashed=args.include_trashed,
             page_size=args.page_size,
+            fields=f"nextPageToken,files(id,md5Checksum)",
         ):
             scanned += 1
-            if not f.md5Checksum:
-                continue
-            by_hash[f.md5Checksum].append(f)
+            if f.md5Checksum:
+                hashes[f.md5Checksum].append(f.id)
     except HttpError as ex:
-        eprint("Drive API error:", ex)
+        eprint("Drive API error during pass 1:", ex)
         return 2
 
-    dup_groups = [g for g in by_hash.values() if len(g) >= 2]
+    dup_hashes = {h for h, ids in hashes.items() if len(ids) >= 2}
+    if not dup_hashes:
+        print(f"Files scanned: {scanned}")
+        print("No duplicate files found.")
+        return 0
+
+    # Pass 2: Fetch full metadata only for the duplicates.
+    eprint(f"Pass 2: Fetching details for {len(dup_hashes)} duplicate groups...")
+    by_hash: Dict[str, List[DriveFile]] = defaultdict(list)
+    dup_file_ids = [fid for h in dup_hashes for fid in hashes[h]]
+
+    # Batched fetch would be complex here due to query limitations.
+    # Instead, we iterate and fetch one-by-one, which is still efficient
+    # because the set of duplicate files is much smaller than the total.
+    for i, file_id in enumerate(dup_file_ids):
+        try:
+            f_api = service.files().get(fileId=file_id, fields=DRIVE_FILE_FIELDS).execute()
+            f = DriveFile.from_api(f_api)
+            if f.md5Checksum:
+                by_hash[f.md5Checksum].append(f)
+        except HttpError as ex:
+            eprint(f"Warning: Failed to fetch metadata for file {file_id}: {ex}")
+
+    dup_groups = list(by_hash.values())
     dup_groups.sort(key=lambda g: sum((x.size or 0) for x in g), reverse=True)
 
     print(f"Files scanned: {scanned}")
