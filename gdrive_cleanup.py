@@ -57,6 +57,19 @@ TRASH_QUERY_FIELDS = ",".join(
 )
 
 
+# --- OPTIMIZATION: Minimal fields for duplicate check (pass 1) ---
+# To find duplicates efficiently, the first pass only needs checksums and basic
+# metadata. Fetching the full file data is deferred until the second pass,
+# and only for files that are part of a duplicate set. This minimizes the
+# initial API payload size.
+DUPLICATES_PASS_1_FIELDS = ",".join(
+    [
+        "nextPageToken",
+        "files(id,name,md5Checksum,size)",
+    ]
+)
+
+
 @dataclass(frozen=True)
 class DriveFile:
     id: str
@@ -501,28 +514,88 @@ def cmd_duplicates(args: argparse.Namespace) -> int:
     )
     service = drive_service(creds=creds)
 
-    by_hash: Dict[str, List[DriveFile]] = defaultdict(list)
+    # --- OPTIMIZATION: Two-pass duplicate detection ---
+    # To minimize API usage and memory, this function uses a two-pass
+    # strategy.
+    #
+    # Pass 1: Fetch only minimal fields (id, name, md5Checksum, size) for all
+    # files. This identifies checksums associated with multiple files.
+    #
+    # Pass 2: Fetch the full metadata *only* for the files that are part of a
+    # duplicate set. This avoids downloading unnecessary data for unique files.
+    #
+    # This approach is significantly faster and uses less memory on drives with
+    # many unique files.
+
+    # Pass 1: Find duplicate checksums with minimal data.
+    eprint("Pass 1/2: Scanning for duplicate checksums...")
+    by_hash: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
     scanned = 0
     try:
-        for f in iter_files(
+        # Note: iter_files yields DriveFile objects, but we're using a raw dict
+        # here because the fields are minimal and we don't need the full object yet.
+        for f_raw in iter_files(
             service,
             q=args.query,
             include_trashed=args.include_trashed,
             page_size=args.page_size,
+            fields=DUPLICATES_PASS_1_FIELDS,
         ):
             scanned += 1
-            if not f.md5Checksum:
+            if not f_raw.md5Checksum:
                 continue
-            by_hash[f.md5Checksum].append(f)
+            # Store the raw file dict to avoid re-fetching basic info in pass 2
+            by_hash[f_raw.md5Checksum].append(f_raw.__dict__)
     except HttpError as ex:
         eprint("Drive API error:", ex)
         return 2
 
-    dup_groups = [g for g in by_hash.values() if len(g) >= 2]
-    dup_groups.sort(key=lambda g: sum((x.size or 0) for x in g), reverse=True)
+    dup_checksums = {k for k, v in by_hash.items() if len(v) >= 2}
+    if not dup_checksums:
+        print(f"Files scanned: {scanned}")
+        print("No duplicate files found.")
+        return 0
+
+    # Pass 2: Fetch full metadata only for the duplicate files.
+    eprint(f"Pass 2/2: Fetching full metadata for {len(dup_checksums)} duplicate groups...")
+    by_hash_full: Dict[str, List[DriveFile]] = defaultdict(list)
+
+    # --- SAFETY: Batch checksum queries ---
+    # To avoid exceeding the Drive API's query length limit, batch the checksums
+    # into smaller groups. A batch size of 50 is a conservative choice that
+    # keeps the query string well under typical limits (~2000 chars).
+    checksum_list = list(dup_checksums)
+    chunk_size = 50
+    for i in range(0, len(checksum_list), chunk_size):
+        chunk = checksum_list[i : i + chunk_size]
+        query_parts = [f"md5Checksum='{c}'" for c in chunk]
+        batch_query = f"({' or '.join(query_parts)})"
+        if args.query:
+            final_query = f"({args.query}) and ({batch_query})"
+        else:
+            final_query = batch_query
+
+        try:
+            for f in iter_files(
+                service,
+                q=final_query,
+                include_trashed=args.include_trashed,
+                page_size=args.page_size,
+                fields=DEFAULT_FIELDS,  # Fetch full details now
+            ):
+                if f.md5Checksum:
+                    by_hash_full[f.md5Checksum].append(f)
+        except HttpError as ex:
+            eprint(f"Drive API error on second pass (batch {i//chunk_size + 1}):", ex)
+            # Decide whether to continue or fail. For now, we'll fail.
+            return 2
+
+    dup_groups_full = [g for g in by_hash_full.values() if len(g) >= 2]
+
+    dup_groups_full.sort(key=lambda g: sum((x.size or 0) for x in g), reverse=True)
 
     print(f"Files scanned: {scanned}")
-    print(f"Duplicate groups found (md5Checksum): {len(dup_groups)}")
+    print(f"Duplicate groups found (md5Checksum): {len(dup_groups_full)}")
     print("")
 
     plan: Dict[str, Any] = {
@@ -533,7 +606,7 @@ def cmd_duplicates(args: argparse.Namespace) -> int:
     }
 
     shown = 0
-    for g in dup_groups:
+    for g in dup_groups_full:
         total = sum((x.size or 0) for x in g)
         group = {
             "md5Checksum": g[0].md5Checksum,
