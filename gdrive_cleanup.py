@@ -45,6 +45,18 @@ DEFAULT_FIELDS = ",".join(
 )
 
 
+# --- OPTIMIZATION: Minimal fields for duplicate hash scan ---
+# To speed up duplicate detection, the first pass only fetches the fields
+# needed to identify duplicate checksums. Full metadata is fetched later
+# only for the files that are part of a duplicate set.
+DUPLICATES_PASS_1_FIELDS = ",".join(
+    [
+        "nextPageToken",
+        "files(id,md5Checksum)",
+    ]
+)
+
+
 # --- OPTIMIZATION: Minimal fields for trash-query ---
 # To speed up the initial file scan, the `trash-query` command requests only
 # the fields essential for identifying, displaying, and trashing files. This
@@ -293,6 +305,54 @@ def trash_files_batch(
     return (ok, failed)
 
 
+def _get_files_batch_callback(
+    request_id: str,
+    response: Any,
+    exception: Optional[HttpError],
+    *,
+    results_dict: Dict[str, DriveFile],
+    failed_list: List[Tuple[str, str]],
+) -> None:
+    """Callback for batch file get requests."""
+    if exception:
+        failed_list.append((request_id, str(exception)))
+    else:
+        results_dict[response["id"]] = DriveFile.from_api(response)
+
+
+def get_files_batch(
+    service, *, file_ids: Iterable[str]
+) -> Tuple[Dict[str, DriveFile], List[Tuple[str, str]]]:
+    """Fetch a list of Drive files by ID using batch requests for performance."""
+    if not file_ids:
+        return ({}, [])
+    results: Dict[str, DriveFile] = {}
+    failed: List[Tuple[str, str]] = []
+    batch = service.new_batch_http_request(
+        callback=lambda req_id, resp, exc: _get_files_batch_callback(
+            req_id, resp, exc, results_dict=results, failed_list=failed
+        )
+    )
+
+    file_ids_list = list(file_ids)
+    for i, fid in enumerate(file_ids_list):
+        batch.add(
+            service.files().get(fileId=fid, fields=DEFAULT_FIELDS.split("files(")[1][:-1]),
+            request_id=fid,
+        )
+        if (i + 1) % 100 == 0:
+            batch.execute()
+            batch = service.new_batch_http_request(
+                callback=lambda req_id, resp, exc: _get_files_batch_callback(
+                    req_id, resp, exc, results_dict=results, failed_list=failed
+                )
+            )
+    if (i + 1) % 100 != 0:
+        batch.execute()
+
+    return (results, failed)
+
+
 def cmd_trash_query(args: argparse.Namespace) -> int:
     # This command modifies Drive, so it uses the broader scope.
     scopes = SCOPES_TRASH
@@ -501,28 +561,55 @@ def cmd_duplicates(args: argparse.Namespace) -> int:
     )
     service = drive_service(creds=creds)
 
-    by_hash: Dict[str, List[DriveFile]] = defaultdict(list)
+    # --- OPTIMIZATION: Two-pass duplicate detection ---
+    # To minimize API response size and memory, this function uses a two-pass
+    # strategy. Pass 1 fetches only `id` and `md5Checksum` to find
+    # duplicate hashes. Pass 2 fetches full metadata *only* for the files
+    # identified as duplicates, which is much more efficient.
+    eprint("Pass 1: Scanning for duplicate file hashes...")
+    by_hash: Dict[str, List[str]] = defaultdict(list)
     scanned = 0
     try:
+        q = and_query([args.query, "md5Checksum != null"])
         for f in iter_files(
             service,
-            q=args.query,
+            q=q,
             include_trashed=args.include_trashed,
             page_size=args.page_size,
+            fields=DUPLICATES_PASS_1_FIELDS,
         ):
             scanned += 1
-            if not f.md5Checksum:
-                continue
-            by_hash[f.md5Checksum].append(f)
+            if f.md5Checksum:
+                by_hash[f.md5Checksum].append(f.id)
     except HttpError as ex:
         eprint("Drive API error:", ex)
         return 2
 
-    dup_groups = [g for g in by_hash.values() if len(g) >= 2]
-    dup_groups.sort(key=lambda g: sum((x.size or 0) for x in g), reverse=True)
+    dup_hashes = {h: ids for h, ids in by_hash.items() if len(ids) >= 2}
+    dup_file_ids = {id for ids in dup_hashes.values() for id in ids}
 
     print(f"Files scanned: {scanned}")
-    print(f"Duplicate groups found (md5Checksum): {len(dup_groups)}")
+    print(f"Duplicate groups found (md5Checksum): {len(dup_hashes)}")
+    if not dup_hashes:
+        return 0
+
+    eprint(
+        f"Pass 2: Fetching full metadata for {len(dup_file_ids)} duplicate files..."
+    )
+    dup_files_by_id, failed_gets = get_files_batch(service, file_ids=dup_file_ids)
+    if failed_gets:
+        eprint(f"Warning: Failed to fetch metadata for {len(failed_gets)} files.")
+        for fid, msg in failed_gets[:5]:
+            eprint(f"- {fid}: {msg}")
+
+    # Reconstruct the groups with full file objects.
+    dup_groups: List[List[DriveFile]] = []
+    for h, ids in dup_hashes.items():
+        group = [dup_files_by_id[fid] for fid in ids if fid in dup_files_by_id]
+        if len(group) >= 2:
+            dup_groups.append(group)
+
+    dup_groups.sort(key=lambda g: sum((x.size or 0) for x in g), reverse=True)
     print("")
 
     plan: Dict[str, Any] = {
@@ -535,16 +622,20 @@ def cmd_duplicates(args: argparse.Namespace) -> int:
     shown = 0
     for g in dup_groups:
         total = sum((x.size or 0) for x in g)
-        group = {
-            "md5Checksum": g[0].md5Checksum,
+        # All files in the group should have the same checksum.
+        md5 = g[0].md5Checksum or "unknown"
+        group_data = {
+            "md5Checksum": md5,
             "totalSizeBytes": total,
             "files": [x.__dict__ for x in sorted(g, key=lambda x: (x.modifiedTime or ""))],
         }
-        plan["groups"].append(group)
+        plan["groups"].append(group_data)
 
         if shown < args.show:
-            print(f"md5={g[0].md5Checksum}  total={human_bytes(total)}  count={len(g)}")
-            for x in sorted(g, key=lambda x: (x.size or -1), reverse=True)[: args.show_per_group]:
+            print(f"md5={md5}  total={human_bytes(total)}  count={len(g)}")
+            for x in sorted(g, key=lambda x: (x.size or -1), reverse=True)[
+                : args.show_per_group
+            ]:
                 print(f"  - {human_bytes(x.size)}  {x.name}  ({x.id})")
             print("")
             shown += 1
@@ -552,7 +643,9 @@ def cmd_duplicates(args: argparse.Namespace) -> int:
     if args.plan_json:
         write_json(args.plan_json, plan)
         print(f"Wrote plan JSON: {args.plan_json}")
-        print("Tip: open it, choose which file IDs to trash, then run the 'trash' command.")
+        print(
+            "Tip: open it, choose which file IDs to trash, then run the 'trash' command."
+        )
     return 0
 
 
