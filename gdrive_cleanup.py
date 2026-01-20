@@ -57,6 +57,18 @@ TRASH_QUERY_FIELDS = ",".join(
 )
 
 
+# --- OPTIMIZATION: Minimal fields for duplicate detection ---
+# To speed up the initial file scan for duplicates, this requests only the
+# fields essential for identifying file content (md5Checksum) and grouping
+# (id). Full metadata is fetched only for actual duplicates in a second pass.
+DUPLICATES_PASS_1_FIELDS = ",".join(
+    [
+        "nextPageToken",
+        "files(id,md5Checksum)",
+    ]
+)
+
+
 @dataclass(frozen=True)
 class DriveFile:
     id: str
@@ -271,6 +283,7 @@ def trash_files_batch(
         )
     )
 
+    i = -1  # Ensure i is bound for the final check if file_ids is empty
     for i, fid in enumerate(file_ids):
         batch.add(
             service.files().update(fileId=fid, body={"trashed": True}),
@@ -291,6 +304,51 @@ def trash_files_batch(
 
     ok = len(file_ids) - len(failed)
     return (ok, failed)
+
+
+def _get_batch_callback(
+    request_id: str,
+    response: Any,
+    exception: Optional[HttpError],
+    *,
+    results_dict: Dict[str, DriveFile],
+    failed_list: List[Tuple[str, str]],
+) -> None:
+    """Callback for batch API requests to collect results and failures."""
+    if exception:
+        failed_list.append((request_id, str(exception)))
+    else:
+        results_dict[request_id] = DriveFile.from_api(response)
+
+
+def get_files_batch(
+    service, *, file_ids: List[str], fields: str
+) -> Tuple[List[DriveFile], List[Tuple[str, str]]]:
+    """Fetch a list of file metadata using batch requests for performance."""
+    if not file_ids:
+        return ([], [])
+
+    results_dict: Dict[str, DriveFile] = {}
+    failed: List[Tuple[str, str]] = []
+
+    def chunker(seq, size):
+        return (seq[pos : pos + size] for pos in range(0, len(seq), size))
+
+    for chunk in chunker(file_ids, 100):
+        batch = service.new_batch_http_request(
+            callback=lambda req_id, resp, exc: _get_batch_callback(
+                req_id, resp, exc, results_dict=results_dict, failed_list=failed
+            )
+        )
+        for fid in chunk:
+            batch.add(
+                service.files().get(fileId=fid, fields=fields),
+                request_id=fid,
+            )
+        batch.execute()
+
+    succeeded = [results_dict[fid] for fid in file_ids if fid in results_dict]
+    return (succeeded, failed)
 
 
 def cmd_trash_query(args: argparse.Namespace) -> int:
@@ -501,7 +559,15 @@ def cmd_duplicates(args: argparse.Namespace) -> int:
     )
     service = drive_service(creds=creds)
 
-    by_hash: Dict[str, List[DriveFile]] = defaultdict(list)
+    # --- OPTIMIZATION: Two-pass duplicate detection ---
+    # To minimize memory usage and API calls, this uses two passes.
+    # 1. First pass: Fetch only md5Checksum and id for all files. This is
+    #    lightweight and identifies which files are potential duplicates.
+    # 2. Second pass: Fetch full metadata *only* for the files that have
+    #    matching checksums. This avoids downloading unnecessary data for
+    #    unique files.
+    eprint("Pass 1/2: Finding potential duplicates (scanning hashes)...")
+    hashes_to_ids: Dict[str, List[str]] = defaultdict(list)
     scanned = 0
     try:
         for f in iter_files(
@@ -509,16 +575,51 @@ def cmd_duplicates(args: argparse.Namespace) -> int:
             q=args.query,
             include_trashed=args.include_trashed,
             page_size=args.page_size,
+            fields=DUPLICATES_PASS_1_FIELDS,
         ):
             scanned += 1
             if not f.md5Checksum:
                 continue
-            by_hash[f.md5Checksum].append(f)
+            hashes_to_ids[f.md5Checksum].append(f.id)
     except HttpError as ex:
         eprint("Drive API error:", ex)
         return 2
 
-    dup_groups = [g for g in by_hash.values() if len(g) >= 2]
+    # Filter to find checksums associated with more than one file ID.
+    dup_hashes = {h: ids for h, ids in hashes_to_ids.items() if len(ids) >= 2}
+    dup_file_ids = [fid for ids in dup_hashes.values() for fid in ids]
+
+    if not dup_file_ids:
+        print(f"Files scanned: {scanned}")
+        print("No duplicate files found.")
+        return 0
+
+    eprint(
+        f"Pass 2/2: Fetching full metadata for {len(dup_file_ids)} duplicate files..."
+    )
+    # Now, fetch the full metadata but only for the duplicate files.
+    # NOTE: The fields here correspond to DriveFile.from_api()
+    fields_for_details = "id,name,mimeType,size,md5Checksum,trashed,createdTime,modifiedTime,owners(displayName,emailAddress),parents,webViewLink"
+
+    # We can't use iter_files as it doesn't support fetching by a list of IDs.
+    # A query like "id='id1' or id='id2'..." is not supported.
+    # So, we must fetch them one by one or in a batch. Batching is much faster.
+    all_dup_files, failures = get_files_batch(
+        service, file_ids=dup_file_ids, fields=fields_for_details
+    )
+
+    if failures:
+        eprint(f"Warning: Failed to fetch metadata for {len(failures)} files.")
+        for fid, msg in failures[:5]:
+            eprint(f"- {fid}: {msg}")
+
+    # Group the full file objects by their checksum.
+    by_hash: Dict[str, List[DriveFile]] = defaultdict(list)
+    for f in all_dup_files:
+        if f.md5Checksum:
+            by_hash[f.md5Checksum].append(f)
+
+    dup_groups = list(by_hash.values())
     dup_groups.sort(key=lambda g: sum((x.size or 0) for x in g), reverse=True)
 
     print(f"Files scanned: {scanned}")
