@@ -110,21 +110,45 @@ def mkdirp(p: Path) -> None:
     p.mkdir(parents=True, exist_ok=True)
 
 
-def file_mtime_local(p: Path) -> dt.datetime:
-    ts = p.stat().st_mtime
+def iter_files(p: Path) -> Iterable[Tuple[Path, os.stat_result]]:
+    """More efficient Path.iterdir() + stat() for files."""
+    try:
+        for entry in os.scandir(p):
+            if entry.is_file():
+                yield (p / entry.name, entry.stat())
+    except FileNotFoundError:
+        pass
+
+
+def riter_files(p: Path) -> Iterable[Tuple[Path, os.stat_result]]:
+    """More efficient Path.rglob("*") + stat() for files."""
+    try:
+        for entry in os.scandir(p):
+            if entry.is_file():
+                yield (p / entry.name, entry.stat())
+            elif entry.is_dir():
+                yield from riter_files(p / entry.name)
+    except FileNotFoundError:
+        pass
+
+
+def file_mtime_local(p: Path, stat: Optional[os.stat_result] = None) -> dt.datetime:
+    ts = stat.st_mtime if stat else p.stat().st_mtime
     return dt.datetime.fromtimestamp(ts)
 
 
-def older_than_days(p: Path, *, days: int, now: Optional[dt.datetime] = None) -> bool:
+def older_than_days(
+    p: Path, *, days: int, now: Optional[dt.datetime] = None, stat: Optional[os.stat_result] = None
+) -> bool:
     if days <= 0:
         return False
     now_dt = now or dt.datetime.now()
-    age = now_dt - file_mtime_local(p)
+    age = now_dt - file_mtime_local(p, stat=stat)
     return age.total_seconds() >= days * 86400
 
 
-def archive_bucket_for(p: Path) -> Tuple[str, str]:
-    d = file_mtime_local(p)
+def archive_bucket_for(p: Path, stat: Optional[os.stat_result] = None) -> Tuple[str, str]:
+    d = file_mtime_local(p, stat=stat)
     return (f"{d.year:04d}", f"{d.month:02d}")
 
 
@@ -198,8 +222,8 @@ def plan_actions(root: Path, cfg: Dict[str, Any]) -> List[Action]:
     # 1) .txt logs -> trash after retention
     txt_days = int(retention.get("txt_to_trash", 0))
     if txt_days > 0:
-        for p in logs_dir.glob("*.txt"):
-            if p.is_file() and older_than_days(p, days=txt_days, now=now):
+        for p, p_stat in iter_files(logs_dir):
+            if p.suffix == ".txt" and older_than_days(p, days=txt_days, now=now, stat=p_stat):
                 actions.append(
                     Action(
                         kind="move",
@@ -211,12 +235,12 @@ def plan_actions(root: Path, cfg: Dict[str, Any]) -> List[Action]:
 
     # 2) CSV -> XLSX conversion
     if bool(conversion.get("csv_to_xlsx", True)):
-        for csv_p in raw_csv_dir.glob("*.csv"):
-            if not csv_p.is_file():
+        for csv_p, csv_p_stat in iter_files(raw_csv_dir):
+            if csv_p.suffix != ".csv":
                 continue
             xlsx_p = reports_dir / (csv_p.stem + ".xlsx")
             # Skip if already converted and XLSX is newer than CSV
-            if xlsx_p.exists() and xlsx_p.stat().st_mtime >= csv_p.stat().st_mtime:
+            if xlsx_p.exists() and xlsx_p.stat().st_mtime >= csv_p_stat.st_mtime:
                 continue
             actions.append(
                 Action(
@@ -236,22 +260,25 @@ def plan_actions(root: Path, cfg: Dict[str, Any]) -> List[Action]:
                 )
             )
 
+    # Cache all XLSX file stats once
+    xlsx_files: List[Tuple[Path, os.stat_result]] = [
+        (p, st) for p, st in iter_files(reports_dir) if p.suffix == ".xlsx"
+    ]
+
     # 3) Keep only latest XLSX per day in reports/
     if bool(reports_cfg.get("keep_latest_per_day", True)):
-        by_day: Dict[dt.date, List[Path]] = {}
-        for x in reports_dir.glob("*.xlsx"):
-            if not x.is_file():
-                continue
-            day = file_mtime_local(x).date()
-            by_day.setdefault(day, []).append(x)
+        by_day: Dict[dt.date, List[Tuple[Path, os.stat_result]]] = {}
+        for p, p_stat in xlsx_files:
+            day = file_mtime_local(p, stat=p_stat).date()
+            by_day.setdefault(day, []).append((p, p_stat))
 
         for day, files in by_day.items():
             if len(files) <= 1:
                 continue
-            files_sorted = sorted(files, key=lambda p: p.stat().st_mtime, reverse=True)
-            keep = files_sorted[0]
-            for old in files_sorted[1:]:
-                yyyy, mm = archive_bucket_for(old)
+            files_sorted = sorted(files, key=lambda ps: ps[1].st_mtime, reverse=True)
+            keep, _ = files_sorted[0]
+            for old, old_stat in files_sorted[1:]:
+                yyyy, mm = archive_bucket_for(old, stat=old_stat)
                 actions.append(
                     Action(
                         kind="move",
@@ -264,9 +291,9 @@ def plan_actions(root: Path, cfg: Dict[str, Any]) -> List[Action]:
     # 4) Archive reports older than X days (from reports/ only)
     xlsx_days = int(retention.get("xlsx_to_archive", 0))
     if xlsx_days > 0:
-        for x in reports_dir.glob("*.xlsx"):
-            if x.is_file() and older_than_days(x, days=xlsx_days, now=now):
-                yyyy, mm = archive_bucket_for(x)
+        for x, x_stat in xlsx_files:
+            if older_than_days(x, days=xlsx_days, now=now, stat=x_stat):
+                yyyy, mm = archive_bucket_for(x, stat=x_stat)
                 actions.append(
                     Action(
                         kind="move",
@@ -331,8 +358,9 @@ def plan_purge_actions(root: Path, cfg: Dict[str, Any]) -> List[Action]:
     now = dt.datetime.now()
     actions: List[Action] = []
     # Purge files (not directories) older than purge_days. Empty directories are removed at the end.
-    for p in sorted(trash_dir.rglob("*")):
-        if p.is_file() and older_than_days(p, days=purge_days, now=now):
+    files_to_check = sorted(riter_files(trash_dir), key=lambda ps: ps[0])
+    for p, p_stat in files_to_check:
+        if older_than_days(p, days=purge_days, now=now, stat=p_stat):
             actions.append(Action(kind="purge", src=p, dst=None, detail=f"trash older than {purge_days}d"))
 
     for a in actions:
