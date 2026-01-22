@@ -93,6 +93,46 @@ class TestTradingDataManager(unittest.TestCase):
         self.assertEqual(actions[0].kind, "purge")
         self.assertEqual(actions[0].src, old_file)
 
+    def test_csv_conversion_flag(self):
+        # Create a CSV file
+        csv_file = self.raw_csv_dir / "data.csv"
+        csv_file.touch()
+
+        # Test with conversion enabled (default)
+        self.cfg["conversion"]["csv_to_xlsx"] = True
+        actions = tdm.plan_actions(self.root, self.cfg)
+        # Should have 2 actions: convert and move to trash
+        self.assertEqual(len([a for a in actions if a.kind == "convert"]), 1)
+        self.assertEqual(len([a for a in actions if a.kind == "move" and a.src == csv_file]), 1)
+
+        # Test with conversion disabled
+        self.cfg["conversion"]["csv_to_xlsx"] = False
+        actions = tdm.plan_actions(self.root, self.cfg)
+        self.assertEqual(len(actions), 0)
+
+    def test_keep_latest_per_day_flag(self):
+        # Create two reports for the same day
+        report1 = self.reports_dir / "report1.xlsx"
+        report1.touch()
+        # Ensure report1 is older
+        os.utime(report1, (time.time() - 100, time.time() - 100))
+
+        report2 = self.reports_dir / "report2.xlsx"
+        report2.touch()
+
+        # Test with keep_latest_per_day enabled (default)
+        self.cfg["reports"]["keep_latest_per_day"] = True
+        actions = tdm.plan_actions(self.root, self.cfg)
+        # Should move the older report to archive
+        self.assertEqual(len(actions), 1)
+        self.assertEqual(actions[0].kind, "move")
+        self.assertEqual(actions[0].src, report1)
+
+        # Test with keep_latest_per_day disabled
+        self.cfg["reports"]["keep_latest_per_day"] = False
+        actions = tdm.plan_actions(self.root, self.cfg)
+        self.assertEqual(len(actions), 0)
+
 
 if __name__ == "__main__":
     unittest.main()
