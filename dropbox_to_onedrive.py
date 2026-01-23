@@ -572,12 +572,18 @@ def main(argv: List[str]) -> int:
             # This is a performance optimization for folders with many files,
             # as network I/O can be done concurrently.
             print("Pre-creating directories...")
+            # --- OPTIMIZATION: Avoid redundant relative_to() calls ---
+            # To improve performance, especially with many files, this logic
+            # now calculates the relative path for each file only once.
+            # The result is stored and reused, avoiding a second expensive
+            # path computation in the conditional check.
+            relative_paths = [p.relative_to(src_root) for p in files]
             all_dirs = sorted(
                 list(
                     {
-                        p.relative_to(src_root).parent
-                        for p in files
-                        if p.relative_to(src_root).parent != Path(".")
+                        rel_path.parent
+                        for rel_path in relative_paths
+                        if rel_path.parent != Path(".")
                     }
                 )
             )
