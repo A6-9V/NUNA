@@ -37,6 +37,9 @@ SCOPES_READONLY = ["https://www.googleapis.com/auth/drive.metadata.readonly"]
 SCOPES_TRASH = ["https://www.googleapis.com/auth/drive"]
 
 
+GOOGLE_API_BATCH_LIMIT = 100
+
+
 DEFAULT_FIELDS = ",".join(
     [
         "nextPageToken",
@@ -295,7 +298,7 @@ def trash_files_batch(
             request_id=fid,
         )
         # Batch supports up to 100 calls. Execute every 100.
-        if (i + 1) % 100 == 0:
+        if (i + 1) % GOOGLE_API_BATCH_LIMIT == 0:
             batch.execute()
             # Create a new batch for the next set of requests.
             batch = service.new_batch_http_request(
@@ -304,7 +307,7 @@ def trash_files_batch(
                 )
             )
     # Execute any remaining requests in the last batch.
-    if (i + 1) % 100 != 0:
+    if (i + 1) % GOOGLE_API_BATCH_LIMIT != 0:
         batch.execute()
 
     ok = len(file_ids) - len(failed)
@@ -334,16 +337,22 @@ def get_files_batch(service, *, file_ids: List[str]) -> Iterable[DriveFile]:
             # The response (`resp`) is already a parsed JSON dict.
             results.append(DriveFile.from_api(resp))
 
-    batch = service.new_batch_http_request(callback=_callback)
-
-    for fid in file_ids:
-        batch.add(
-            service.files().get(
-                fileId=fid, fields=FULL_FILE_FIELDS, supportsAllDrives=True
-            ),
-            request_id=fid,
-        )
-    batch.execute()
+    # --- OPTIMIZATION: Batch chunking ---
+    # The Google Drive API limits batch requests to 100 calls. To handle
+    # more than 100 file IDs, the list is processed in chunks, executing a
+    # separate batch request for each. This makes the function robust for
+    # large inputs and avoids API errors.
+    for i in range(0, len(file_ids), GOOGLE_API_BATCH_LIMIT):
+        chunk = file_ids[i : i + GOOGLE_API_BATCH_LIMIT]
+        batch = service.new_batch_http_request(callback=_callback)
+        for fid in chunk:
+            batch.add(
+                service.files().get(
+                    fileId=fid, fields=FULL_FILE_FIELDS, supportsAllDrives=True
+                ),
+                request_id=fid,
+            )
+        batch.execute()
 
     if failures:
         eprint(f"Batch metadata fetch failed for {len(failures)} files:")
