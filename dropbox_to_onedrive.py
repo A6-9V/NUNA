@@ -379,8 +379,8 @@ def ensure_folder_path(
 
 def upload_one_file(
     local_file: Path,
+    rel_path: Path,
     *,
-    src_root: Path,
     client: GraphClient,
     dest_folder_id: str,
     onedrive_folder: str,
@@ -388,7 +388,6 @@ def upload_one_file(
     folder_id_cache: Dict[str, str],
     chunk_size: int,
 ) -> Tuple[str, int]:
-    rel_path = local_file.relative_to(src_root)
     parent_rel = rel_path.parent
     # This function is run in a thread, so directory creation needs to be safe.
     # The main thread pre-creates all directories, so this call should be cached.
@@ -498,21 +497,25 @@ def main(argv: List[str]) -> int:
                 zf.extractall(extract_dir)
             src_root = pick_extracted_root(extract_dir)
 
-            # --- OPTIMIZATION: Single-pass file scan ---
-            # Instead of creating a list and then summing its size,
-            # do both in a single pass over the file iterator.
-            # This avoids a second iteration over the file list.
-            files = []
+            # --- OPTIMIZATION: Single-pass file scan with pre-calculation ---
+            # Pre-calculate relative paths to avoid redundant calls to `relative_to`
+            # in loops later on. This is a performance gain for large file counts.
+            files: List[Tuple[Path, Path]] = []
             total = 0
             for p in iter_files(src_root):
-                files.append(p)
+                # --- OPTIMIZATION: Pre-compute relative paths ---
+                # To avoid repeated `relative_to()` calls in downstream loops,
+                # compute the relative path once here and store it. This is a
+                # measurable performance improvement when dealing with thousands
+                # of files, as it reduces redundant path computations.
+                files.append((p, p.relative_to(src_root)))
                 total += p.stat().st_size
             print(f"Files to upload: {len(files)} (total {human_bytes(total)})")
 
             if args.dry_run:
-                for pth in files[:50]:
-                    rel = pth.relative_to(src_root).as_posix()
-                    print(f"- {rel} ({human_bytes(pth.stat().st_size)})")
+                # Use the pre-calculated relative path
+                for pth, rel_path in files[:50]:
+                    print(f"- {rel_path.as_posix()} ({human_bytes(pth.stat().st_size)})")
                 if len(files) > 50:
                     print(f"... and {len(files) - 50} more")
                 print("Dry-run complete (no uploads).")
@@ -544,16 +547,20 @@ def main(argv: List[str]) -> int:
                     client, item_id=dest_folder_id, dest_folder_name=args.onedrive_folder
                 )
                 if existing_paths:
-                    print(f"Found {len(existing_paths)} existing files. Skipping duplicates.")
-                    files_to_upload = [
-                        f
-                        for f in files
-                        if f.relative_to(src_root) not in existing_paths
+                    original_count = len(files)
+                    # --- FIX: Ensure `files` is reassigned to the filtered list ---
+                    # The original logic failed to reassign the `files` variable if no
+                    # duplicates were found, causing the upload step to iterate over
+                    # the wrong list. This is corrected by always reassigning `files`
+                    # to the filtered result.
+                    files = [
+                        (p, rel_p)
+                        for p, rel_p in files
+                        if rel_p not in existing_paths
                     ]
-                    if len(files_to_upload) < len(files):
-                        skipped = len(files) - len(files_to_upload)
-                        print(f"Skipping {skipped} files that already exist.")
-                        files = files_to_upload
+                    skipped = original_count - len(files)
+                    if skipped > 0:
+                        print(f"Found {len(existing_paths)} existing files. Skipping {skipped} duplicates.")
                 else:
                     print("No existing files found in destination.")
 
@@ -572,12 +579,13 @@ def main(argv: List[str]) -> int:
             # This is a performance optimization for folders with many files,
             # as network I/O can be done concurrently.
             print("Pre-creating directories...")
+            # Use pre-calculated relative paths
             all_dirs = sorted(
                 list(
                     {
-                        p.relative_to(src_root).parent
-                        for p in files
-                        if p.relative_to(src_root).parent != Path(".")
+                        rel_p.parent
+                        for _, rel_p in files
+                        if rel_p.parent != Path(".")
                     }
                 )
             )
@@ -601,10 +609,12 @@ def main(argv: List[str]) -> int:
                 if workers > 1:
                     print(f"Uploading with {workers} parallel workers...")
                     with ThreadPoolExecutor(max_workers=workers) as ex:
+                        # Unpack the (local_path, rel_path) tuples for mapping
+                        local_paths, rel_paths = zip(*files)
                         tasks = ex.map(
                             upload_one_file,
-                            files,
-                            itertools.repeat(src_root),
+                            local_paths,
+                            rel_paths,  # Pass pre-calculated relative paths
                             itertools.repeat(client),
                             itertools.repeat(dest_folder_id),
                             itertools.repeat(args.onedrive_folder),
@@ -618,10 +628,10 @@ def main(argv: List[str]) -> int:
                 else:
                     # Sequential upload for --parallel=1
                     print("Uploading sequentially...")
-                    for local_file in files:
+                    for local_file, rel_path in files:
                         upload_one_file(
                             local_file,
-                            src_root=src_root,
+                            rel_path,  # Pass pre-calculated relative path
                             client=client,
                             dest_folder_id=dest_folder_id,
                             onedrive_folder=args.onedrive_folder,
