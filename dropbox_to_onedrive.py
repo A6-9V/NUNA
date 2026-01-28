@@ -90,12 +90,27 @@ def pick_extracted_root(extract_dir: Path) -> Path:
     return extract_dir
 
 
-def iter_files(root: Path) -> Iterable[Path]:
-    # Use os.walk for performance. It's faster than rglob for deeply nested
-    # directories as it avoids repeatedly stating every directory entry.
-    for dirpath, _, filenames in os.walk(root):
-        for filename in filenames:
-            yield Path(dirpath) / filename
+def iter_files_with_size(root: Path) -> Iterable[Tuple[Path, Path, int]]:
+    """
+    Recursively scan a directory for files, yielding their full path,
+    path relative to the root, and size.
+
+    This uses `os.scandir` which is more performant than `os.walk` followed
+    by `stat` calls, as it retrieves file metadata during the initial listing.
+    """
+
+    def _scan(current_dir: Path):
+        for entry in os.scandir(current_dir):
+            p = Path(entry.path)
+            if entry.is_dir():
+                yield from _scan(p)
+            elif entry.is_file():
+                # The size is retrieved from the Direntry, avoiding a stat() call.
+                size = entry.stat().st_size
+                # `root` is from the outer scope, ensuring correct relative path.
+                yield p, p.relative_to(root), size
+
+    yield from _scan(root)
 
 
 def encode_drive_path(path: str) -> str:
@@ -159,10 +174,10 @@ class GraphClient:
         drive_path: str,
         local_path: Path,
         *,
+        total: int,
         chunk_size: int,
     ) -> None:
         upload_url = self.create_upload_session(drive_path)
-        total = local_path.stat().st_size
         with open(local_path, "rb") as f:
             start = 0
             while start < total:
@@ -380,6 +395,7 @@ def ensure_folder_path(
 def upload_one_file(
     local_file: Path,
     rel_path: Path,
+    file_size: int,
     *,
     client: GraphClient,
     dest_folder_id: str,
@@ -400,16 +416,16 @@ def upload_one_file(
     )
 
     drive_path = f"{onedrive_folder}/{rel_path.as_posix()}"
-    size = local_file.stat().st_size
-    if size <= 4 * 1024 * 1024:
+    if file_size <= 4 * 1024 * 1024:
         client.put_file_simple(drive_path, local_file)
     else:
         client.upload_large_file(
             drive_path,
             local_file,
+            total=file_size,
             chunk_size=chunk_size,
         )
-    return (str(rel_path), size)
+    return (str(rel_path), file_size)
 
 
 def main(argv: List[str]) -> int:
@@ -498,24 +514,17 @@ def main(argv: List[str]) -> int:
             src_root = pick_extracted_root(extract_dir)
 
             # --- OPTIMIZATION: Single-pass file scan with pre-calculation ---
-            # Pre-calculate relative paths to avoid redundant calls to `relative_to`
-            # in loops later on. This is a performance gain for large file counts.
-            files: List[Tuple[Path, Path]] = []
-            total = 0
-            for p in iter_files(src_root):
-                # --- OPTIMIZATION: Pre-compute relative paths ---
-                # To avoid repeated `relative_to()` calls in downstream loops,
-                # compute the relative path once here and store it. This is a
-                # measurable performance improvement when dealing with thousands
-                # of files, as it reduces redundant path computations.
-                files.append((p, p.relative_to(src_root)))
-                total += p.stat().st_size
+            # Use a single pass to collect file paths and sizes, avoiding
+            # repeated `stat()` calls. This is a measurable performance gain
+            # for directories with thousands of files.
+            files: List[Tuple[Path, Path, int]] = list(iter_files_with_size(src_root))
+            total = sum(size for _, _, size in files)
             print(f"Files to upload: {len(files)} (total {human_bytes(total)})")
 
             if args.dry_run:
-                # Use the pre-calculated relative path
-                for pth, rel_path in files[:50]:
-                    print(f"- {rel_path.as_posix()} ({human_bytes(pth.stat().st_size)})")
+                # Use the pre-calculated relative path and size
+                for _, rel_path, size in files[:50]:
+                    print(f"- {rel_path.as_posix()} ({human_bytes(size)})")
                 if len(files) > 50:
                     print(f"... and {len(files) - 50} more")
                 print("Dry-run complete (no uploads).")
@@ -554,8 +563,8 @@ def main(argv: List[str]) -> int:
                     # the wrong list. This is corrected by always reassigning `files`
                     # to the filtered result.
                     files = [
-                        (p, rel_p)
-                        for p, rel_p in files
+                        (p, rel_p, size)
+                        for p, rel_p, size in files
                         if rel_p not in existing_paths
                     ]
                     skipped = original_count - len(files)
@@ -584,7 +593,7 @@ def main(argv: List[str]) -> int:
                 list(
                     {
                         rel_p.parent
-                        for _, rel_p in files
+                        for _, rel_p, _ in files
                         if rel_p.parent != Path(".")
                     }
                 )
@@ -609,12 +618,13 @@ def main(argv: List[str]) -> int:
                 if workers > 1:
                     print(f"Uploading with {workers} parallel workers...")
                     with ThreadPoolExecutor(max_workers=workers) as ex:
-                        # Unpack the (local_path, rel_path) tuples for mapping
-                        local_paths, rel_paths = zip(*files)
+                        # Unpack the (local_path, rel_path, size) tuples
+                        local_paths, rel_paths, sizes = zip(*files)
                         tasks = ex.map(
                             upload_one_file,
                             local_paths,
-                            rel_paths,  # Pass pre-calculated relative paths
+                            rel_paths,
+                            sizes,
                             itertools.repeat(client),
                             itertools.repeat(dest_folder_id),
                             itertools.repeat(args.onedrive_folder),
@@ -628,10 +638,11 @@ def main(argv: List[str]) -> int:
                 else:
                     # Sequential upload for --parallel=1
                     print("Uploading sequentially...")
-                    for local_file, rel_path in files:
+                    for local_file, rel_path, size in files:
                         upload_one_file(
                             local_file,
-                            rel_path,  # Pass pre-calculated relative path
+                            rel_path,
+                            size,
                             client=client,
                             dest_folder_id=dest_folder_id,
                             onedrive_folder=args.onedrive_folder,
