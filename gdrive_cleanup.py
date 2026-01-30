@@ -31,6 +31,7 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from tqdm import tqdm
 
 
 SCOPES_READONLY = ["https://www.googleapis.com/auth/drive.metadata.readonly"]
@@ -292,23 +293,27 @@ def trash_files_batch(
         )
     )
 
-    for i, fid in enumerate(file_ids):
-        batch.add(
-            service.files().update(fileId=fid, body={"trashed": True}),
-            request_id=fid,
-        )
-        # Batch supports up to 100 calls. Execute every 100.
-        if (i + 1) % GOOGLE_API_BATCH_LIMIT == 0:
-            batch.execute()
-            # Create a new batch for the next set of requests.
-            batch = service.new_batch_http_request(
-                callback=lambda req_id, resp, exc: _trash_batch_callback(
-                    req_id, resp, exc, failed_list=failed
-                )
+    with tqdm(total=len(file_ids), desc="Trashing files", unit="files") as pbar:
+        for i, fid in enumerate(file_ids):
+            batch.add(
+                service.files().update(fileId=fid, body={"trashed": True}),
+                request_id=fid,
             )
-    # Execute any remaining requests in the last batch.
-    if (i + 1) % GOOGLE_API_BATCH_LIMIT != 0:
-        batch.execute()
+            # Batch supports up to 100 calls. Execute every 100.
+            if (i + 1) % GOOGLE_API_BATCH_LIMIT == 0:
+                batch.execute()
+                pbar.update(GOOGLE_API_BATCH_LIMIT)
+                # Create a new batch for the next set of requests.
+                batch = service.new_batch_http_request(
+                    callback=lambda req_id, resp, exc: _trash_batch_callback(
+                        req_id, resp, exc, failed_list=failed
+                    )
+                )
+        # Execute any remaining requests in the last batch.
+        remainder = (i + 1) % GOOGLE_API_BATCH_LIMIT
+        if remainder != 0:
+            batch.execute()
+            pbar.update(remainder)
 
     ok = len(file_ids) - len(failed)
     return (ok, failed)
@@ -342,17 +347,19 @@ def get_files_batch(service, *, file_ids: List[str]) -> Iterable[DriveFile]:
     # more than 100 file IDs, the list is processed in chunks, executing a
     # separate batch request for each. This makes the function robust for
     # large inputs and avoids API errors.
-    for i in range(0, len(file_ids), GOOGLE_API_BATCH_LIMIT):
-        chunk = file_ids[i : i + GOOGLE_API_BATCH_LIMIT]
-        batch = service.new_batch_http_request(callback=_callback)
-        for fid in chunk:
-            batch.add(
-                service.files().get(
-                    fileId=fid, fields=FULL_FILE_FIELDS, supportsAllDrives=True
-                ),
-                request_id=fid,
-            )
-        batch.execute()
+    with tqdm(total=len(file_ids), desc="Fetching metadata", unit="files") as pbar:
+        for i in range(0, len(file_ids), GOOGLE_API_BATCH_LIMIT):
+            chunk = file_ids[i : i + GOOGLE_API_BATCH_LIMIT]
+            batch = service.new_batch_http_request(callback=_callback)
+            for fid in chunk:
+                batch.add(
+                    service.files().get(
+                        fileId=fid, fields=FULL_FILE_FIELDS, supportsAllDrives=True
+                    ),
+                    request_id=fid,
+                )
+            batch.execute()
+            pbar.update(len(chunk))
 
     if failures:
         eprint(f"Batch metadata fetch failed for {len(failures)} files:")
@@ -384,13 +391,14 @@ def cmd_trash_query(args: argparse.Namespace) -> int:
 
     matched: List[DriveFile] = []
     try:
-        for f in iter_files(
+        iterator = iter_files(
             service,
             q=final_q,
             include_trashed=args.include_trashed,
             page_size=args.page_size,
             fields=TRASH_QUERY_FIELDS,
-        ):
+        )
+        for f in tqdm(iterator, desc="Scanning for trash candidates", unit="files"):
             matched.append(f)
             if args.limit and len(matched) >= args.limit:
                 break
@@ -477,12 +485,13 @@ def cmd_audit(args: argparse.Namespace) -> int:
     scanned_count = 0
     count_with_size = 0
     try:
-        for f in iter_files(
+        iterator = iter_files(
             service,
             q=args.query,
             include_trashed=args.include_trashed,
             page_size=args.page_size,
-        ):
+        )
+        for f in tqdm(iterator, desc="Scanning files", unit="files"):
             scanned_count += 1
             if f.size is not None:
                 total_size += f.size
@@ -516,12 +525,13 @@ def _cmd_audit_export(args: argparse.Namespace, service) -> int:
     total_size = 0
     count_with_size = 0
     try:
-        for f in iter_files(
+        iterator = iter_files(
             service,
             q=args.query,
             include_trashed=args.include_trashed,
             page_size=args.page_size,
-        ):
+        )
+        for f in tqdm(iterator, desc="Scanning files for export", unit="files"):
             files.append(f)
             if f.size is not None:
                 total_size += f.size
@@ -577,13 +587,14 @@ def cmd_duplicates(args: argparse.Namespace) -> int:
     by_hash: Dict[str, List[str]] = defaultdict(list)
     scanned = 0
     try:
-        for f in iter_files(
+        iterator = iter_files(
             service,
             q=args.query,
             include_trashed=args.include_trashed,
             page_size=args.page_size,
             fields=DUPLICATES_PASS1_FIELDS,
-        ):
+        )
+        for f in tqdm(iterator, desc="Scanning checksums", unit="files"):
             scanned += 1
             if f.md5Checksum:
                 by_hash[f.md5Checksum].append(f.id)
