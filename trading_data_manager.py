@@ -244,15 +244,28 @@ def plan_actions(root: Path, cfg: Dict[str, Any]) -> List[Action]:
                     )
                 )
 
+    # Cache all XLSX file stats once
+    xlsx_files: List[Tuple[Path, os.stat_result]] = [
+        (p, st) for p, st in iter_files(reports_dir) if p.suffix == ".xlsx"
+    ]
+    # --- OPTIMIZATION: Cache existing report stats to avoid repeated syscalls ---
+    # Instead of checking `exists()` and `stat()` for each CSV file (which triggers
+    # a filesystem call), we look up the timestamp in a pre-populated dictionary.
+    # This turns O(N) syscalls into O(N) dict lookups, which is significantly faster.
+    xlsx_map = {p.stem: st.st_mtime for p, st in xlsx_files}
+
     # 2) CSV -> XLSX conversion
     if bool(conversion.get("csv_to_xlsx", True)):
         for csv_p, csv_p_stat in iter_files(raw_csv_dir):
             if csv_p.suffix != ".csv":
                 continue
-            xlsx_p = reports_dir / (csv_p.stem + ".xlsx")
-            # Skip if already converted and XLSX is newer than CSV
-            if xlsx_p.exists() and xlsx_p.stat().st_mtime >= csv_p_stat.st_mtime:
+
+            # Check cache instead of filesystem
+            existing_mtime = xlsx_map.get(csv_p.stem)
+            if existing_mtime is not None and existing_mtime >= csv_p_stat.st_mtime:
                 continue
+
+            xlsx_p = reports_dir / (csv_p.stem + ".xlsx")
             actions.append(
                 Action(
                     kind="convert",
@@ -270,11 +283,6 @@ def plan_actions(root: Path, cfg: Dict[str, Any]) -> List[Action]:
                     detail=f"post-conversion quarantine (keep {int(retention.get('csv_to_trash', 0))}d in trash)",
                 )
             )
-
-    # Cache all XLSX file stats once
-    xlsx_files: List[Tuple[Path, os.stat_result]] = [
-        (p, st) for p, st in iter_files(reports_dir) if p.suffix == ".xlsx"
-    ]
 
     # 3) Keep only latest XLSX per day in reports/
     if bool(reports_cfg.get("keep_latest_per_day", True)):
