@@ -133,6 +133,55 @@ class TestTradingDataManager(unittest.TestCase):
         actions = tdm.plan_actions(self.root, self.cfg)
         self.assertEqual(len(actions), 0)
 
+    def test_csv_to_xlsx_sanitization(self):
+        # Create a CSV with malicious content
+        csv_file = self.raw_csv_dir / "malicious.csv"
+        xlsx_file = self.reports_dir / "malicious.xlsx"
+
+        with csv_file.open("w", newline="", encoding="utf-8") as f:
+            import csv
+            writer = csv.writer(f)
+            writer.writerow(["Header1", "Header2"])
+            writer.writerow(["=cmd|' /C calc'!A0", "123"])
+            writer.writerow(["+SUM(1,1)", "@SUM(1,1)"])
+            writer.writerow(["-SUM(1,1)", "Normal"])
+
+        # Mock openpyxl to check calls without needing the library installed or writing files
+        with patch.dict("sys.modules", {"openpyxl": unittest.mock.MagicMock()}):
+            import openpyxl
+            mock_wb = openpyxl.Workbook.return_value
+            mock_ws = mock_wb.create_sheet.return_value
+
+            # Side effect to create the file so replace() doesn't fail
+            def side_effect_save(path):
+                with open(path, "w") as f:
+                    f.write("dummy")
+            mock_wb.save.side_effect = side_effect_save
+
+            # Since openpyxl is imported inside the function, we need to ensure
+            # it uses our mock. However, if openpyxl is already loaded in sys.modules,
+            # we need to be careful. The patch.dict above handles it.
+
+            tdm.csv_to_xlsx(
+                csv_file,
+                xlsx_file,
+                sheet_name="data",
+                delimiter=",",
+                encoding="utf-8"
+            )
+
+            # Verify calls to ws.append
+            # Expect 4 calls (header + 3 rows)
+            self.assertEqual(mock_ws.append.call_count, 4)
+
+            # Check header (not sanitized)
+            mock_ws.append.assert_any_call(["Header1", "Header2"])
+
+            # Check malicious rows (sanitized)
+            mock_ws.append.assert_any_call(["'=cmd|' /C calc'!A0", "123"])
+            mock_ws.append.assert_any_call(["'+SUM(1,1)", "'@SUM(1,1)"])
+            mock_ws.append.assert_any_call(["'-SUM(1,1)", "Normal"])
+
 
 if __name__ == "__main__":
     unittest.main()
