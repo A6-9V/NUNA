@@ -99,18 +99,19 @@ def iter_files_with_size(root: Path) -> Iterable[Tuple[Path, Path, int]]:
     by `stat` calls, as it retrieves file metadata during the initial listing.
     """
 
-    def _scan(current_dir: Path):
+    def _scan(current_dir: Path, current_rel_path: Path):
         for entry in os.scandir(current_dir):
-            p = Path(entry.path)
             if entry.is_dir():
-                yield from _scan(p)
+                yield from _scan(Path(entry.path), current_rel_path / entry.name)
             elif entry.is_file():
                 # The size is retrieved from the Direntry, avoiding a stat() call.
                 size = entry.stat().st_size
-                # `root` is from the outer scope, ensuring correct relative path.
-                yield p, p.relative_to(root), size
+                # --- OPTIMIZATION: Avoid expensive relative_to() ---
+                # Calculating relative path by joining is much faster than Path.relative_to(root)
+                # which has to walk up the path and compare parts for every file.
+                yield Path(entry.path), current_rel_path / entry.name, size
 
-    yield from _scan(root)
+    yield from _scan(root, Path(""))
 
 
 def encode_drive_path(path: str) -> str:
@@ -374,6 +375,14 @@ def ensure_folder_path(
     Ensure rel_folder exists under base_parent_id and return its item id.
     rel_folder is relative (no leading slash).
     """
+    # --- OPTIMIZATION: Quick cache lookup for full path ---
+    # Before splitting the path and checking each part, check if the full
+    # path is already known. This avoids O(depth) string operations and
+    # dict lookups for every file in the same directory.
+    full_path_posix = rel_folder.as_posix()
+    if full_path_posix in folder_id_cache:
+        return folder_id_cache[full_path_posix]
+
     rel_parts = [p for p in rel_folder.parts if p not in ("", ".", "/")]
     if not rel_parts:
         return base_parent_id
