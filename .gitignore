@@ -13,6 +13,8 @@ env/
 credentials.json
 token.json
 *.json.bak
+firebase-config.js
+firebase-config.json
 
 # IDE
 .vscode/
