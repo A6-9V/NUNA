@@ -465,14 +465,21 @@ def cmd_purge_trash(args: argparse.Namespace) -> int:
         print("Dry-run only. Re-run with --apply to execute.")
         return 0
 
-    # Clean up empty directories under trash/
-    trash_dir = (root / cfg["paths"]["trash_dir"])
-    for p in sorted(trash_dir.rglob("*"), reverse=True):
-        if p.is_dir():
-            try:
-                p.rmdir()
-            except OSError:
-                pass
+    # --- OPTIMIZATION: Efficiently remove empty directories ---
+    # To clean up the trash folder, this uses a bottom-up traversal
+    # (`os.walk` with `topdown=False`). This is significantly more
+    # performant than the previous `rglob` + `sorted` method because it
+    # avoids loading the entire directory tree into memory and sorting it.
+    # Instead, it visits directories from the deepest level up, attempting
+    # to remove them. `os.rmdir` will only succeed if a directory is empty,
+    # making this a safe and efficient O(N) operation.
+    trash_dir = root / cfg["paths"]["trash_dir"]
+    for dirpath, _, _ in os.walk(trash_dir, topdown=False):
+        try:
+            os.rmdir(dirpath)
+        except OSError:
+            # Directory is not empty, which is expected.
+            pass
 
     run_logs_dir = root / cfg["paths"]["run_logs_dir"]
     log_path = run_logs_dir / f"trading-data-manager-purge-{now_local_stamp()}.log"
