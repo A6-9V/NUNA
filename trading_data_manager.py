@@ -161,6 +161,10 @@ def safe_move(src: Path, dst: Path) -> None:
 
 
 def csv_to_xlsx(csv_path: Path, xlsx_path: Path, *, sheet_name: str, delimiter: str, encoding: str) -> None:
+    """
+    Convert a CSV file to an XLSX file.
+    Sanitizes cells starting with =, +, -, or @ to prevent CSV injection (Formula Injection).
+    """
     try:
         from openpyxl import Workbook
     except ModuleNotFoundError as ex:
@@ -177,7 +181,14 @@ def csv_to_xlsx(csv_path: Path, xlsx_path: Path, *, sheet_name: str, delimiter: 
     with csv_path.open("r", encoding=encoding, newline="") as f:
         reader = csv.reader(f, delimiter=delimiter)
         for row in reader:
-            ws.append(row)
+            # Sanitize CSV injection payloads (formula injection)
+            safe_row = []
+            for cell in row:
+                if isinstance(cell, str) and cell.startswith(("=", "+", "-", "@")):
+                    safe_row.append("'" + cell)
+                else:
+                    safe_row.append(cell)
+            ws.append(safe_row)
 
     wb.save(tmp_path)
     tmp_path.replace(xlsx_path)
