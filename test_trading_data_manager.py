@@ -4,6 +4,7 @@ import os
 import shutil
 import tempfile
 import time
+import copy
 from pathlib import Path
 from unittest.mock import patch
 
@@ -21,7 +22,8 @@ class TestTradingDataManager(unittest.TestCase):
         self.archive_dir = self.root / "archive"
         self.trash_dir = self.root / "trash"
 
-        self.cfg = tdm.DEFAULT_CONFIG
+        # Fix: copy default config so we don't pollute global state across tests
+        self.cfg = copy.deepcopy(tdm.DEFAULT_CONFIG)
         self.cfg["paths"] = {
             "logs_dir": self.logs_dir.relative_to(self.root),
             "raw_csv_dir": self.raw_csv_dir.relative_to(self.root),
@@ -109,6 +111,31 @@ class TestTradingDataManager(unittest.TestCase):
         self.cfg["conversion"]["csv_to_xlsx"] = False
         actions = tdm.plan_actions(self.root, self.cfg)
         self.assertEqual(len(actions), 0)
+
+    def test_csv_conversion_skip_if_newer(self):
+        # Create a CSV file
+        csv_file = self.raw_csv_dir / "data.csv"
+        csv_file.touch()
+
+        # XLSX is at T=1000
+        xlsx_file = self.reports_dir / "data.xlsx"
+        xlsx_file.touch()
+        t_base = time.time()
+        os.utime(xlsx_file, (t_base, t_base))
+
+        # Case 1: CSV is older (T=500)
+        os.utime(csv_file, (t_base - 500, t_base - 500))
+
+        actions = tdm.plan_actions(self.root, self.cfg)
+        # Should NOT have any convert actions
+        self.assertEqual(len([a for a in actions if a.kind == "convert"]), 0)
+
+        # Case 2: CSV is newer (T=1500)
+        os.utime(csv_file, (t_base + 500, t_base + 500))
+
+        actions = tdm.plan_actions(self.root, self.cfg)
+        # Should have convert action
+        self.assertEqual(len([a for a in actions if a.kind == "convert"]), 1)
 
     def test_keep_latest_per_day_flag(self):
         # Create two reports for the same day
