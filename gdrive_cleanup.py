@@ -26,6 +26,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
+from common_utils import eprint, human_bytes, now_stamp, write_json
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -117,14 +118,6 @@ class DriveFile:
         )
 
 
-def eprint(*args: object) -> None:
-    print(*args, file=sys.stderr)
-
-
-def now_stamp() -> str:
-    return dt.datetime.now(dt.timezone.utc).strftime("%Y%m%d-%H%M%SZ")
-
-
 def load_credentials(
     *,
     credentials_path: str,
@@ -150,13 +143,14 @@ def load_credentials(
     return creds
 
 
-def drive_service(*, creds: Credentials):
+def drive_service(*, creds: Credentials) -> Any:
+    """Initialize the Drive API service."""
     # cache_discovery=False avoids writing discovery cache files
     return build("drive", "v3", credentials=creds, cache_discovery=False)
 
 
 def iter_files(
-    service,
+    service: Any,
     *,
     q: Optional[str],
     include_trashed: bool,
@@ -194,18 +188,6 @@ def iter_files(
             break
 
 
-def human_bytes(n: Optional[int]) -> str:
-    if n is None:
-        return "—"
-    units = ["B", "KB", "MB", "GB", "TB", "PB"]
-    x = float(n)
-    for u in units:
-        if x < 1024 or u == units[-1]:
-            return f"{x:.1f}{u}" if u != "B" else f"{int(x)}B"
-        x /= 1024
-    return f"{n}B"
-
-
 def write_csv(path: str, files: List[DriveFile]) -> None:
     with open(path, "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
@@ -238,11 +220,6 @@ def write_csv(path: str, files: List[DriveFile]) -> None:
                     x.webViewLink or "",
                 ]
             )
-
-
-def write_json(path: str, payload: Any) -> None:
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(payload, f, indent=2, sort_keys=True)
 
 
 def drive_single_quote(value: str) -> str:
@@ -281,7 +258,7 @@ def _trash_batch_callback(
 
 
 def trash_files_batch(
-    service, *, file_ids: List[str]
+    service: Any, *, file_ids: List[str]
 ) -> Tuple[int, List[Tuple[str, str]]]:
     """Trash a list of file IDs using batch requests for performance."""
     if not file_ids:
@@ -319,7 +296,7 @@ def trash_files_batch(
     return (ok, failed)
 
 
-def get_files_batch(service, *, file_ids: List[str]) -> Iterable[DriveFile]:
+def get_files_batch(service: Any, *, file_ids: List[str]) -> Iterable[DriveFile]:
     """
     Fetch metadata for a list of file IDs using batch requests.
     This is more efficient than N+1 individual requests.
@@ -519,7 +496,7 @@ def cmd_audit(args: argparse.Namespace) -> int:
     return 0
 
 
-def _cmd_audit_export(args: argparse.Namespace, service) -> int:
+def _cmd_audit_export(args: argparse.Namespace, service: Any) -> int:
     """Original audit implementation, used when exporting requires all files in memory."""
     files: List[DriveFile] = []
     total_size = 0
