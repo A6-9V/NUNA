@@ -1,4 +1,3 @@
-
 import unittest
 import os
 import shutil
@@ -102,7 +101,9 @@ class TestTradingDataManager(unittest.TestCase):
         actions = tdm.plan_actions(self.root, self.cfg)
         # Should have 2 actions: convert and move to trash
         self.assertEqual(len([a for a in actions if a.kind == "convert"]), 1)
-        self.assertEqual(len([a for a in actions if a.kind == "move" and a.src == csv_file]), 1)
+        self.assertEqual(
+            len([a for a in actions if a.kind == "move" and a.src == csv_file]), 1
+        )
 
         # Test with conversion disabled
         self.cfg["conversion"]["csv_to_xlsx"] = False

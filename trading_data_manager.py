@@ -30,7 +30,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
-
 DEFAULT_CONFIG: Dict[str, Any] = {
     "paths": {
         "logs_dir": "logs",
@@ -88,11 +87,7 @@ def load_json_config(path: Path) -> Dict[str, Any]:
 def deep_merge(base: Dict[str, Any], override: Dict[str, Any]) -> Dict[str, Any]:
     out: Dict[str, Any] = dict(base)
     for k, v in override.items():
-        if (
-            k in out
-            and isinstance(out[k], dict)
-            and isinstance(v, dict)
-        ):
+        if k in out and isinstance(out[k], dict) and isinstance(v, dict):
             out[k] = deep_merge(out[k], v)
         else:
             out[k] = v
@@ -145,7 +140,11 @@ def file_mtime_local(p: Path, stat: Optional[os.stat_result] = None) -> dt.datet
 
 
 def older_than_days(
-    p: Path, *, days: int, now: Optional[dt.datetime] = None, stat: Optional[os.stat_result] = None
+    p: Path,
+    *,
+    days: int,
+    now: Optional[dt.datetime] = None,
+    stat: Optional[os.stat_result] = None,
 ) -> bool:
     if days <= 0:
         return False
@@ -154,7 +153,9 @@ def older_than_days(
     return age.total_seconds() >= days * 86400
 
 
-def archive_bucket_for(p: Path, stat: Optional[os.stat_result] = None) -> Tuple[str, str]:
+def archive_bucket_for(
+    p: Path, stat: Optional[os.stat_result] = None
+) -> Tuple[str, str]:
     d = file_mtime_local(p, stat=stat)
     return (f"{d.year:04d}", f"{d.month:02d}")
 
@@ -167,7 +168,9 @@ def safe_move(src: Path, dst: Path) -> None:
     shutil.move(str(src), str(dst))
 
 
-def csv_to_xlsx(csv_path: Path, xlsx_path: Path, *, sheet_name: str, delimiter: str, encoding: str) -> None:
+def csv_to_xlsx(
+    csv_path: Path, xlsx_path: Path, *, sheet_name: str, delimiter: str, encoding: str
+) -> None:
     try:
         from openpyxl import Workbook
     except ModuleNotFoundError as ex:
@@ -230,7 +233,9 @@ def plan_actions(root: Path, cfg: Dict[str, Any]) -> List[Action]:
     txt_days = int(retention.get("txt_to_trash", 0))
     if txt_days > 0:
         for p, p_stat in iter_files(logs_dir):
-            if p.suffix == ".txt" and older_than_days(p, days=txt_days, now=now, stat=p_stat):
+            if p.suffix == ".txt" and older_than_days(
+                p, days=txt_days, now=now, stat=p_stat
+            ):
                 actions.append(
                     Action(
                         kind="move",
@@ -320,7 +325,9 @@ def plan_actions(root: Path, cfg: Dict[str, Any]) -> List[Action]:
     return actions
 
 
-def execute_actions(actions: List[Action], *, cfg: Dict[str, Any], apply: bool) -> Tuple[int, List[str]]:
+def execute_actions(
+    actions: List[Action], *, cfg: Dict[str, Any], apply: bool
+) -> Tuple[int, List[str]]:
     max_actions = int(cfg.get("max_actions_per_run", 0) or 0)
     if max_actions > 0 and len(actions) > max_actions:
         raise RuntimeError(
@@ -339,7 +346,13 @@ def execute_actions(actions: List[Action], *, cfg: Dict[str, Any], apply: bool) 
             msg = f"CONVERT {a.src} -> {a.dst} ({a.detail})"
             lines.append(msg)
             if apply:
-                csv_to_xlsx(a.src, a.dst, sheet_name=sheet_name, delimiter=delimiter, encoding=encoding)
+                csv_to_xlsx(
+                    a.src,
+                    a.dst,
+                    sheet_name=sheet_name,
+                    delimiter=delimiter,
+                    encoding=encoding,
+                )
             ok += 1
         elif a.kind == "move":
             msg = f"MOVE {a.src} -> {a.dst} ({a.detail})"
@@ -368,7 +381,14 @@ def plan_purge_actions(root: Path, cfg: Dict[str, Any]) -> List[Action]:
     files_to_check = riter_files(trash_dir)
     for p, p_stat in files_to_check:
         if older_than_days(p, days=purge_days, now=now, stat=p_stat):
-            actions.append(Action(kind="purge", src=p, dst=None, detail=f"trash older than {purge_days}d"))
+            actions.append(
+                Action(
+                    kind="purge",
+                    src=p,
+                    dst=None,
+                    detail=f"trash older than {purge_days}d",
+                )
+            )
 
     for a in actions:
         ensure_under_root(root, a.src or trash_dir)
@@ -459,7 +479,7 @@ def cmd_purge_trash(args: argparse.Namespace) -> int:
         return 0
 
     expected = f"PURGE {n} FILES"
-    print(f"To permanently delete them, re-run with: --confirm \"{expected}\" --apply")
+    print(f'To permanently delete them, re-run with: --confirm "{expected}" --apply')
     if args.confirm != expected:
         return 0
 
@@ -491,7 +511,11 @@ def build_parser() -> argparse.ArgumentParser:
         prog="trading_data_manager.py",
         description="Safe local file workflow automation for trading logs and reports.",
     )
-    p.add_argument("--root", default="trading_data", help="Root folder containing trading subfolders")
+    p.add_argument(
+        "--root",
+        default="trading_data",
+        help="Root folder containing trading subfolders",
+    )
     p.add_argument(
         "--config",
         default="trading_data_config.json",
@@ -500,7 +524,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     sub = p.add_subparsers(dest="cmd", required=True)
 
-    i = sub.add_parser("init", help="Create the folder structure (and optionally write example config)")
+    i = sub.add_parser(
+        "init", help="Create the folder structure (and optionally write example config)"
+    )
     i.add_argument(
         "--write-example-config",
         default=None,
@@ -508,17 +534,29 @@ def build_parser() -> argparse.ArgumentParser:
     )
     i.set_defaults(func=cmd_init)
 
-    r = sub.add_parser("run", help="Convert CSV -> XLSX and move old files (dry-run by default)")
-    r.add_argument("--apply", action="store_true", help="Execute planned actions (otherwise dry-run)")
-    r.add_argument("--show", type=int, default=25, help="How many planned actions to preview")
+    r = sub.add_parser(
+        "run", help="Convert CSV -> XLSX and move old files (dry-run by default)"
+    )
+    r.add_argument(
+        "--apply",
+        action="store_true",
+        help="Execute planned actions (otherwise dry-run)",
+    )
+    r.add_argument(
+        "--show", type=int, default=25, help="How many planned actions to preview"
+    )
     r.set_defaults(func=cmd_run)
 
     pt = sub.add_parser(
         "purge-trash",
         help="Permanently delete old items inside trash/ (requires --confirm and --apply)",
     )
-    pt.add_argument("--apply", action="store_true", help="Actually purge (otherwise dry-run)")
-    pt.add_argument("--confirm", default=None, help="Must exactly match: PURGE <n> FILES")
+    pt.add_argument(
+        "--apply", action="store_true", help="Actually purge (otherwise dry-run)"
+    )
+    pt.add_argument(
+        "--confirm", default=None, help="Must exactly match: PURGE <n> FILES"
+    )
     pt.set_defaults(func=cmd_purge_trash)
 
     return p

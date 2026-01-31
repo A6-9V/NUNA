@@ -32,7 +32,6 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-
 SCOPES_READONLY = ["https://www.googleapis.com/auth/drive.metadata.readonly"]
 SCOPES_TRASH = ["https://www.googleapis.com/auth/drive"]
 
@@ -118,7 +117,9 @@ def load_credentials(
                 "Create a 'Desktop app' OAuth client in Google Cloud Console, download JSON, "
                 "and save it as ./credentials.json"
             )
-        flow = InstalledAppFlow.from_client_secrets_file(credentials_path, scopes=scopes)
+        flow = InstalledAppFlow.from_client_secrets_file(
+            credentials_path, scopes=scopes
+        )
         creds = flow.run_local_server(port=0)
     with open(token_path, "w", encoding="utf-8") as f:
         f.write(creds.to_json())
@@ -312,7 +313,7 @@ def get_files_batch(service, *, file_ids: List[str]) -> Iterable[DriveFile]:
 
     # The Google Drive API limits batch requests to 100 calls.
     for i in range(0, len(file_ids), GOOGLE_API_BATCH_LIMIT):
-        chunk = file_ids[i : i + GOOGLE_API_BATCH_LIMIT]
+        chunk = file_ids[i: i + GOOGLE_API_BATCH_LIMIT]
         batch = service.new_batch_http_request(callback=_callback)
         for fid in chunk:
             batch.add(
@@ -391,7 +392,7 @@ def cmd_trash_query(args: argparse.Namespace) -> int:
 
     expected = f"TRASH {n} FILES"
     print("")
-    print(f"To proceed, re-run with: --confirm \"{expected}\" --apply")
+    print(f'To proceed, re-run with: --confirm "{expected}" --apply')
 
     # If user hasn't provided the confirm string, stop here.
     if args.confirm is None:
@@ -399,7 +400,7 @@ def cmd_trash_query(args: argparse.Namespace) -> int:
 
     if args.confirm != expected:
         eprint("Refusing to proceed without exact confirmation string.")
-        eprint(f"Provide: --confirm \"{expected}\"")
+        eprint(f'Provide: --confirm "{expected}"')
         return 2
 
     # Dry-run unless --apply
@@ -436,7 +437,8 @@ def cmd_audit(args: argparse.Namespace) -> int:
 
     # Memory-efficient audit using a min-heap to keep track of top N files.
     # This avoids loading the entire file list into memory, reducing usage from O(N) to O(k).
-    top_n_heap: List[Tuple[int, DriveFile]] = []
+    # We use (size, id, file) to ensure unique heap elements and avoid comparison errors.
+    top_n_heap: List[Tuple[int, str, DriveFile]] = []
     total_size = 0
     scanned_count = 0
     count_with_size = 0
@@ -454,18 +456,22 @@ def cmd_audit(args: argparse.Namespace) -> int:
                 count_with_size += 1
                 # Use a min-heap to keep track of the k largest files.
                 if len(top_n_heap) < args.top:
-                    heapq.heappush(top_n_heap, (f.size, f))
+                    heapq.heappush(top_n_heap, (f.size, f.id, f))
                 else:
-                    heapq.heappushpop(top_n_heap, (f.size, f))
+                    heapq.heappushpop(top_n_heap, (f.size, f.id, f))
     except HttpError as ex:
         eprint("Drive API error:", ex)
         return 2
 
     # The heap contains the k largest files, sorted smallest to largest.
-    top_n_files = sorted([item[1] for item in top_n_heap], key=lambda x: x.size or -1, reverse=True)
+    top_n_files = sorted(
+        [item[2] for item in top_n_heap], key=lambda x: x.size or -1, reverse=True
+    )
 
     print(f"Files scanned: {scanned_count}")
-    print(f"Total size (files with size): {human_bytes(total_size)} ({count_with_size} files)")
+    print(
+        f"Total size (files with size): {human_bytes(total_size)} ({count_with_size} files)"
+    )
     print("")
     print(f"Top {len(top_n_files)} largest files:")
     for f in top_n_files:
@@ -499,7 +505,9 @@ def _cmd_audit_export(args: argparse.Namespace, service) -> int:
     top_n = files_sorted[: args.top]
 
     print(f"Files scanned: {len(files)}")
-    print(f"Total size (files with size): {human_bytes(total_size)} ({count_with_size} files)")
+    print(
+        f"Total size (files with size): {human_bytes(total_size)} ({count_with_size} files)"
+    )
     print("")
     print(f"Top {len(top_n)} largest files:")
     for f in top_n:
@@ -597,13 +605,17 @@ def cmd_duplicates(args: argparse.Namespace) -> int:
         group = {
             "md5Checksum": g[0].md5Checksum,
             "totalSizeBytes": total,
-            "files": [x.__dict__ for x in sorted(g, key=lambda x: (x.modifiedTime or ""))],
+            "files": [
+                x.__dict__ for x in sorted(g, key=lambda x: (x.modifiedTime or ""))
+            ],
         }
         plan["groups"].append(group)
 
         if shown < args.show:
             print(f"md5={g[0].md5Checksum}  total={human_bytes(total)}  count={len(g)}")
-            for x in sorted(g, key=lambda x: (x.size or -1), reverse=True)[: args.show_per_group]:
+            for x in sorted(g, key=lambda x: (x.size or -1), reverse=True)[
+                : args.show_per_group
+            ]:
                 print(f"  - {human_bytes(x.size)}  {x.name}  ({x.id})")
             print("")
             shown += 1
@@ -611,7 +623,9 @@ def cmd_duplicates(args: argparse.Namespace) -> int:
     if args.plan_json:
         write_json(args.plan_json, plan)
         print(f"Wrote plan JSON: {args.plan_json}")
-        print("Tip: open it, choose which file IDs to trash, then run the 'trash' command.")
+        print(
+            "Tip: open it, choose which file IDs to trash, then run the 'trash' command."
+        )
     return 0
 
 
@@ -633,7 +647,7 @@ def cmd_trash(args: argparse.Namespace) -> int:
 
     file_ids = payload.get("fileIds")
     if not isinstance(file_ids, list) or not all(isinstance(x, str) for x in file_ids):
-        eprint("ids JSON must look like: {\"fileIds\": [\"<id>\", ...]}")
+        eprint('ids JSON must look like: {"fileIds": ["<id>", ...]}')
         return 2
 
     file_ids = list(dict.fromkeys(file_ids))  # de-dupe, keep order
@@ -645,7 +659,7 @@ def cmd_trash(args: argparse.Namespace) -> int:
     expected = f"TRASH {n} FILES"
     if args.confirm != expected:
         eprint("Refusing to proceed without exact confirmation string.")
-        eprint(f"Provide: --confirm \"{expected}\"")
+        eprint(f'Provide: --confirm "{expected}"')
         eprint("This is a safety check so a copied command can’t trash the wrong set.")
         return 2
 
@@ -674,28 +688,44 @@ def build_parser() -> argparse.ArgumentParser:
         prog="gdrive_cleanup.py",
         description="Audit Google Drive, find duplicates, and optionally move selected items to trash (safely).",
     )
-    p.add_argument("--credentials", default="credentials.json", help="OAuth client secrets JSON path")
+    p.add_argument(
+        "--credentials",
+        default="credentials.json",
+        help="OAuth client secrets JSON path",
+    )
     p.add_argument("--token", default="token.json", help="OAuth token cache path")
     p.add_argument(
         "--include-trashed",
         action="store_true",
         help="Include items already in trash when scanning",
     )
-    p.add_argument("--query", default=None, help="Drive API query (q=...) to filter files")
-    p.add_argument("--page-size", type=int, default=1000, help="API page size (max 1000)")
+    p.add_argument(
+        "--query", default=None, help="Drive API query (q=...) to filter files"
+    )
+    p.add_argument(
+        "--page-size", type=int, default=1000, help="API page size (max 1000)"
+    )
 
     sub = p.add_subparsers(dest="cmd", required=True)
 
     a = sub.add_parser("audit", help="Scan files and report largest items")
     a.add_argument("--top", type=int, default=25, help="How many largest files to show")
-    a.add_argument("--show-links", action="store_true", help="Print webViewLink for shown items")
+    a.add_argument(
+        "--show-links", action="store_true", help="Print webViewLink for shown items"
+    )
     a.add_argument("--csv", default=None, help="Write full file list as CSV")
     a.add_argument("--json", default=None, help="Write full file list as JSON")
     a.set_defaults(func=cmd_audit)
 
-    d = sub.add_parser("duplicates", help="Find duplicate binary files using md5Checksum")
-    d.add_argument("--show", type=int, default=10, help="How many duplicate groups to print")
-    d.add_argument("--show-per-group", type=int, default=5, help="Items per group to print")
+    d = sub.add_parser(
+        "duplicates", help="Find duplicate binary files using md5Checksum"
+    )
+    d.add_argument(
+        "--show", type=int, default=10, help="How many duplicate groups to print"
+    )
+    d.add_argument(
+        "--show-per-group", type=int, default=5, help="Items per group to print"
+    )
     d.add_argument(
         "--plan-json",
         default=f"gdrive-plan-{now_stamp()}.json",
@@ -707,9 +737,15 @@ def build_parser() -> argparse.ArgumentParser:
         "trash",
         help="Move specific file IDs to trash (requires --apply and a confirmation string). Uses batch requests for performance.",
     )
-    t.add_argument("--ids-json", required=True, help="JSON file containing {\"fileIds\": [..]}")
-    t.add_argument("--apply", action="store_true", help="Actually perform the trash operation")
-    t.add_argument("--confirm", required=True, help="Must exactly match: TRASH <n> FILES")
+    t.add_argument(
+        "--ids-json", required=True, help='JSON file containing {"fileIds": [..]}'
+    )
+    t.add_argument(
+        "--apply", action="store_true", help="Actually perform the trash operation"
+    )
+    t.add_argument(
+        "--confirm", required=True, help="Must exactly match: TRASH <n> FILES"
+    )
     t.set_defaults(func=cmd_trash)
 
     tq = sub.add_parser(
@@ -732,14 +768,20 @@ def build_parser() -> argparse.ArgumentParser:
         default=0,
         help="Optional safety limit (0 = no limit)",
     )
-    tq.add_argument("--show", type=int, default=25, help="How many matched files to print")
-    tq.add_argument("--show-links", action="store_true", help="Print webViewLink for shown items")
+    tq.add_argument(
+        "--show", type=int, default=25, help="How many matched files to print"
+    )
+    tq.add_argument(
+        "--show-links", action="store_true", help="Print webViewLink for shown items"
+    )
     tq.add_argument(
         "--ids-out",
         default=None,
-        help="Write matched file IDs as JSON: {\"fileIds\": [..]}",
+        help='Write matched file IDs as JSON: {"fileIds": [..]}',
     )
-    tq.add_argument("--apply", action="store_true", help="Actually perform the trash operation")
+    tq.add_argument(
+        "--apply", action="store_true", help="Actually perform the trash operation"
+    )
     tq.add_argument(
         "--confirm",
         default=None,

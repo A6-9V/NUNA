@@ -34,7 +34,6 @@ import msal
 import requests
 from tqdm import tqdm
 
-
 GRAPH_BASE = "https://graph.microsoft.com/v1.0"
 
 
@@ -93,17 +92,21 @@ def pick_extracted_root(extract_dir: Path) -> Path:
 def iter_files_with_size(root: Path) -> Iterable[Tuple[Path, Path, int]]:
     """
     Recursively scan directory and yield (full_path, rel_path, size).
-    Uses os.scandir to leverage metadata caching for better performance.
+    Uses an iterative stack and os.scandir for performance and robustness.
     """
-    def _scan(current_dir: Path):
-        for entry in os.scandir(current_dir):
-            p = Path(entry.path)
-            if entry.is_dir():
-                yield from _scan(p)
-            elif entry.is_file():
-                # entry.stat() is efficient when used with scandir
-                yield p, p.relative_to(root), entry.stat().st_size
-    yield from _scan(root)
+    stack = [root]
+    while stack:
+        current_dir = stack.pop()
+        try:
+            for entry in os.scandir(current_dir):
+                p = Path(entry.path)
+                if entry.is_dir():
+                    stack.append(p)
+                elif entry.is_file():
+                    # entry.stat() is efficient when used with scandir
+                    yield p, p.relative_to(root), entry.stat().st_size
+        except FileNotFoundError:
+            continue
 
 
 def encode_drive_path(path: str) -> str:
@@ -139,7 +142,9 @@ class GraphClient:
         r.raise_for_status()
         return r.json()
 
-    def put_bytes(self, url: str, data: bytes, *, headers: Optional[dict] = None) -> dict:
+    def put_bytes(
+        self, url: str, data: bytes, *, headers: Optional[dict] = None
+    ) -> dict:
         r = self._s.put(url, data=data, headers=headers, timeout=300)
         r.raise_for_status()
         # For upload-session finalization, Graph returns JSON item metadata
@@ -253,7 +258,9 @@ def load_onedrive_auth(
         flow = app.initiate_device_flow(scopes=scopes)
         msg = flow.get("message")
         if not msg:
-            raise RuntimeError("Failed to initiate device-code flow. Is the client_id correct?")
+            raise RuntimeError(
+                "Failed to initiate device-code flow. Is the client_id correct?"
+            )
         print(msg)
         result = app.acquire_token_by_device_flow(flow)
 
@@ -294,7 +301,7 @@ def get_existing_files_delta(
             continue
 
         # This gives a path like: /folder/subfolder
-        path_from_root = path_str[colon_idx + 1 :]
+        path_from_root = path_str[colon_idx + 1:]
 
         # Full path of the item from the drive root.
         full_path_from_root = f"{path_from_root}/{name}"
@@ -303,7 +310,7 @@ def get_existing_files_delta(
         full_path_from_root = full_path_from_root.lstrip("/")
 
         if full_path_from_root.startswith(path_prefix_to_strip):
-            rel_path_str = full_path_from_root[len(path_prefix_to_strip) :]
+            rel_path_str = full_path_from_root[len(path_prefix_to_strip):]
             existing_paths.add(Path(rel_path_str))
 
     return existing_paths
@@ -447,7 +454,9 @@ def main(argv: List[str]) -> int:
         default=os.environ.get("ONEDRIVE_TOKEN_CACHE") or ".onedrive_token_cache.json",
         help="Path to MSAL token cache file",
     )
-    p.add_argument("--dry-run", action="store_true", help="Do not upload; only show plan")
+    p.add_argument(
+        "--dry-run", action="store_true", help="Do not upload; only show plan"
+    )
     p.add_argument(
         "--chunk-mb",
         type=int,
@@ -470,7 +479,11 @@ def main(argv: List[str]) -> int:
         default=1,
         help="Number of parallel uploads to run (default: 1, sequential). Improves performance for many small files.",
     )
-    p.add_argument("--skip-duplicates", action="store_true", help="Do not upload files that already exist in the destination")
+    p.add_argument(
+        "--skip-duplicates",
+        action="store_true",
+        help="Do not upload files that already exist in the destination",
+    )
     args = p.parse_args(argv)
 
     if not args.client_id:
@@ -531,13 +544,18 @@ def main(argv: List[str]) -> int:
             children_cache: Dict[str, Dict[str, str]] = {}
             folder_id_cache: Dict[str, str] = {}
             dest_folder_id = get_or_create_folder(
-                client, parent_id="root", name=args.onedrive_folder, children_cache=children_cache
+                client,
+                parent_id="root",
+                name=args.onedrive_folder,
+                children_cache=children_cache,
             )
 
             if args.skip_duplicates:
                 print("Checking for existing files in OneDrive...")
                 existing_paths = get_existing_files_delta(
-                    client, item_id=dest_folder_id, dest_folder_name=args.onedrive_folder
+                    client,
+                    item_id=dest_folder_id,
+                    dest_folder_name=args.onedrive_folder,
                 )
                 if existing_paths:
                     original_count = len(files)
@@ -549,7 +567,9 @@ def main(argv: List[str]) -> int:
                     ]
                     skipped = original_count - len(files)
                     if skipped > 0:
-                        print(f"Found {len(existing_paths)} existing files. Skipping {skipped} duplicates.")
+                        print(
+                            f"Found {len(existing_paths)} existing files. Skipping {skipped} duplicates."
+                        )
                 else:
                     print("No existing files found in destination.")
 
@@ -565,11 +585,7 @@ def main(argv: List[str]) -> int:
             print("Pre-creating directories...")
             all_dirs = sorted(
                 list(
-                    {
-                        rel_p.parent
-                        for _, rel_p, _ in files
-                        if rel_p.parent != Path(".")
-                    }
+                    {rel_p.parent for _, rel_p, _ in files if rel_p.parent != Path(".")}
                 )
             )
             for d in all_dirs:
@@ -627,10 +643,16 @@ def main(argv: List[str]) -> int:
                         uploaded_count += 1
                         pbar.update(1)
 
-            print(f"Done. Uploaded {uploaded_count} files into '{args.onedrive_folder}'.")
+            print(
+                f"Done. Uploaded {uploaded_count} files into '{args.onedrive_folder}'."
+            )
             return 0
         finally:
-            if not args.keep_extracted and "tmp_extract_ctx" in locals() and tmp_extract_ctx:
+            if (
+                not args.keep_extracted
+                and "tmp_extract_ctx" in locals()
+                and tmp_extract_ctx
+            ):
                 tmp_extract_ctx.cleanup()
     finally:
         if not args.keep_zip and tmp_zip_ctx:
