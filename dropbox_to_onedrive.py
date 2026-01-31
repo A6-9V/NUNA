@@ -27,34 +27,16 @@ import zipfile
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Set, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
 from urllib.parse import parse_qsl, quote, urlencode, urlparse, urlunparse
 
+from common_utils import eprint, human_bytes, now_stamp
 import msal
 import requests
 from tqdm import tqdm
 
 
 GRAPH_BASE = "https://graph.microsoft.com/v1.0"
-
-
-def eprint(*args: object) -> None:
-    print(*args, file=sys.stderr)
-
-
-def now_stamp() -> str:
-    # compact and filesystem-safe
-    return time.strftime("%Y%m%d-%H%M%S", time.gmtime())
-
-
-def human_bytes(n: int) -> str:
-    units = ["B", "KB", "MB", "GB", "TB", "PB"]
-    x = float(n)
-    for u in units:
-        if x < 1024 or u == units[-1]:
-            return f"{x:.1f}{u}" if u != "B" else f"{int(x)}B"
-        x /= 1024
-    return f"{n}B"
 
 
 def normalize_dropbox_download_url(url: str) -> str:
@@ -99,7 +81,7 @@ def iter_files_with_size(root: Path) -> Iterable[Tuple[Path, Path, int]]:
     by `stat` calls, as it retrieves file metadata during the initial listing.
     """
 
-    def _scan(current_dir: Path, current_rel_path: Path):
+    def _scan(current_dir: Path, current_rel_path: Path) -> Iterable[Tuple[Path, Path, int]]:
         for entry in os.scandir(current_dir):
             if entry.is_dir():
                 yield from _scan(Path(entry.path), current_rel_path / entry.name)
@@ -129,7 +111,7 @@ class GraphAuth:
 
 
 class GraphClient:
-    def __init__(self, auth: GraphAuth):
+    def __init__(self, auth: GraphAuth) -> None:
         self._s = requests.Session()
         self._s.headers.update(
             {

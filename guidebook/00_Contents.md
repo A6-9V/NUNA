@@ -11,6 +11,8 @@ This guide book provides a comprehensive overview of the **Google Drive Cleanup 
 | [03_dropbox_to_onedrive_docs.md](03_dropbox_to_onedrive_docs.md) | Dropbox to OneDrive migration guide |
 | [04_org_copilot_agents_setup.md](04_org_copilot_agents_setup.md) | **GitHub Copilot & Jules Agents: Organization Setup** |
 | [05_trading_data_file_management.md](05_trading_data_file_management.md) | Local trading logs & reports file management workflow |
+| [06_oauth_setup.md](06_oauth_setup.md) | Detailed OAuth setup instructions for Google Drive and OneDrive |
+| [07_quick_start.md](07_quick_start.md) | Quick reference guide for common commands |
 
 ## Repository Cloning Instructions
 

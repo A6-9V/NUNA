@@ -4,13 +4,20 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 import firebase_admin
+from common_utils import eprint
 from firebase_admin import credentials, firestore
 
 def load_firebase_config(config_path: str = "firebase-config.json") -> Dict[str, Any]:
     """Loads the Firebase configuration from a JSON file."""
     path = Path(config_path)
     if not path.exists():
-        raise FileNotFoundError(f"Firebase config file not found: {config_path}")
+        # Try example if real one is missing, but warn
+        example_path = path.with_suffix(".example.json")
+        if example_path.exists():
+            eprint(f"Warning: {config_path} not found. Using {example_path} instead.")
+            path = example_path
+        else:
+            raise FileNotFoundError(f"Firebase config file not found: {config_path}")
 
     with path.open("r", encoding="utf-8") as f:
         return json.load(f)

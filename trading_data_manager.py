@@ -30,6 +30,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
+from common_utils import deep_merge, eprint, load_json_config, mkdirp, now_local_stamp
+
 
 DEFAULT_CONFIG: Dict[str, Any] = {
     "paths": {
@@ -66,48 +68,11 @@ DEFAULT_CONFIG: Dict[str, Any] = {
 }
 
 
-def eprint(*args: object) -> None:
-    print(*args, file=sys.stderr)
-
-
-def now_local_stamp() -> str:
-    # Include microseconds to avoid log filename collisions in fast reruns.
-    return dt.datetime.now().strftime("%Y%m%d-%H%M%S-%f")
-
-
-def load_json_config(path: Path) -> Dict[str, Any]:
-    if not path.exists():
-        return {}
-    with path.open("r", encoding="utf-8") as f:
-        payload = json.load(f)
-    if not isinstance(payload, dict):
-        raise ValueError(f"Config must be a JSON object: {path}")
-    return payload
-
-
-def deep_merge(base: Dict[str, Any], override: Dict[str, Any]) -> Dict[str, Any]:
-    out: Dict[str, Any] = dict(base)
-    for k, v in override.items():
-        if (
-            k in out
-            and isinstance(out[k], dict)
-            and isinstance(v, dict)
-        ):
-            out[k] = deep_merge(out[k], v)
-        else:
-            out[k] = v
-    return out
-
-
 def ensure_under_root(root: Path, p: Path) -> None:
     rr = root.resolve()
     rp = p.resolve()
     if not rp.is_relative_to(rr):
         raise ValueError(f"Refusing to operate outside root: {rp} (root={rr})")
-
-
-def mkdirp(p: Path) -> None:
-    p.mkdir(parents=True, exist_ok=True)
 
 
 def iter_files(p: Path) -> Iterable[Tuple[Path, os.stat_result]]:
