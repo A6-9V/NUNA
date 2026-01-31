@@ -462,11 +462,16 @@ def cmd_audit(args: argparse.Namespace) -> int:
     scanned_count = 0
     count_with_size = 0
     try:
+        # --- OPTIMIZATION: Minimal fields for audit scan ---
+        # When only displaying the top N files on the terminal, we don't need
+        # full metadata for every file. Requesting only essential fields
+        # significantly reduces the API payload and speeds up the scan.
         iterator = iter_files(
             service,
             q=args.query,
             include_trashed=args.include_trashed,
             page_size=args.page_size,
+            fields=TRASH_QUERY_FIELDS,
         )
         for f in tqdm(iterator, desc="Scanning files", unit="files"):
             scanned_count += 1
