@@ -377,7 +377,7 @@ def plan_purge_actions(root: Path, cfg: Dict[str, Any]) -> List[Action]:
 
     now = dt.datetime.now()
     actions: List[Action] = []
-
+    # Purge files (not directories) older than purge_days. Empty directories are removed at the end.
     files_to_check = riter_files(trash_dir)
     for p, p_stat in files_to_check:
         if older_than_days(p, days=purge_days, now=now, stat=p_stat):

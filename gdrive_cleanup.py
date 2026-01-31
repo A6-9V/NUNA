@@ -313,7 +313,7 @@ def get_files_batch(service, *, file_ids: List[str]) -> Iterable[DriveFile]:
 
     # The Google Drive API limits batch requests to 100 calls.
     for i in range(0, len(file_ids), GOOGLE_API_BATCH_LIMIT):
-        chunk = file_ids[i: i + GOOGLE_API_BATCH_LIMIT]
+        chunk = file_ids[i : i + GOOGLE_API_BATCH_LIMIT]
         batch = service.new_batch_http_request(callback=_callback)
         for fid in chunk:
             batch.add(

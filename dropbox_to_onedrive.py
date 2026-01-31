@@ -197,8 +197,8 @@ class GraphClient:
 
     def delta(self, *, item_id: str) -> Iterable[dict]:
         """
-        Iterate through all descendants using the delta query.
-        This is faster than recursive listings for large folders.
+        Iterate through all descendants of an item using the delta query.
+        This is significantly faster than recursive listings for large folders.
         """
         next_link = f"{GRAPH_BASE}/me/drive/items/{item_id}/delta"
         while next_link:
@@ -277,8 +277,8 @@ def get_existing_files_delta(
     client: GraphClient, *, item_id: str, dest_folder_name: str
 ) -> Set[Path]:
     """
-    Get all existing file paths using delta query.
-    High-performance recursive listing to avoid the N+1 problem.
+    Use Graph's `delta` query for a high-performance recursive file listing.
+    This avoids the N+1 problem of traversing the folder hierarchy manually.
     """
     existing_paths: Set[Path] = set()
     # The `delta` response provides item paths relative to the drive root.
@@ -301,7 +301,7 @@ def get_existing_files_delta(
             continue
 
         # This gives a path like: /folder/subfolder
-        path_from_root = path_str[colon_idx + 1:]
+        path_from_root = path_str[colon_idx + 1 :]
 
         # Full path of the item from the drive root.
         full_path_from_root = f"{path_from_root}/{name}"
@@ -310,7 +310,7 @@ def get_existing_files_delta(
         full_path_from_root = full_path_from_root.lstrip("/")
 
         if full_path_from_root.startswith(path_prefix_to_strip):
-            rel_path_str = full_path_from_root[len(path_prefix_to_strip):]
+            rel_path_str = full_path_from_root[len(path_prefix_to_strip) :]
             existing_paths.add(Path(rel_path_str))
 
     return existing_paths
@@ -583,6 +583,7 @@ def main(argv: List[str]) -> int:
 
             # Pre-create all unique directories to avoid race conditions in parallel uploads.
             print("Pre-creating directories...")
+            # Use pre-calculated relative paths
             all_dirs = sorted(
                 list(
                     {rel_p.parent for _, rel_p, _ in files if rel_p.parent != Path(".")}
