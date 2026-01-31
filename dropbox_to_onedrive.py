@@ -154,9 +154,9 @@ class GraphClient:
 
     def create_upload_session(self, drive_path: str) -> str:
         encoded = encode_drive_path(drive_path)
-        url = f"{GRAPH_BASE}/me/drive/root:/{encoded}:/createUploadSession"
+        path = f"/me/drive/root:/{encoded}:/createUploadSession"
         payload = {"item": {"@microsoft.graph.conflictBehavior": "replace"}}
-        resp = self.post_json(f"/me/drive/root:/{encoded}:/createUploadSession", payload)
+        resp = self.post_json(path, payload)
         upload_url = resp.get("uploadUrl")
         if not upload_url:
             raise RuntimeError("Graph did not return an uploadUrl for upload session.")
@@ -211,15 +211,15 @@ class GraphClient:
             else f"/me/drive/items/{item_id}/children"
         )
         params: Optional[Dict] = {"$select": "id,name,folder", "$top": 999}
-        url: Optional[str] = f"{GRAPH_BASE}{path}"
-        while url:
-            r = self._s.get(url, params=params, timeout=120)
+        next_url: Optional[str] = f"{GRAPH_BASE}{path}"
+        while next_url:
+            r = self._s.get(next_url, params=params, timeout=120)
             # Params are only needed for the first request with a relative path
             params = None
             r.raise_for_status()
             data = r.json()
             yield from data.get("value", [])
-            url = data.get("@odata.nextLink")
+            next_url = data.get("@odata.nextLink")
 
 
 def load_onedrive_auth(
@@ -487,7 +487,7 @@ def main(argv: List[str]) -> int:
         zip_path = Path(tmp_zip_ctx.name) / "dropbox.zip"
 
     try:
-        print(f"Downloading Dropbox ZIP...")
+        print("Downloading Dropbox ZIP...")
         download_to_file(dl_url, dest_path=zip_path)
         zip_size = zip_path.stat().st_size
         print(f"Downloaded: {zip_path.name} ({human_bytes(zip_size)})")
@@ -639,4 +639,3 @@ def main(argv: List[str]) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main(sys.argv[1:]))
-
