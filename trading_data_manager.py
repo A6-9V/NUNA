@@ -121,15 +121,22 @@ def iter_files(p: Path) -> Iterable[Tuple[Path, os.stat_result]]:
 
 
 def riter_files(p: Path) -> Iterable[Tuple[Path, os.stat_result]]:
-    """More efficient Path.rglob("*") + stat() for files."""
-    try:
-        for entry in os.scandir(p):
-            if entry.is_file():
-                yield (p / entry.name, entry.stat())
-            elif entry.is_dir():
-                yield from riter_files(p / entry.name)
-    except FileNotFoundError:
-        pass
+    """
+    Recursively yield (Path, stat) for all files under p.
+    Uses an iterative stack and os.scandir for performance and to avoid recursion depth issues.
+    """
+    stack = [p]
+    while stack:
+        curr = stack.pop()
+        try:
+            for entry in os.scandir(curr):
+                if entry.is_file():
+                    # entry.stat() is cached on some systems after scandir
+                    yield (curr / entry.name, entry.stat())
+                elif entry.is_dir():
+                    stack.append(curr / entry.name)
+        except FileNotFoundError:
+            pass
 
 
 def file_mtime_local(p: Path, stat: Optional[os.stat_result] = None) -> dt.datetime:
@@ -357,11 +364,7 @@ def plan_purge_actions(root: Path, cfg: Dict[str, Any]) -> List[Action]:
 
     now = dt.datetime.now()
     actions: List[Action] = []
-    # Purge files (not directories) older than purge_days. Empty directories are removed at the end.
-    # --- OPTIMIZATION: Remove unnecessary sort ---
-    # The list of files to be purged does not need to be sorted. Removing the
-    # sort avoids a potentially expensive operation on large directories without
-    # affecting correctness.
+
     files_to_check = riter_files(trash_dir)
     for p, p_stat in files_to_check:
         if older_than_days(p, days=purge_days, now=now, stat=p_stat):
@@ -465,14 +468,8 @@ def cmd_purge_trash(args: argparse.Namespace) -> int:
         print("Dry-run only. Re-run with --apply to execute.")
         return 0
 
-    # --- OPTIMIZATION: Efficiently remove empty directories ---
-    # To clean up the trash folder, this uses a bottom-up traversal
-    # (`os.walk` with `topdown=False`). This is significantly more
-    # performant than the previous `rglob` + `sorted` method because it
-    # avoids loading the entire directory tree into memory and sorting it.
-    # Instead, it visits directories from the deepest level up, attempting
-    # to remove them. `os.rmdir` will only succeed if a directory is empty,
-    # making this a safe and efficient O(N) operation.
+    # Efficiently remove empty directories using bottom-up traversal.
+    # os.walk(topdown=False) ensures we visit children before parents.
     trash_dir = root / cfg["paths"]["trash_dir"]
     for dirpath, _, _ in os.walk(trash_dir, topdown=False):
         try:

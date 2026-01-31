@@ -48,33 +48,9 @@ DEFAULT_FIELDS = ",".join(
 )
 
 
-# --- OPTIMIZATION: Minimal fields for trash-query ---
-# To speed up the initial file scan, the `trash-query` command requests only
-# the fields essential for identifying, displaying, and trashing files. This
-# reduces the API response payload size, improving performance.
-TRASH_QUERY_FIELDS = ",".join(
-    [
-        "nextPageToken",
-        "files(id,name,size,webViewLink)",
-    ]
-)
-
-
-# --- OPTIMIZATION: Minimal fields for duplicates pass 1 ---
-# To speed up finding duplicates, the first pass requests only the fields
-# essential for identifying files with the same content. This minimizes the
-# initial API response payload.
-DUPLICATES_PASS1_FIELDS = ",".join(
-    [
-        "nextPageToken",
-        "files(id,size,md5Checksum)",
-    ]
-)
-
-
-# --- OPTIMIZATION: Fields for fetching full file metadata ---
-# Used in the second pass of the duplicates command to fetch detailed metadata
-# for only the files identified as duplicates.
+TRASH_QUERY_FIELDS = "nextPageToken,files(id,name,size,webViewLink)"
+DUPLICATES_PASS1_FIELDS = "nextPageToken,files(id,size,md5Checksum)"
+AUDIT_FIELDS = "nextPageToken,files(id,name,size,webViewLink)"
 FULL_FILE_FIELDS = "id,name,mimeType,size,md5Checksum,trashed,createdTime,modifiedTime,owners(displayName,emailAddress),parents,webViewLink"
 
 
@@ -262,11 +238,8 @@ def and_query(parts: Iterable[Optional[str]]) -> Optional[str]:
     return " and ".join(f"({x})" for x in xs)
 
 
-# --- OPTIMIZATION: Batch trash requests ---
-# For improved performance when trashing many files, this function uses batch
-# requests to minimize HTTP overhead. Instead of one API call per file, it
-# groups up to 100 trash operations into a single multipart HTTP request.
-# This significantly reduces latency from network round-trips.
+# Use batch requests to group up to 100 trash operations into a single HTTP request,
+# significantly reducing latency from network round-trips.
 def _trash_batch_callback(
     request_id: str,
     response: Any,
@@ -337,11 +310,7 @@ def get_files_batch(service, *, file_ids: List[str]) -> Iterable[DriveFile]:
             # The response (`resp`) is already a parsed JSON dict.
             results.append(DriveFile.from_api(resp))
 
-    # --- OPTIMIZATION: Batch chunking ---
-    # The Google Drive API limits batch requests to 100 calls. To handle
-    # more than 100 file IDs, the list is processed in chunks, executing a
-    # separate batch request for each. This makes the function robust for
-    # large inputs and avoids API errors.
+    # The Google Drive API limits batch requests to 100 calls.
     for i in range(0, len(file_ids), GOOGLE_API_BATCH_LIMIT):
         chunk = file_ids[i : i + GOOGLE_API_BATCH_LIMIT]
         batch = service.new_batch_http_request(callback=_callback)
@@ -461,17 +430,12 @@ def cmd_audit(args: argparse.Namespace) -> int:
     )
     service = drive_service(creds=creds)
 
-    # --- OPTIMIZATION: Memory-efficient audit ---
-    # When not exporting to CSV/JSON, the audit can find the largest files
-    # without storing the entire file list in memory. This is critical for
-    # very large drives, as it reduces memory usage from O(N) to O(k), where N
-    # is the total number of files and k is the number of top files to show.
-    # A min-heap is used to keep track of the largest k files seen so far.
     is_exporting = args.csv or args.json
     if is_exporting:
-        # Fallback to the original memory-intensive method when exporting.
         return _cmd_audit_export(args, service)
 
+    # Memory-efficient audit using a min-heap to keep track of top N files.
+    # This avoids loading the entire file list into memory, reducing usage from O(N) to O(k).
     top_n_heap: List[Tuple[int, DriveFile]] = []
     total_size = 0
     scanned_count = 0
@@ -482,6 +446,7 @@ def cmd_audit(args: argparse.Namespace) -> int:
             q=args.query,
             include_trashed=args.include_trashed,
             page_size=args.page_size,
+            fields=AUDIT_FIELDS,
         ):
             scanned_count += 1
             if f.size is not None:
@@ -570,9 +535,8 @@ def cmd_duplicates(args: argparse.Namespace) -> int:
     )
     service = drive_service(creds=creds)
 
-    # --- OPTIMIZATION: Two-pass strategy for finding duplicates ---
-    # Pass 1: Fetch minimal fields to find duplicate md5Checksums.
-    # This pass is memory-efficient and minimizes API response size.
+    # Two-pass strategy to find duplicates:
+    # Pass 1: Find duplicate checksums with minimal fields to minimize payload.
     eprint("Pass 1: Finding duplicate checksums...")
     by_hash: Dict[str, List[str]] = defaultdict(list)
     scanned = 0
@@ -597,10 +561,9 @@ def cmd_duplicates(args: argparse.Namespace) -> int:
         print("No duplicate files found.")
         return 0
 
-    # Pass 2: Fetch full metadata for only the duplicate files.
-    # This avoids fetching unnecessary data for unique files.
-    eprint(f"Pass 2: Fetching metadata for {len(dup_checksums)} duplicate groups...")
+    # Pass 2: Fetch full metadata only for duplicates
     dup_file_ids = [fid for ids in dup_checksums.values() for fid in ids]
+    eprint(f"Pass 2: Fetching metadata for {len(dup_file_ids)} duplicate files...")
 
     files_by_hash: Dict[str, List[DriveFile]] = defaultdict(list)
     try:

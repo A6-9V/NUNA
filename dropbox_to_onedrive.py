@@ -92,24 +92,17 @@ def pick_extracted_root(extract_dir: Path) -> Path:
 
 def iter_files_with_size(root: Path) -> Iterable[Tuple[Path, Path, int]]:
     """
-    Recursively scan a directory for files, yielding their full path,
-    path relative to the root, and size.
-
-    This uses `os.scandir` which is more performant than `os.walk` followed
-    by `stat` calls, as it retrieves file metadata during the initial listing.
+    Recursively scan directory and yield (full_path, rel_path, size).
+    Uses os.scandir to leverage metadata caching for better performance.
     """
-
     def _scan(current_dir: Path):
         for entry in os.scandir(current_dir):
             p = Path(entry.path)
             if entry.is_dir():
                 yield from _scan(p)
             elif entry.is_file():
-                # The size is retrieved from the Direntry, avoiding a stat() call.
-                size = entry.stat().st_size
-                # `root` is from the outer scope, ensuring correct relative path.
-                yield p, p.relative_to(root), size
-
+                # entry.stat() is efficient when used with scandir
+                yield p, p.relative_to(root), entry.stat().st_size
     yield from _scan(root)
 
 
@@ -199,8 +192,8 @@ class GraphClient:
 
     def delta(self, *, item_id: str) -> Iterable[dict]:
         """
-        Iterate through all descendants of an item using the delta query.
-        This is significantly faster than recursive listings for large folders.
+        Iterate through all descendants using the delta query.
+        This is faster than recursive listings for large folders.
         """
         next_link = f"{GRAPH_BASE}/me/drive/items/{item_id}/delta"
         while next_link:
@@ -277,8 +270,8 @@ def get_existing_files_delta(
     client: GraphClient, *, item_id: str, dest_folder_name: str
 ) -> Set[Path]:
     """
-    Use Graph's `delta` query for a high-performance recursive file listing.
-    This avoids the N+1 problem of traversing the folder hierarchy manually.
+    Get all existing file paths using delta query.
+    High-performance recursive listing to avoid the N+1 problem.
     """
     existing_paths: Set[Path] = set()
     # The `delta` response provides item paths relative to the drive root.
@@ -513,10 +506,6 @@ def main(argv: List[str]) -> int:
                 zf.extractall(extract_dir)
             src_root = pick_extracted_root(extract_dir)
 
-            # --- OPTIMIZATION: Single-pass file scan with pre-calculation ---
-            # Use a single pass to collect file paths and sizes, avoiding
-            # repeated `stat()` calls. This is a measurable performance gain
-            # for directories with thousands of files.
             files: List[Tuple[Path, Path, int]] = list(iter_files_with_size(src_root))
             total = sum(size for _, _, size in files)
             print(f"Files to upload: {len(files)} (total {human_bytes(total)})")
@@ -546,22 +535,13 @@ def main(argv: List[str]) -> int:
             )
 
             if args.skip_duplicates:
-                print("Checking for existing files in OneDrive (this may take a while for large folders)...")
-                # --- OPTIMIZATION: High-performance duplicate check ---
-                # Use the Graph API's `delta` query to fetch the entire file
-                # list in the destination folder in a single operation. This
-                # avoids the N+1 problem of recursively listing directories,
-                # significantly speeding up the check for large, nested folders.
+                print("Checking for existing files in OneDrive...")
                 existing_paths = get_existing_files_delta(
                     client, item_id=dest_folder_id, dest_folder_name=args.onedrive_folder
                 )
                 if existing_paths:
                     original_count = len(files)
-                    # --- FIX: Ensure `files` is reassigned to the filtered list ---
-                    # The original logic failed to reassign the `files` variable if no
-                    # duplicates were found, causing the upload step to iterate over
-                    # the wrong list. This is corrected by always reassigning `files`
-                    # to the filtered result.
+                    # Reassign filtered list to avoid redundant uploads
                     files = [
                         (p, rel_p, size)
                         for p, rel_p, size in files
@@ -581,14 +561,8 @@ def main(argv: List[str]) -> int:
 
             print(f"Uploading into OneDrive folder: {args.onedrive_folder}")
 
-            # --- OPTIMIZATION: Parallel uploads ---
-            # To make parallel uploads safe, first discover all unique directories
-            # and create them sequentially. This avoids race conditions where
-            # multiple threads might try to create the same folder.
-            # This is a performance optimization for folders with many files,
-            # as network I/O can be done concurrently.
+            # Pre-create all unique directories to avoid race conditions in parallel uploads.
             print("Pre-creating directories...")
-            # Use pre-calculated relative paths
             all_dirs = sorted(
                 list(
                     {
