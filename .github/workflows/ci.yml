@@ -38,3 +38,12 @@ jobs:
           "${{ steps.setup-python.outputs.python-path }}" trading_data_manager.py init --help
           "${{ steps.setup-python.outputs.python-path }}" trading_data_manager.py run --help
           "${{ steps.setup-python.outputs.python-path }}" trading_data_manager.py purge-trash --help
+
+  verify-plugin:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: IntelliJ Platform Plugin Verifier
+        uses: ChrisCarini/intellij-platform-plugin-verifier-action@v2.0.3
