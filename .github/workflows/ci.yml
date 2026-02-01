@@ -48,4 +48,4 @@ jobs:
       - name: Domain and SSL cert watcher
         uses: codex-team/action-check-domain@v1.2
         with:
-          url: https://github.com/A6-9V/NUNA
+          url: ${{ github.server_url }}/${{ github.repository }}
