@@ -39,5 +39,9 @@ jobs:
           "${{ steps.setup-python.outputs.python-path }}" trading_data_manager.py run --help
           "${{ steps.setup-python.outputs.python-path }}" trading_data_manager.py purge-trash --help
 
+      # SSH Remote Commands - Placeholder for remote deployment/execution
+      # Configure with required secrets: SSH_HOST, SSH_USERNAME, SSH_KEY
+      # Add 'with:' section and 'script:' parameter when ready to use
       - name: SSH Remote Commands
         uses: appleboy/ssh-action@v1.2.5
+        if: false  # Disabled until SSH credentials are configured
