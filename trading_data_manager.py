@@ -80,7 +80,8 @@ def iter_files(p: Path) -> Iterable[Tuple[Path, os.stat_result]]:
     try:
         for entry in os.scandir(p):
             if entry.is_file():
-                yield (p / entry.name, entry.stat())
+                # --- OPTIMIZATION: Path(entry.path) is faster than p / entry.name ---
+                yield (Path(entry.path), entry.stat())
     except FileNotFoundError:
         pass
 
@@ -90,9 +91,10 @@ def riter_files(p: Path) -> Iterable[Tuple[Path, os.stat_result]]:
     try:
         for entry in os.scandir(p):
             if entry.is_file():
-                yield (p / entry.name, entry.stat())
+                # --- OPTIMIZATION: Path(entry.path) is faster than p / entry.name ---
+                yield (Path(entry.path), entry.stat())
             elif entry.is_dir():
-                yield from riter_files(p / entry.name)
+                yield from riter_files(Path(entry.path))
     except FileNotFoundError:
         pass
 
