@@ -38,3 +38,6 @@ jobs:
           "${{ steps.setup-python.outputs.python-path }}" trading_data_manager.py init --help
           "${{ steps.setup-python.outputs.python-path }}" trading_data_manager.py run --help
           "${{ steps.setup-python.outputs.python-path }}" trading_data_manager.py purge-trash --help
+
+      - name: SSH Remote Commands
+        uses: appleboy/ssh-action@v1.2.5
