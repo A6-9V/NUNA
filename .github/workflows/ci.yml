@@ -38,3 +38,19 @@ jobs:
           "${{ steps.setup-python.outputs.python-path }}" trading_data_manager.py init --help
           "${{ steps.setup-python.outputs.python-path }}" trading_data_manager.py run --help
           "${{ steps.setup-python.outputs.python-path }}" trading_data_manager.py purge-trash --help
+
+  graphql:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: GitHub GraphQL Action
+        uses: helaili/github-graphql-action@2.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          query: .github/workflows/repository.query.yaml
+          owner: A6-9V
+          name: NUNA
+          outputFile: repo-info.json

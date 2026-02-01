@@ -1,0 +1,22 @@
+query: |
+  query($owner:String!, $name:String!) {
+    repository(owner:$owner, name:$name) {
+      name
+      description
+      stargazerCount
+      forkCount
+      issues(states: OPEN) {
+        totalCount
+      }
+      pullRequests(states: OPEN) {
+        totalCount
+      }
+    }
+  }
+variables:
+  owner:
+    type: arg
+    name: owner
+  name:
+    type: arg
+    name: name
