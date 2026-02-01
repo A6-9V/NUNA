@@ -3,6 +3,8 @@ name: CI
 on:
   push:
   pull_request:
+  schedule:
+    - cron: '0 8 * * *'
 
 jobs:
   python:
@@ -38,3 +40,12 @@ jobs:
           "${{ steps.setup-python.outputs.python-path }}" trading_data_manager.py init --help
           "${{ steps.setup-python.outputs.python-path }}" trading_data_manager.py run --help
           "${{ steps.setup-python.outputs.python-path }}" trading_data_manager.py purge-trash --help
+
+  domain-check:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    steps:
+      - name: Domain and SSL cert watcher
+        uses: codex-team/action-check-domain@v1.2
+        with:
+          url: https://github.com/A6-9V/NUNA
