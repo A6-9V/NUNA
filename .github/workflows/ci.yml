@@ -6,7 +6,7 @@ on:
 
 jobs:
   python:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,8 +24,12 @@ jobs:
 
       - name: Syntax check
         run: |
-          "${{ steps.setup-python.outputs.python-path }}" -m compileall -q gdrive_cleanup.py
-          "${{ steps.setup-python.outputs.python-path }}" -m compileall -q trading_data_manager.py
+          "${{ steps.setup-python.outputs.python-path }}" -m compileall -q .
+
+      - name: Run tests
+        run: |
+          "${{ steps.setup-python.outputs.python-path }}" test_common_utils.py
+          "${{ steps.setup-python.outputs.python-path }}" test_trading_data_manager.py
 
       - name: CLI help smoke test
         run: |
