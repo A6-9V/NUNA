@@ -67,8 +67,12 @@ def deep_merge(base: Dict[str, Any], override: Dict[str, Any]) -> Dict[str, Any]
 
 
 def mkdirp(p: Path) -> None:
-    """Create directory and its parents if they don't exist."""
-    p.mkdir(parents=True, exist_ok=True)
+    """
+    Create directory and its parents if they don't exist.
+    Guarded with is_dir() to avoid overhead of mkdir(exist_ok=True) for existing paths.
+    """
+    if not p.is_dir():
+        p.mkdir(parents=True, exist_ok=True)
 
 
 def write_json(path: str | Path, payload: Any) -> None:

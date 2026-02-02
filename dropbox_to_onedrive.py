@@ -30,7 +30,7 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
 from urllib.parse import parse_qsl, quote, urlencode, urlparse, urlunparse
 
-from common_utils import eprint, human_bytes, now_stamp
+from common_utils import eprint, human_bytes, mkdirp, now_stamp
 import msal
 import requests
 from tqdm import tqdm
@@ -52,7 +52,7 @@ def normalize_dropbox_download_url(url: str) -> str:
 
 
 def download_to_file(url: str, *, dest_path: Path, timeout_s: int = 120) -> None:
-    dest_path.parent.mkdir(parents=True, exist_ok=True)
+    mkdirp(dest_path.parent)
     with requests.get(url, stream=True, timeout=timeout_s, allow_redirects=True) as r:
         r.raise_for_status()
         with open(dest_path, "wb") as f:
@@ -492,7 +492,7 @@ def main(argv: List[str]) -> int:
 
         if args.keep_extracted:
             extract_dir = Path("dropbox-extracted").resolve()
-            extract_dir.mkdir(parents=True, exist_ok=True)
+            mkdirp(extract_dir)
             tmp_extract_ctx = None
         else:
             tmp_extract_ctx = tempfile.TemporaryDirectory(prefix="dropbox_extract_")

@@ -25,6 +25,7 @@ import datetime as dt
 import json
 import os
 import shutil
+import time
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -103,13 +104,17 @@ def file_mtime_local(p: Path, stat: Optional[os.stat_result] = None) -> dt.datet
 
 
 def older_than_days(
-    p: Path, *, days: int, now: Optional[dt.datetime] = None, stat: Optional[os.stat_result] = None
+    p: Path, *, days: int, now: Optional[float] = None, stat: Optional[os.stat_result] = None
 ) -> bool:
+    """
+    Check if a file is older than a certain number of days.
+    Uses float timestamps for performance, avoiding datetime object overhead.
+    """
     if days <= 0:
         return False
-    now_dt = now or dt.datetime.now()
-    age = now_dt - file_mtime_local(p, stat=stat)
-    return age.total_seconds() >= days * 86400
+    now_val = now or time.time()
+    mtime = stat.st_mtime if stat else p.stat().st_mtime
+    return (now_val - mtime) >= days * 86400
 
 
 def archive_bucket_for(p: Path, stat: Optional[os.stat_result] = None) -> Tuple[str, str]:
@@ -192,14 +197,14 @@ def plan_actions(root: Path, cfg: Dict[str, Any]) -> List[Action]:
     mkdirp(archive_dir)
     mkdirp(trash_dir)
 
-    now = dt.datetime.now()
+    now_ts = time.time()
     actions: List[Action] = []
 
     # 1) .txt logs -> trash after retention
     txt_days = int(retention.get("txt_to_trash", 0))
     if txt_days > 0:
         for p, p_stat in iter_files(logs_dir):
-            if p.suffix == ".txt" and older_than_days(p, days=txt_days, now=now, stat=p_stat):
+            if p.suffix == ".txt" and older_than_days(p, days=txt_days, now=now_ts, stat=p_stat):
                 actions.append(
                     Action(
                         kind="move",
@@ -276,7 +281,7 @@ def plan_actions(root: Path, cfg: Dict[str, Any]) -> List[Action]:
     xlsx_days = int(retention.get("xlsx_to_archive", 0))
     if xlsx_days > 0:
         for x, x_stat in xlsx_files:
-            if older_than_days(x, days=xlsx_days, now=now, stat=x_stat):
+            if older_than_days(x, days=xlsx_days, now=now_ts, stat=x_stat):
                 yyyy, mm = archive_bucket_for(x, stat=x_stat)
                 actions.append(
                     Action(
@@ -339,7 +344,7 @@ def plan_purge_actions(root: Path, cfg: Dict[str, Any]) -> List[Action]:
     if purge_days <= 0:
         return []
 
-    now = dt.datetime.now()
+    now_ts = time.time()
     actions: List[Action] = []
     # Purge files (not directories) older than purge_days. Empty directories are removed at the end.
     # --- OPTIMIZATION: Remove unnecessary sort ---
@@ -348,7 +353,7 @@ def plan_purge_actions(root: Path, cfg: Dict[str, Any]) -> List[Action]:
     # affecting correctness.
     files_to_check = riter_files(trash_dir)
     for p, p_stat in files_to_check:
-        if older_than_days(p, days=purge_days, now=now, stat=p_stat):
+        if older_than_days(p, days=purge_days, now=now_ts, stat=p_stat):
             actions.append(Action(kind="purge", src=p, dst=None, detail=f"trash older than {purge_days}d"))
 
     for a in actions:
