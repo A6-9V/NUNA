@@ -1,0 +1,4 @@
+Time;Order;Symbol;Type;Direction;Lot;Price;Order2;Commision;Swap;Profit;Balance;Comment
+2020.02.12 21:27:14;511;XAUUSD;sell;in;0.1;1 565,65;511;0,00;0,00;0,00;10008 373,07;"START|SELL|1|0|511"
+
+2020.02.28 09:21:41;611;XAUUSD;buy;out;271.08;1 624,13;611;0,00;-8 728,78;312 284,16;10121 880,28;"tp 1624.14|511"
