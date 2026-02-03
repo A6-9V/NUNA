@@ -30,7 +30,10 @@ This document tracks the VPS hosting configuration for NUNA MQL5 Trading Robots.
 
 To deploy the NUNA trading robots to VPS Singapore 09:
 
-1. Connect to the VPS via Remote Desktop or SSH
+1. **Connect to the VPS:**
+   - For Windows VPS: Use Remote Desktop Connection (RDP)
+   - For Linux VPS: Use SSH
+   - Connection details should be provided by the VPS hosting provider
 2. Install MetaTrader 5 platform if not already installed
 3. Deploy trading robots from the repository:
    - Copy Expert Advisors from `Experts/` directory
