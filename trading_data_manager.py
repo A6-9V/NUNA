@@ -26,6 +26,7 @@ import json
 import os
 import shutil
 import sys
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple
@@ -68,8 +69,12 @@ DEFAULT_CONFIG: Dict[str, Any] = {
 }
 
 
-def ensure_under_root(root: Path, p: Path) -> None:
-    rr = root.resolve()
+def ensure_under_root(root: Path, p: Path, root_resolved: Optional[Path] = None) -> None:
+    """
+    Ensure path p is under root.
+    Optimization: pass root_resolved to avoid redundant .resolve() calls in loops.
+    """
+    rr = root_resolved or root.resolve()
     rp = p.resolve()
     if not rp.is_relative_to(rr):
         raise ValueError(f"Refusing to operate outside root: {rp} (root={rr})")
@@ -103,13 +108,18 @@ def file_mtime_local(p: Path, stat: Optional[os.stat_result] = None) -> dt.datet
 
 
 def older_than_days(
-    p: Path, *, days: int, now: Optional[dt.datetime] = None, stat: Optional[os.stat_result] = None
+    p: Path, *, days: int, now: Optional[float] = None, stat: Optional[os.stat_result] = None
 ) -> bool:
+    """
+    Check if a file is older than the given number of days.
+    Uses float timestamps for comparison to avoid O(N) datetime object creations.
+    """
     if days <= 0:
         return False
-    now_dt = now or dt.datetime.now()
-    age = now_dt - file_mtime_local(p, stat=stat)
-    return age.total_seconds() >= days * 86400
+    now_ts = now or time.time()
+    file_ts = stat.st_mtime if stat else p.stat().st_mtime
+    # Use float comparison (O(1)) which is significantly faster than datetime arithmetic.
+    return (now_ts - file_ts) >= (days * 86400)
 
 
 def archive_bucket_for(p: Path, stat: Optional[os.stat_result] = None) -> Tuple[str, str]:
@@ -192,7 +202,7 @@ def plan_actions(root: Path, cfg: Dict[str, Any]) -> List[Action]:
     mkdirp(archive_dir)
     mkdirp(trash_dir)
 
-    now = dt.datetime.now()
+    now = time.time()
     actions: List[Action] = []
 
     # 1) .txt logs -> trash after retention
@@ -288,11 +298,13 @@ def plan_actions(root: Path, cfg: Dict[str, Any]) -> List[Action]:
                 )
 
     # Safety: ensure every action stays within root
+    # Optimization: resolve root once outside the loop.
+    root_resolved = root.resolve()
     for a in actions:
         if a.src is not None:
-            ensure_under_root(root, a.src)
+            ensure_under_root(root, a.src, root_resolved=root_resolved)
         if a.dst is not None:
-            ensure_under_root(root, a.dst)
+            ensure_under_root(root, a.dst, root_resolved=root_resolved)
 
     return actions
 
@@ -339,7 +351,7 @@ def plan_purge_actions(root: Path, cfg: Dict[str, Any]) -> List[Action]:
     if purge_days <= 0:
         return []
 
-    now = dt.datetime.now()
+    now = time.time()
     actions: List[Action] = []
     # Purge files (not directories) older than purge_days. Empty directories are removed at the end.
     # --- OPTIMIZATION: Remove unnecessary sort ---
@@ -351,8 +363,10 @@ def plan_purge_actions(root: Path, cfg: Dict[str, Any]) -> List[Action]:
         if older_than_days(p, days=purge_days, now=now, stat=p_stat):
             actions.append(Action(kind="purge", src=p, dst=None, detail=f"trash older than {purge_days}d"))
 
+    # Optimization: resolve root once outside the loop.
+    root_resolved = root.resolve()
     for a in actions:
-        ensure_under_root(root, a.src or trash_dir)
+        ensure_under_root(root, a.src or trash_dir, root_resolved=root_resolved)
     return actions
 
 
