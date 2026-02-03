@@ -1,0 +1,59 @@
+# Git
+.git
+.gitignore
+.github
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info
+dist
+build
+*.log
+
+# Virtual environments
+.venv
+venv
+ENV
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Local config and secrets
+.env
+*.json
+token.json
+credentials.json
+trading_data_config.json
+
+# Documentation
+*.md
+guidebook
+
+# Windows
+*.bat
+*.ps1
+
+# MQL5 files (not needed in Python container)
+Expert
+Experts
+Include
+Indicators
+Scripts
+Profiles
+Logs
+Files
+Images
+MQL5_Deployment_Package
+I'm Good
+.jules

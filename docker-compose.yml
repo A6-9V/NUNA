@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  nuna-tools:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nuna-tools:latest
+    container_name: nuna-tools
+    volumes:
+      # Mount credentials and tokens
+      - ./credentials.json:/app/credentials.json:ro
+      - ./token.json:/app/token.json
+      # Mount data directories for persistence
+      - ./data:/data
+      # Mount local config if exists
+      - ./trading_data_config.json:/app/trading_data_config.json:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+      # Add OneDrive client ID if needed
+      - ONEDRIVE_CLIENT_ID=${ONEDRIVE_CLIENT_ID:-}
+    command: ["python", "gdrive_cleanup.py", "--help"]
+    restart: unless-stopped
+    networks:
+      - nuna-network
+
+networks:
+  nuna-network:
+    driver: bridge

@@ -62,3 +62,31 @@ jobs:
           python trading_data_manager.py init --help
           python trading_data_manager.py run --help
           python trading_data_manager.py purge-trash --help
+
+  docker-build:
+    name: Docker Build & Test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          tags: nuna-tools:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Test Docker image
+        run: |
+          docker run --rm nuna-tools:test python gdrive_cleanup.py --help
+          docker run --rm nuna-tools:test python trading_data_manager.py --help
+          docker run --rm nuna-tools:test python -m unittest discover -s . -p "test_*.py"

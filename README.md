@@ -49,6 +49,18 @@ This repository also includes Python utilities for file management and automatio
 
 ### Setup
 
+#### Option 1: Using Docker (Recommended)
+
+```bash
+# Build the Docker image
+docker build -t nuna-tools .
+
+# Or use docker-compose
+docker-compose up -d
+```
+
+#### Option 2: Local Installation
+
 ```bash
 # Using bash (Linux/Mac)
 ./setup.sh
@@ -65,8 +77,11 @@ pip install -r requirements.txt
 Audit, find duplicates, and clean up Google Drive files.
 
 ```bash
-# Audit largest files
+# Local usage
 python gdrive_cleanup.py audit --top 50
+
+# Docker usage
+docker run --rm -v $(pwd)/credentials.json:/app/credentials.json nuna-tools python gdrive_cleanup.py audit --top 50
 
 # Find duplicates
 python gdrive_cleanup.py duplicates --show 10
@@ -79,14 +94,48 @@ python gdrive_cleanup.py trash-query --name-contains "old" --apply --confirm "TR
 Manage trading logs and reports with automated CSV to XLSX conversion.
 
 ```bash
-# Initialize folder structure
+# Local usage
 python trading_data_manager.py init
+
+# Docker usage
+docker run --rm -v $(pwd)/data:/data nuna-tools python trading_data_manager.py init --root /data
 
 # Convert CSV files and organize (dry-run)
 python trading_data_manager.py run
 
 # Apply changes
 python trading_data_manager.py run --apply
+```
+
+### Docker Deployment
+
+#### Using Docker Compose
+
+```bash
+# Start services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+```
+
+#### Manual Docker Commands
+
+```bash
+# Build image
+docker build -t nuna-tools .
+
+# Run with mounted credentials
+docker run --rm \
+  -v $(pwd)/credentials.json:/app/credentials.json \
+  -v $(pwd)/data:/data \
+  nuna-tools python gdrive_cleanup.py audit --top 20
+
+# Run tests in container
+docker run --rm nuna-tools python -m unittest discover -s . -p "test_*.py"
 ```
 
 ## Development
@@ -99,9 +148,20 @@ python -m unittest discover -s . -p "test_*.py" -v
 
 ### CI/CD
 
-The repository uses GitHub Actions for continuous integration:
-- Python syntax checking
-- Unit tests
-- CLI smoke tests
+The repository uses GitHub Actions for continuous integration and deployment:
+- **CI Workflow**: Python syntax checking, unit tests, CLI smoke tests, Docker build & test
+- **Deploy Workflow**: Automated Docker image building and publishing to GitHub Container Registry
 
-See [`.github/workflows/ci.yml`](.github/workflows/ci.yml) for details.
+See [`.github/workflows/ci.yml`](.github/workflows/ci.yml) and [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) for details.
+
+#### Deployment to VPS
+
+To deploy on your VPS:
+
+```bash
+# Pull the latest image
+docker pull ghcr.io/a6-9v/nuna:main
+
+# Run with docker-compose
+docker-compose up -d
+```

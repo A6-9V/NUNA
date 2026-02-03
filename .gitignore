@@ -11,3 +11,6 @@ venv/
 *.swp
 *.swo
 *~
+
+# Docker volumes and data
+data/
