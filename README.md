@@ -71,8 +71,8 @@ python gdrive_cleanup.py audit --top 50
 # Find duplicates
 python gdrive_cleanup.py duplicates --show 10
 
-# Move files to trash
-python gdrive_cleanup.py trash-query --name-contains "old" --apply --confirm "TRASH N FILES"
+# Move files to trash (requires confirmation with actual count)
+python gdrive_cleanup.py trash-query --name-contains "old" --apply --confirm "TRASH 5 FILES"
 ```
 
 #### Trading Data Manager (`trading_data_manager.py`)
