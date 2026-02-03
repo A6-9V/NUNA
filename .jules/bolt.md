@@ -13,3 +13,7 @@
 ## 2026-01-31 - Safety vs. Performance in mkdirp Caching
 **Learning:** A global cache for `mkdirp` using a `set` is unsafe because it doesn't account for external deletions of directories. While it provides a massive speedup (~40x), it sacrifices correctness.
 **Action:** Avoid global state for filesystem operations. Use `if not p.is_dir():` as a safe way to speed up `Path.mkdir(parents=True, exist_ok=True)` by ~2x without sacrificing robustness.
+
+## 2026-02-03 - Optimization of Path Resolution and Timestamp Checks
+**Learning:** Redundant calls to `Path.resolve()` and `dt.datetime.now()` (or conversion to `datetime` objects) inside loops can introduce significant overhead when processing thousands of files. `resolve()` performs expensive system calls, and `datetime` object creation is slower than raw float timestamp arithmetic.
+**Action:** Always pre-resolve base paths once outside of loops. Use `time.time()` and `os.stat_result.st_mtime` for age comparisons in high-frequency loops to leverage O(1) float arithmetic. Guard `Path.mkdir` with `is_dir()` to avoid internal exception handling or redundant checks when a directory already exists.
