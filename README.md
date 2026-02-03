@@ -165,3 +165,5 @@ docker pull ghcr.io/a6-9v/nuna:main
 # Run with docker-compose
 docker-compose up -d
 ```
+
+For VPS hosting configuration and management details, see [VPS_HOSTING.md](VPS_HOSTING.md).
