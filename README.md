@@ -1,7 +1,13 @@
-# MQL5 Trading Robots
-git clone https://github.com/A6-9V/NUNA.git
+# NUNA - MQL5 Trading Robots
 
-This repository contains a collection of MQL5 trading robots (Expert Advisors).
+[![CI](https://github.com/A6-9V/NUNA/actions/workflows/ci.yml/badge.svg)](https://github.com/A6-9V/NUNA/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+```bash
+git clone https://github.com/A6-9V/NUNA.git
+```
+
+This repository contains a collection of MQL5 trading robots (Expert Advisors) and Python utilities for managing trading data and Google Drive files.
 
 ## Robots
 
@@ -36,3 +42,66 @@ All robots share a common set of input parameters for configuration.
     *   `DarkCloud PiercingLine CCI`: 120500
     *   `HangingMan Hammer CCI`: 124100
     *   `DarkCloud PiercingLine RSI`: 120700
+
+## Python Utilities
+
+This repository also includes Python utilities for file management and automation.
+
+### Setup
+
+```bash
+# Using bash (Linux/Mac)
+./setup.sh
+
+# Or manually
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+### Tools
+
+#### Google Drive Cleanup (`gdrive_cleanup.py`)
+Audit, find duplicates, and clean up Google Drive files.
+
+```bash
+# Audit largest files
+python gdrive_cleanup.py audit --top 50
+
+# Find duplicates
+python gdrive_cleanup.py duplicates --show 10
+
+# Move files to trash
+python gdrive_cleanup.py trash-query --name-contains "old" --apply --confirm "TRASH N FILES"
+```
+
+#### Trading Data Manager (`trading_data_manager.py`)
+Manage trading logs and reports with automated CSV to XLSX conversion.
+
+```bash
+# Initialize folder structure
+python trading_data_manager.py init
+
+# Convert CSV files and organize (dry-run)
+python trading_data_manager.py run
+
+# Apply changes
+python trading_data_manager.py run --apply
+```
+
+## Development
+
+### Running Tests
+
+```bash
+python -m unittest discover -s . -p "test_*.py" -v
+```
+
+### CI/CD
+
+The repository uses GitHub Actions for continuous integration:
+- Python syntax checking
+- Unit tests
+- CLI smoke tests
+
+See [`.github/workflows/ci.yml`](.github/workflows/ci.yml) for details.

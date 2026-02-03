@@ -1,2 +1,13 @@
 .env
 tmp/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+*.log
+.DS_Store
+*.swp
+*.swo
+*~
