@@ -86,11 +86,14 @@ This repository also includes Python utilities for file management and automatio
 #### Option 1: Using Docker (Recommended)
 
 ```bash
-# Build the Docker image
+# Build and start with docker-compose (builds image if needed)
+./docker-compose up --build
+
+# Or build the Docker image manually
 docker build -t nuna-tools .
 
-# Or use docker-compose
-docker-compose up -d
+# Or use native Docker Compose v2 command
+docker compose up -d
 ```
 
 #### Option 2: Local Installation
@@ -168,15 +171,20 @@ Available image tags:
 
 #### Using Docker Compose
 
+> **Note**: This repository includes a `docker-compose` wrapper script for backward compatibility with Docker Compose v1 syntax. Systems with Docker Compose v2 can use either `./docker-compose` or `docker compose` (native v2 command).
+
 ```bash
-# Start services
-docker-compose up -d
+# Build and start services
+./docker-compose up --build
+
+# Or start services without rebuilding
+./docker-compose up -d
 
 # View logs
-docker-compose logs -f
+./docker-compose logs -f
 
 # Stop services
-docker-compose down
+./docker-compose down
 ```
 
 #### Manual Docker Commands
@@ -220,7 +228,7 @@ To deploy on your VPS:
 docker pull ghcr.io/a6-9v/nuna:main
 
 # Run with docker-compose
-docker-compose up -d
+./docker-compose up -d
 ```
 
 For VPS hosting configuration and management details, see [VPS_HOSTING.md](VPS_HOSTING.md).
