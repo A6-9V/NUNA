@@ -50,7 +50,7 @@ For containerized deployment:
 docker pull ghcr.io/a6-9v/nuna:main
 
 # Run with docker-compose
-docker-compose up -d
+./docker-compose up -d
 ```
 
 See [README.md](README.md) for more deployment details.
