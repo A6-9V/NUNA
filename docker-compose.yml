@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   nuna-tools:
     # Option 1: Build locally from Dockerfile
