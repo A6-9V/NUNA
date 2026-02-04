@@ -39,16 +39,17 @@ class TestPluginLoader(unittest.TestCase):
                 json.dump(metadata, f)
         
         if with_init:
-            init_content = '''
-def initialize():
-    return "initialized"
+            from textwrap import dedent
+            init_content = dedent("""
+                def initialize():
+                    return "initialized"
 
-def main():
-    return {"status": "success"}
+                def main():
+                    return {"status": "success"}
 
-def get_info():
-    return {"name": "Test Plugin"}
-'''
+                def get_info():
+                    return {"name": "Test Plugin"}
+            """).strip()
             with open(plugin_path / "__init__.py", 'w') as f:
                 f.write(init_content)
     

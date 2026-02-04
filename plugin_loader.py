@@ -130,7 +130,7 @@ class PluginLoader:
         return list(self.loaded_plugins.keys())
 
 
-def main():
+def main() -> int:
     """CLI interface for plugin management."""
     import argparse
     

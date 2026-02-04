@@ -445,35 +445,52 @@ def get_info():
 
 import requests
 
+class APIPlugin:
+    """API Integration Plugin using class-based approach."""
+    
+    def __init__(self):
+        self.api_url = "https://api.example.com"
+        self.api_key = None
+    
+    def initialize(self):
+        """Initialize API connection."""
+        self.api_key = self.load_api_key()
+    
+    def main(self):
+        """Fetch data from API."""
+        response = requests.get(
+            f"{self.api_url}/data",
+            headers={"Authorization": f"Bearer {self.api_key}"}
+        )
+        
+        if response.status_code == 200:
+            return {"status": "success", "data": response.json()}
+        else:
+            return {"status": "error", "message": f"API returned {response.status_code}"}
+    
+    def get_info(self):
+        return {
+            "name": "API Integrator",
+            "version": "1.0.0",
+            "capabilities": ["api", "integration"]
+        }
+    
+    def load_api_key(self):
+        """Load API key from secure storage."""
+        # Implementation
+        pass
+
+# Module-level interface for compatibility
+_plugin = APIPlugin()
+
 def initialize():
-    """Initialize API connection."""
-    global api_url, api_key
-    api_url = "https://api.example.com"
-    api_key = load_api_key()
+    return _plugin.initialize()
 
 def main():
-    """Fetch data from API."""
-    response = requests.get(
-        f"{api_url}/data",
-        headers={"Authorization": f"Bearer {api_key}"}
-    )
-    
-    if response.status_code == 200:
-        return {"status": "success", "data": response.json()}
-    else:
-        return {"status": "error", "message": f"API returned {response.status_code}"}
+    return _plugin.main()
 
 def get_info():
-    return {
-        "name": "API Integrator",
-        "version": "1.0.0",
-        "capabilities": ["api", "integration"]
-    }
-
-def load_api_key():
-    """Load API key from secure storage."""
-    # Implementation
-    pass
+    return _plugin.get_info()
 ```
 
 ## Troubleshooting
