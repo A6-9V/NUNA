@@ -1,0 +1,7 @@
+{
+  "name": "example",
+  "version": "1.0.0",
+  "description": "Example plugin demonstrating NUNA plugin structure",
+  "author": "NUNA Team",
+  "entry_point": "main"
+}

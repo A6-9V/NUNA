@@ -1,0 +1,15 @@
+{
+  "plugin_directory": "plugins",
+  "auto_load": false,
+  "enabled_plugins": [
+    "example"
+  ],
+  "plugin_config": {
+    "example": {
+      "enabled": true,
+      "settings": {
+        "debug": false
+      }
+    }
+  }
+}
