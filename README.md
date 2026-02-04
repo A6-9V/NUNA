@@ -232,3 +232,23 @@ docker pull ghcr.io/a6-9v/nuna:main
 ```
 
 For VPS hosting configuration and management details, see [VPS_HOSTING.md](VPS_HOSTING.md).
+
+## Configuration and Credentials
+
+### Supabase Integration
+
+This repository is connected to a Supabase organization for backend services. For information about:
+- Accessing the Supabase dashboard
+- Setting up GitHub repository secrets
+- Security best practices for credential management
+
+See [guidebook/09_supabase_credentials.md](guidebook/09_supabase_credentials.md).
+
+### Other Configuration Files
+
+The repository includes several example configuration files:
+- `firebase-config.example.json` - Firebase configuration template
+- `plugin_config.example.json` - Plugin system configuration
+- `trading_data_config.example.json` - Trading data manager settings
+
+Copy these files and remove the `.example` suffix to create your own configuration files. Never commit actual credentials to the repository.
