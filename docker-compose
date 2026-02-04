@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 # Docker Compose v1 compatibility wrapper
 # This script provides backward compatibility for 'docker-compose' command
 # by forwarding all arguments to 'docker compose' (v2 CLI)
