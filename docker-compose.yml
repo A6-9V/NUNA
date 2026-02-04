@@ -2,10 +2,16 @@ version: '3.8'
 
 services:
   nuna-tools:
+    # Option 1: Build locally from Dockerfile
     build:
       context: .
       dockerfile: Dockerfile
     image: nuna-tools:latest
+    
+    # Option 2: Use pre-built image from GitHub Container Registry
+    # Uncomment the line below and comment out the 'build' section above
+    # image: ghcr.io/a6-9v/nuna:main
+    
     container_name: nuna-tools
     volumes:
       # Mount credentials and tokens

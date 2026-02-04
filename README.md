@@ -109,6 +109,29 @@ python trading_data_manager.py run --apply
 
 ### Docker Deployment
 
+#### Pre-built Images from GitHub Container Registry
+
+The repository automatically publishes Docker images to GitHub Container Registry on every push to the main branch.
+
+```bash
+# Pull latest from main branch
+docker pull ghcr.io/a6-9v/nuna:main
+
+# Pull specific commit by SHA tag (e.g., main-1890e95)
+docker pull ghcr.io/a6-9v/nuna:main-abc1234
+
+# Pull by digest for immutability (replace with actual digest)
+docker pull ghcr.io/a6-9v/nuna@sha256:07d977a6cfb628842793fcddae9ae5644800ddb367e9301063532eaa515fe381
+
+# Run the pre-built image
+docker run --rm ghcr.io/a6-9v/nuna:main python gdrive_cleanup.py --help
+```
+
+Available image tags:
+- `:main` - Latest build from the main branch
+- `:main-{short-sha}` - Specific commit (e.g., `main-1890e95`)
+- `@sha256:{digest}` - Immutable reference by content digest
+
 #### Using Docker Compose
 
 ```bash
