@@ -19,7 +19,7 @@ Write-Host "  4. Go to: APIs & Services → Credentials" -ForegroundColor White
 Write-Host "  5. Click: + CREATE CREDENTIALS → OAuth client ID" -ForegroundColor White
 Write-Host "  6. Application type: Desktop app" -ForegroundColor White
 Write-Host "  7. Download the JSON file as 'credentials.json'" -ForegroundColor White
-Write-Host "  8. Save it to: J:\NUNA\credentials.json" -ForegroundColor White
+Write-Host "  8. Save it to: H:\Pictures\.Gallery2\recycle\bins\credentials.json" -ForegroundColor White
 Write-Host ""
 
 Start-Sleep -Seconds 3

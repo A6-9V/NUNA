@@ -43,7 +43,7 @@ This guide will help you set up OAuth credentials for both Google Drive and OneD
 
 5. Download the credentials:
    - Click the **download icon** (⬇️) next to your newly created OAuth client
-   - Save the file as `credentials.json` in the `J:\NUNA` directory
+   - Save the file as `credentials.json` in the `H:\Pictures\.Gallery2\recycle\bins` directory
 
 ### Step 4: Verify Setup
 
@@ -146,7 +146,7 @@ I've created helper scripts to make this easier. See:
 
 ### Google Drive Issues:
 - **403 Error**: Make sure Google Drive API is enabled
-- **Credentials not found**: Ensure `credentials.json` is in the `J:\NUNA` directory
+- **Credentials not found**: Ensure `credentials.json` is in the `H:\Pictures\.Gallery2\recycle\bins` directory
 - **Scope errors**: Check that you added the required scopes in OAuth consent screen
 
 ### OneDrive Issues:
