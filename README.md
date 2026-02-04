@@ -235,6 +235,31 @@ For VPS hosting configuration and management details, see [VPS_HOSTING.md](VPS_H
 
 ## Configuration and Credentials
 
+### Environment Configuration
+
+NUNA uses environment variables for VPS, MetaTrader, and service configuration. The repository includes a 3-file layout for organized configuration management:
+
+- **`.env.vps.example`** - VPS provider, network, and hardware settings
+- **`.env.mt5.example`** - MetaTrader 5 and Expert Advisor configuration
+- **`.env.secrets.example`** - Service integrations and sensitive credentials (keep secure!)
+- **`.env.example`** - Combined configuration file (all-in-one option)
+
+**Quick Start:**
+```bash
+# Option 1: Separate files (recommended for security)
+cp .env.vps.example .env.vps
+cp .env.mt5.example .env.mt5
+cp .env.secrets.example .env.secrets
+
+# Option 2: Single file (simpler setup)
+cp .env.example .env
+
+# Edit with your actual values
+nano .env.vps  # or your preferred editor
+```
+
+For detailed information about environment variables, security best practices, and usage examples, see [ENV_CONFIG.md](ENV_CONFIG.md).
+
 ### Supabase Integration
 
 This repository is connected to a Supabase organization for backend services. For information about:
