@@ -244,7 +244,42 @@ echo "MT5 Build: $MT5_BUILD"
 
 ## Validation
 
-To validate your configuration:
+NUNA includes a validation script to check your configuration:
+
+```bash
+# Validate your configuration
+python validate_env.py
+```
+
+The script will:
+- ✅ Check if all required variables are present
+- ⚠️ Warn about placeholder values that need to be replaced
+- ❌ Report missing configuration files
+
+**Example output:**
+```
+Detected: Combined configuration file
+============================================================
+NUNA Environment Configuration Validator
+============================================================
+
+✓ Found .env file
+
+------------------------------------------------------------
+✅ All required variables are present
+
+⚠️  Warning: Found placeholder values that should be replaced:
+  ⚠️  DOCKER_TOKEN contains placeholder value: dckr_pat_YOUR_TOKEN_HERE
+  ⚠️  GITHUB_TOKEN contains placeholder value: ghp_YOUR_TOKEN_HERE
+
+------------------------------------------------------------
+⚠️  Configuration validation passed with warnings
+   Please replace placeholder values with actual credentials.
+```
+
+### Manual Validation
+
+You can also validate manually:
 
 ```bash
 # Check if required variables are set
