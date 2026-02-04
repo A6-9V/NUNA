@@ -7,7 +7,8 @@ This document tracks the VPS hosting configuration for NUNA MQL5 Trading Robots.
 ### VPS Singapore 09
 
 **Status:** Active  
-**Start Date:** 2026.01.18
+**Start Date:** 2026.01.18  
+**End Date:** 2026.02.18
 
 | Property | Value |
 |----------|-------|
@@ -19,12 +20,24 @@ This document tracks the VPS hosting configuration for NUNA MQL5 Trading Robots.
 | **Monthly Cost** | $15.00 |
 | **Order ID** | 15740071 |
 | **Start Date** | 2026.01.18 |
+| **End Date** | 2026.02.18 |
+
+#### MT5 Account Details
+
+| Property | Value |
+|----------|-------|
+| **MT5 Account** | 411534497 |
+| **Account Name** | Exness MT5_Auto-Trad |
+| **Server** | Exness-MT5Real8 |
+| **Log Path** | C:\Users\USER\AppData\Roaming\MetaQuotes\Terminal\4260A113DD8DC0E474D390C530B6647D\logs\hosting.6773048.terminal |
 
 #### Server Details
 
 - **Location:** Singapore
 - **Purpose:** MQL5 Trading Robot hosting
 - **Services:** Running automated trading strategies 24/7
+- **Trading Platform:** MetaTrader 5 (MT5)
+- **Broker:** Exness
 
 #### Deployment
 
