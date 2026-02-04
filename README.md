@@ -43,6 +43,40 @@ All robots share a common set of input parameters for configuration.
     *   `HangingMan Hammer CCI`: 124100
     *   `DarkCloud PiercingLine RSI`: 120700
 
+## Plugin System
+
+NUNA includes a flexible plugin system that allows you to extend its functionality with custom modules and integrations.
+
+### Quick Start with Plugins
+
+```bash
+# List available plugins
+python plugin_loader.py list
+
+# Load a specific plugin
+python plugin_loader.py load --plugin example
+
+# Get plugin information
+python plugin_loader.py info --plugin example
+```
+
+### External Plugin Integration
+
+To integrate plugins from external sources (e.g., Mouy-leng/nuna):
+
+```bash
+# The remote is already configured
+git remote -v
+
+# Fetch external content (when available)
+git fetch mouy-leng
+
+# Copy external plugins to plugins directory
+# cp -r /path/to/external/plugin plugins/
+```
+
+For detailed information about creating and using plugins, see [plugins/README.md](plugins/README.md).
+
 ## Python Utilities
 
 This repository also includes Python utilities for file management and automation.

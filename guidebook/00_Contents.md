@@ -13,6 +13,7 @@ This guide book provides a comprehensive overview of the **Google Drive Cleanup 
 | [05_trading_data_file_management.md](05_trading_data_file_management.md) | Local trading logs & reports file management workflow |
 | [06_oauth_setup.md](06_oauth_setup.md) | Detailed OAuth setup instructions for Google Drive and OneDrive |
 | [07_quick_start.md](07_quick_start.md) | Quick reference guide for common commands |
+| [08_plugin_system.md](08_plugin_system.md) | Plugin system guide - extending NUNA with custom modules |
 
 ## VPS Hosting
 
