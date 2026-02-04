@@ -14,3 +14,7 @@ venv/
 
 # Docker volumes and data
 data/
+
+# Confidential credentials files
+*.CONFIDENTIAL
+.supabase-credentials*

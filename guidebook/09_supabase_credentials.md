@@ -9,6 +9,8 @@ This document provides information about the Supabase organization credentials a
 - **Dashboard URL**: https://supabase.com/dashboard/org/ntjdaoifwrjtcyozomys
 - **Password**: Stored securely in GitHub repository secrets (see below)
 
+> **Note for Repository Administrators**: The actual password value is provided in the `.supabase-credentials.CONFIDENTIAL` file (not committed to the repository). Use this to set up the GitHub Secret, then securely delete or store the file.
+
 ## Setting Up GitHub Repository Secret
 
 To securely store the Supabase password in GitHub repository secrets, follow these steps:
@@ -30,7 +32,7 @@ To securely store the Supabase password in GitHub repository secrets, follow the
 
 5. Add the following secret:
    - **Name**: `SUPABASE_PASSWORD`
-   - **Secret**: `Leng3A69V[@Una]`
+   - **Secret**: `[Contact repository administrator for the password value]`
 
 6. Click **Add secret** to save
 
