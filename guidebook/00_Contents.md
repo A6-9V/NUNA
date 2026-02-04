@@ -14,6 +14,10 @@ This guide book provides a comprehensive overview of the **Google Drive Cleanup 
 | [06_oauth_setup.md](06_oauth_setup.md) | Detailed OAuth setup instructions for Google Drive and OneDrive |
 | [07_quick_start.md](07_quick_start.md) | Quick reference guide for common commands |
 
+## VPS Hosting
+
+For VPS hosting configuration and management, see [../VPS_HOSTING.md](../VPS_HOSTING.md).
+
 ## Repository Cloning Instructions
 
 To get a local copy of this repository, you can use one of the following methods.
