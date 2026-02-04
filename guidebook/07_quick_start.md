@@ -115,7 +115,7 @@ python -m pip install -r requirements.txt
 ```
 
 ### Google OAuth Issues?
-- Check `credentials.json` exists in `J:\NUNA`
+- Check `credentials.json` exists in `H:\Pictures\.Gallery2\recycle\bins`
 - Verify Google Drive API is enabled in Google Cloud Console
 - Check OAuth consent screen is configured
 
@@ -137,7 +137,7 @@ python -m pip install -r requirements.txt
 ## 📁 File Structure
 
 ```
-J:\NUNA\
+H:\Pictures\.Gallery2\recycle\bins\
 ├── gdrive_cleanup.py          # Google Drive cleanup tool
 ├── dropbox_to_onedrive.py     # Dropbox to OneDrive importer
 ├── requirements.txt           # Python dependencies

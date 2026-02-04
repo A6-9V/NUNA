@@ -78,7 +78,7 @@ if ($needsGoogle) {
     Write-Host "   - Download the JSON file" -ForegroundColor Gray
     Write-Host ""
     Write-Host "2. Save the downloaded file as:" -ForegroundColor White
-    Write-Host "   J:\NUNA\credentials.json" -ForegroundColor Green
+    Write-Host "   H:\Pictures\.Gallery2\recycle\bins\credentials.json" -ForegroundColor Green
     Write-Host ""
     Write-Host "3. Then run this script again to verify:" -ForegroundColor White
     Write-Host "   .\check-oauth-setup.ps1" -ForegroundColor Yellow
