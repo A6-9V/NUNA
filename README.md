@@ -9,7 +9,8 @@ Docker containerization setup for EXNESS MetaTrader 5 terminal with supporting s
 [![Security](https://github.com/A6-9V/NUNA/actions/workflows/security.yml/badge.svg)](https://github.com/A6-9V/NUNA/actions/workflows/security.yml)
 [![Deploy](https://github.com/A6-9V/NUNA/actions/workflows/deploy.yml/badge.svg)](https://github.com/A6-9V/NUNA/actions/workflows/deploy.yml)
 
-**GitLab CI/CD:** Available - see [GitLab CI/CD Setup Guide](GITLAB_CI_SETUP.md)
+**GitLab CI/CD:** Available - see [GitLab CI/CD Setup Guide](GITLAB_CI_SETUP.md)  
+_Note: After migrating to GitLab, add pipeline badge: `[![Pipeline](https://gitlab.com/<namespace>/NUNA/badges/main/pipeline.svg)](https://gitlab.com/<namespace>/NUNA/-/pipelines)`_
 
 ## 🌐 Cloud Development & Repository Integration
 

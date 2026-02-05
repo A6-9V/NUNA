@@ -141,9 +141,9 @@ measure_test_coverage:
     - coverage html
     - coverage json
     - |
-      COVERAGE=$(coverage json -o /dev/stdout | grep -o '"percent_covered": [0-9.]*' | cut -d' ' -f2)
+      COVERAGE=$(coverage json -o /dev/stdout | grep -o '"percent_covered": [0-9]\+\.[0-9]\+' | cut -d' ' -f2)
       echo "Coverage: ${COVERAGE}%"
-      if (( $(echo "$COVERAGE < 50" | bc -l) )); then
+      if [ $(echo "$COVERAGE 50" | awk '{print ($1 < $2)}') -eq 1 ]; then
         echo "⚠️ Warning: Coverage below 50%"
       fi
   artifacts:

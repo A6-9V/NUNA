@@ -14,7 +14,7 @@ The pipeline consists of 5 main stages that run sequentially:
 validate → analyze → containerize → security_audit → publish
 ```
 
-### 1. Validate Phase
+### 1. Validate Stage
 
 **Purpose:** Ensure code quality and functionality before proceeding
 
@@ -26,7 +26,7 @@ validate → analyze → containerize → security_audit → publish
 
 **Duration:** ~3-5 minutes
 
-### 2. Analyze Phase
+### 2. Analyze Stage
 
 **Purpose:** Assess code quality metrics and test coverage
 
@@ -36,7 +36,7 @@ validate → analyze → containerize → security_audit → publish
 
 **Duration:** ~2-3 minutes
 
-### 3. Containerize Phase
+### 3. Containerize Stage
 
 **Purpose:** Build and test Docker containers
 
@@ -46,7 +46,7 @@ validate → analyze → containerize → security_audit → publish
 
 **Duration:** ~4-6 minutes
 
-### 4. Security Audit Phase
+### 4. Security Audit Stage
 
 **Purpose:** Identify security vulnerabilities
 
@@ -59,7 +59,7 @@ validate → analyze → containerize → security_audit → publish
 
 **Note:** Security jobs are set to `allow_failure: true` to prevent blocking deployments for minor issues.
 
-### 5. Publish Phase
+### 5. Publish Stage
 
 **Purpose:** Deploy containers to GitLab Container Registry
 
