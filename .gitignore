@@ -1,23 +1,65 @@
+# Environment and Secrets
 .env
-.env.vps
-.env.mt5
-.env.secrets
-tmp/
+.env.local
+.env.*.local
+*.key
+*.pem
+*.cert
+
+# Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
 .venv/
 venv/
+ENV/
+
+# Logs
+logs/
 *.log
-.DS_Store
+*.log.*
+
+# Data directories
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# IDE
+.vscode/
+.idea/
 *.swp
 *.swo
 *~
 
-# Docker volumes and data
-data/
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
 
-# Confidential credentials files
-*.CONFIDENTIAL
-.supabase-credentials*
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# Build artifacts
+*.ex5
+*.ex4
+*.mq5.bak
+*.mq4.bak
+
+# Status and temporary reports
+CURRENT-STATUS.txt
+GIT-STATUS.txt
+STATUS-REPORT.md
+

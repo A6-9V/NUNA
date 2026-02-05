@@ -1,31 +1,35 @@
-# Use official Python runtime as base image
-FROM python:3.12-slim
+# Dockerfile for EXNESS Terminal Support Services
+# This container runs supporting services that connect to the native MT5 installation
+
+FROM python:3.11-slim
 
 # Set working directory
 WORKDIR /app
 
-# Set environment variables
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1
-
 # Install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    git \
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    make \
+    curl \
+    wget \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first for better layer caching
-COPY requirements.txt .
-
-# Install Python dependencies
+# Copy and install Python dependencies
+COPY docker/trading-bridge/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
-COPY *.py ./
+# Copy bridge service
+COPY bridge/ ./bridge/
+COPY config/ ./config/
 
-# Create directories for data persistence
-RUN mkdir -p /data/logs /data/reports /data/cache
+# Expose ports
+EXPOSE 5555 8000
 
-# Set default command to show help
-CMD ["python", "gdrive_cleanup.py", "--help"]
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# Start the bridge service
+CMD ["python", "-m", "bridge.main"]
+

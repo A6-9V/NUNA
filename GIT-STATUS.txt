@@ -1,0 +1,27 @@
+========================================
+MQL5 Git Repository Status
+========================================
+
+Repository: https://forge.mql5.io/LengKundee/mql5.git
+Username: LengKundee
+Location: C:\Users\USER\AppData\Roaming\MetaQuotes\Terminal\53785E099C927DB68A545C249CDBCE06\MQL5
+
+STATUS: ✅ CONFIGURED
+
+✓ Git repository exists
+✓ Remote URL configured with credentials
+✓ Ready for push/pull operations
+
+QUICK COMMANDS:
+  Check status:  git status
+  Pull changes:  git pull origin main
+  Push changes:  git push origin main
+  View remote:   git remote -v
+
+INTEGRATION:
+  - MQL5 EAs can connect to EXNESS Docker bridge (port 5555)
+  - Demo account: 279410452 (Exness-MT5Trial8)
+  - 20 trading symbols configured
+
+========================================
+
