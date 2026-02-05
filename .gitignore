@@ -63,3 +63,11 @@ CURRENT-STATUS.txt
 GIT-STATUS.txt
 STATUS-REPORT.md
 
+# Git internal files (should never be in root directory)
+COMMIT_EDITMSG
+FETCH_HEAD
+HEAD
+ORIG_HEAD
+description
+index
+
