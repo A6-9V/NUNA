@@ -105,17 +105,62 @@ jobs:
     name: Deploy to VPS
     runs-on: ubuntu-latest
     needs: build-and-deploy
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && vars.VPS_DEPLOYMENT_ENABLED == 'true'
     
     steps:
-      - name: Deploy notification
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        if: secrets.VPS_SSH_KEY != ''
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/vps_key
+          chmod 600 ~/.ssh/vps_key
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts || true
+
+      - name: Deploy to VPS
+        if: secrets.VPS_SSH_KEY != ''
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_DEPLOY_PATH: ${{ secrets.VPS_DEPLOY_PATH || '/opt/nuna' }}
+          DOCKER_IMAGE: ghcr.io/${{ github.repository }}:main
+          COMPOSE_FILE: docker-compose.vps.yml
+        run: |
+          # Make deployment script executable
+          chmod +x scripts/deploy-vps.sh
+          
+          # Run deployment
+          ./scripts/deploy-vps.sh
+          
+          echo "## VPS Deployment Success" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Deployed to VPS: $VPS_HOST" >> $GITHUB_STEP_SUMMARY
+          echo "📦 Docker Image: ghcr.io/${{ github.repository }}:main" >> $GITHUB_STEP_SUMMARY
+          echo "📍 Deploy Path: $VPS_DEPLOY_PATH" >> $GITHUB_STEP_SUMMARY
+
+      - name: Deployment Instructions
+        if: secrets.VPS_SSH_KEY == ''
         run: |
           echo "## VPS Deployment" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "To deploy to your VPS, SSH into the server and run:" >> $GITHUB_STEP_SUMMARY
-          echo '```bash' >> $GITHUB_STEP_SUMMARY
-          echo "docker pull ghcr.io/${{ github.repository }}:main" >> $GITHUB_STEP_SUMMARY
-          echo "docker-compose up -d" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "⚠️ **Automated deployment is not configured**" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Note: Configure VPS deployment secrets for automated deployment." >> $GITHUB_STEP_SUMMARY
+          echo "To enable automated VPS deployment, configure these secrets:" >> $GITHUB_STEP_SUMMARY
+          echo "- \`VPS_HOST\`: Your VPS hostname or IP address" >> $GITHUB_STEP_SUMMARY
+          echo "- \`VPS_USER\`: SSH username for VPS access" >> $GITHUB_STEP_SUMMARY
+          echo "- \`VPS_SSH_KEY\`: Private SSH key for authentication" >> $GITHUB_STEP_SUMMARY
+          echo "- \`VPS_DEPLOY_PATH\`: Deployment path on VPS (optional, defaults to /opt/nuna)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "And set this repository variable:" >> $GITHUB_STEP_SUMMARY
+          echo "- \`VPS_DEPLOYMENT_ENABLED\`: Set to 'true' to enable automated deployment" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Manual Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "To deploy manually, SSH into your VPS and run:" >> $GITHUB_STEP_SUMMARY
+          echo '```bash' >> $GITHUB_STEP_SUMMARY
+          echo "cd /opt/nuna" >> $GITHUB_STEP_SUMMARY
+          echo "docker pull ghcr.io/${{ github.repository }}:main" >> $GITHUB_STEP_SUMMARY
+          echo "docker-compose -f docker-compose.vps.yml up -d" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
