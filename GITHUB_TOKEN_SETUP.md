@@ -6,7 +6,7 @@ This guide documents the GitHub Personal Access Token (PAT) configuration for th
 
 ## Token Information
 
-- **Token**: `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` *(Configured 2026-02-05)*
+- **Token**: `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` *(Updated 2026-02-05)*
 - **Purpose**: Repository access, CI/CD workflows, secrets management
 - **Type**: Personal Access Token (classic)
 
@@ -56,7 +56,7 @@ The GitHub token is configured in the following files:
 Set the token as an environment variable:
 
 ```bash
-export GITHUB_TOKEN=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
+export GITHUB_TOKEN=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
 ```
 
 ### In .env File
@@ -64,7 +64,7 @@ export GITHUB_TOKEN=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
 Add to your `.env` file:
 
 ```env
-GITHUB_TOKEN=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
+GITHUB_TOKEN=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
 ```
 
 ### In Python Scripts
@@ -122,7 +122,7 @@ git push https://${GITHUB_TOKEN}@github.com/A6-9V/NUNA.git main
 
 **Example with actual token** (for initial setup only):
 ```bash
-git clone https://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@github.com/A6-9V/NUNA.git
+git clone https://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@github.com/A6-9V/NUNA.git
 ```
 
 ## GitHub Secrets Setup
@@ -134,7 +134,7 @@ To add the token as a repository secret:
 1. Go to repository **Settings** → **Secrets and variables** → **Actions**
 2. Click **New repository secret**
 3. Name: `GITHUB_TOKEN`
-4. Value: `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` (use your actual token)
+4. Value: `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` (use your actual token)
 5. Click **Add secret**
 
 ### Environment Secrets
@@ -189,11 +189,11 @@ For organization-wide access:
 
 ```bash
 # Check token authentication (replace with your token)
-curl -H "Authorization: token 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" \
+curl -H "Authorization: token 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" \
      https://api.github.com/user
 
 # Using GitHub CLI
-echo "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" | gh auth login --with-token
+echo "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" | gh auth login --with-token
 gh auth status
 ```
 
@@ -201,7 +201,7 @@ gh auth status
 
 ```bash
 # View token scopes (replace with your token)
-curl -I -H "Authorization: token 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" \
+curl -I -H "Authorization: token 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" \
      https://api.github.com/user | grep -i x-oauth-scopes
 ```
 

@@ -16,7 +16,7 @@ To retrieve the token:
 2. Or contact repository administrator
 3. Or regenerate at: https://github.com/settings/tokens
 
-**Token Format**: `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`
+**Token Format**: `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`
 
 ## Quick Commands
 

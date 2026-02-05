@@ -190,7 +190,7 @@
   "api_credentials": {
     "github": {
       "token_type": "Personal Access Token (classic)",
-      "token_prefix": "ghp_Pvuuykh...",
+      "token_prefix": "ghp_B9WA5x...",
       "configured_date": "2026-02-05",
       "purpose": "Repository access, CI/CD workflows, secrets management",
       "scopes": [
