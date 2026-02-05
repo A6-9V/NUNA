@@ -1,0 +1,24 @@
+{
+  "brokers": [
+    {
+      "name": "EXNESS",
+      "api_url": "https://api.exness.com",
+      "account_id": "CREDENTIAL:EXNESS_ACCOUNT_ID",
+      "api_key": "CREDENTIAL:EXNESS_API_KEY",
+      "api_secret": "CREDENTIAL:EXNESS_API_SECRET",
+      "enabled": true
+    },
+    {
+      "name": "EXNESS_DEMO",
+      "type": "demo",
+      "server": "Exness-MT5Trial8",
+      "account_id": "279410452",
+      "password": "Leng3A69V[@Una]",
+      "api_url": "https://api.exness.com",
+      "enabled": true,
+      "is_demo": true
+    }
+  ],
+  "default_broker": "EXNESS_DEMO"
+}
+

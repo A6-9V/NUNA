@@ -1,0 +1,93 @@
+{
+  "system_info": {
+    "last_updated": "2026-02-05 04:02:17",
+    "timezone": "Asia/Phnom_Penh",
+    "date_format": "yyyy-MM-dd",
+    "time_format": "HH:mm:ss",
+    "current_date": "2026-02-05",
+    "current_time": "04:02:17"
+  },
+  "operating_system": {
+    "name": "Windows 11",
+    "edition": "Home Single Language",
+    "version": "25H2",
+    "installed_on": "2025-12-09",
+    "os_build": "26220.7653",
+    "experience_pack": "Windows Feature Experience Pack 1000.26100.323.0"
+  },
+  "hardware": {
+    "device_name": "NUNA",
+    "processor": {
+      "model": "Intel(R) Core(TM) i3-N305",
+      "base_frequency": "1.80 GHz",
+      "architecture": "x64"
+    },
+    "memory": {
+      "installed_ram": "8.00 GB",
+      "usable_ram": "7.63 GB"
+    },
+    "device_id": "32680105-F98A-49B6-803C-8A525771ABA3",
+    "product_id": "00356-24782-61221-AAOEM",
+    "system_type": "64-bit operating system, x64-based processor",
+    "input_capabilities": {
+      "pen": false,
+      "touch": false,
+      "description": "No pen or touch input is available for this display"
+    }
+  },
+  "mt5_accounts": {
+    "demo_account": {
+      "account_number": 279410452,
+      "server": "Exness-MT5Trial8",
+      "type": "demo",
+      "configured_date": "2025-12-29",
+      "status": "active"
+    },
+    "real_accounts": [
+      {
+        "payment_id": "6773048",
+        "account_number": 411534497,
+        "account_name": "Exness MT5_Auto-Trad",
+        "server": "Exness-MT5Real8",
+        "type": "real",
+        "vps": {
+          "location": "VPS Singapore 09",
+          "region": "Singapore",
+          "provider": "Exness MetaTrader VPS"
+        },
+        "subscription": {
+          "cost": 15.00,
+          "currency": "USD",
+          "start_date": "2026-01-18",
+          "end_date": "2026-02-18",
+          "status": "active"
+        }
+      },
+      {
+        "payment_id": "6759730",
+        "account_number": 405347405,
+        "account_name": "I'm Good",
+        "server": "Exness-MT5Real8",
+        "type": "real",
+        "vps": {
+          "location": "VPS Jakarta 02",
+          "region": "Jakarta",
+          "provider": "Exness MetaTrader VPS"
+        },
+        "subscription": {
+          "cost": 10.00,
+          "currency": "USD",
+          "start_date": "2025-12-16",
+          "end_date": "2026-01-16",
+          "status": "expired",
+          "requires_cleanup": true
+        }
+      }
+    ]
+  },
+  "docker_services": {
+    "last_started": null,
+    "status": "stopped"
+  }
+}
+
