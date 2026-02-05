@@ -54,7 +54,7 @@ graph TB
     
     Scheduled --> WeeklySecurity[Weekly Security Scan]
     Scheduled --> WeeklyDocs[Weekly Link Check]
-    Scheduled --> DailySta le[Daily Stale Check]
+    Scheduled --> DailyStale[Daily Stale Check]
     Scheduled --> WeeklyDeps[Weekly Dependabot]
     
     Fail --> Fix[Update Code]
@@ -142,7 +142,7 @@ None required! All workflows use `secrets.GITHUB_TOKEN` which is automatically p
     └────────┬──────────┘
              │
     ┌────────▼────────┐
-    │  Deploy / Rel ease│
+    │  Deploy / Release│
     │  (Main/Tags)    │
     └─────────────────┘
 ```
