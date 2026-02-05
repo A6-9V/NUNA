@@ -186,6 +186,26 @@
       "status": "active",
       "documentation": "SSL_CERTIFICATE_SETUP.md"
     }
+  },
+  "api_credentials": {
+    "github": {
+      "token_type": "Personal Access Token (classic)",
+      "token_prefix": "ghp_Pvuuykh...",
+      "configured_date": "2026-02-05",
+      "purpose": "Repository access, CI/CD workflows, secrets management",
+      "scopes": [
+        "repo",
+        "workflow",
+        "write:packages",
+        "admin:org"
+      ],
+      "status": "active",
+      "documentation": "GITHUB_TOKEN_SETUP.md",
+      "configuration_files": [
+        ".env.example",
+        ".env.secrets.example"
+      ]
+    }
   }
 }
 
