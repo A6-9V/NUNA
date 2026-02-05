@@ -1,11 +1,19 @@
 {
   "system_info": {
-    "last_updated": "2026-02-05 03:55:49",
+    "last_updated": "2026-02-05 03:58:19",
     "timezone": "Asia/Phnom_Penh",
     "date_format": "yyyy-MM-dd",
     "time_format": "HH:mm:ss",
     "current_date": "2026-02-05",
-    "current_time": "03:55:49"
+    "current_time": "03:58:19"
+  },
+  "operating_system": {
+    "name": "Windows 11",
+    "edition": "Home Single Language",
+    "version": "25H2",
+    "installed_on": "2025-12-09",
+    "os_build": "26220.7653",
+    "experience_pack": "Windows Feature Experience Pack 1000.26100.323.0"
   },
   "hardware": {
     "device_name": "NUNA",
