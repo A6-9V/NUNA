@@ -6,9 +6,9 @@ This document describes the GitLab CI/CD pipeline configuration for the NUNA Met
 
 The GitLab pipeline automates testing, building, security scanning, and deployment of the NUNA trading tools and Docker containers. It mirrors the functionality of the GitHub Actions workflows while leveraging GitLab-specific features.
 
-## Pipeline Phases
+## Pipeline Stages
 
-The pipeline consists of 5 main phases that run sequentially:
+The pipeline consists of 5 main stages that run sequentially:
 
 ```
 validate → analyze → containerize → security_audit → publish
@@ -124,7 +124,7 @@ Pipeline jobs produce various artifacts:
 
 The pipeline is automatically enabled once `.gitlab-ci.yml` exists in your repository root. It will trigger on:
 
-- **Push to any branch** - Runs validation, analysis, containerization, and security phases
+- **Push to any branch** - Runs validation, analysis, containerization, and security stages
 - **Push to main/master** - Also runs deployment to registry
 - **Git tags** (v*.*.*) - Triggers versioned release
 
@@ -170,7 +170,7 @@ All jobs must pass before merge
 ```
 git push origin main
   ↓
-Runs: All phases including publish
+Runs: All stages including publish
   ↓
 Deploys latest image to registry
 ```
@@ -181,7 +181,7 @@ Deploys latest image to registry
 git tag v1.2.3
 git push origin v1.2.3
   ↓
-Runs: All phases
+Runs: All stages
   ↓
 Creates versioned images:
   - v1.2.3
@@ -313,7 +313,7 @@ To maximize cache effectiveness:
 
 ### Parallel Execution
 
-Jobs within the same phase run in parallel when possible:
+Jobs within the same stage run in parallel when possible:
 - All validate jobs run concurrently
 - All security_audit jobs run concurrently
 - Requires multiple runners for full parallelization
