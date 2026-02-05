@@ -21,10 +21,16 @@ permissions:
   contents: read
   packages: write
 
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   build-and-deploy:
     name: Build & Deploy Docker Image
     runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.event.inputs.environment || 'production' }}
     
     steps:
       - name: Checkout code

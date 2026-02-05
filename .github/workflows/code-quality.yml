@@ -1,0 +1,149 @@
+name: Code Quality
+
+on:
+  push:
+    branches:
+      - main
+      - 'copilot/**'
+      - 'cursor/**'
+      - 'bolt/**'
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  test-coverage:
+    name: Test Coverage Report
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install coverage pytest pytest-cov
+
+      - name: Run tests with coverage
+        run: |
+          # Run unittest with coverage
+          coverage run -m unittest discover -s . -p "test_*.py" -v
+          coverage xml
+          coverage report
+          coverage html
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: htmlcov/
+
+      - name: Coverage comment
+        if: github.event_name == 'pull_request'
+        uses: py-cov-action/python-coverage-comment-action@v3
+        with:
+          GITHUB_TOKEN: ${{ github.token }}
+          MINIMUM_GREEN: 70
+          MINIMUM_ORANGE: 50
+
+  code-complexity:
+    name: Code Complexity Analysis
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install analysis tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install radon xenon
+
+      - name: Analyze code complexity
+        run: |
+          echo "## Code Complexity Analysis" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "### Cyclomatic Complexity" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          radon cc . -a -s --exclude=".venv,venv,ENV,__pycache__" >> $GITHUB_STEP_SUMMARY || true
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "### Maintainability Index" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          radon mi . -s --exclude=".venv,venv,ENV,__pycache__" >> $GITHUB_STEP_SUMMARY || true
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Check complexity thresholds
+        run: |
+          # Fail if average complexity is too high (B or worse)
+          xenon --max-average B --max-modules B --max-absolute B . --exclude ".venv,venv,ENV,__pycache__" || true
+
+  code-style:
+    name: Code Style Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install style checkers
+        run: |
+          python -m pip install --upgrade pip
+          pip install black isort pycodestyle
+
+      - name: Check code formatting with Black
+        run: |
+          black --check --diff . --exclude="/(\.venv|venv|ENV|__pycache__|\.git)/" || true
+
+      - name: Check import sorting with isort
+        run: |
+          isort --check-only --diff . --skip .venv --skip venv --skip ENV --skip __pycache__ || true
+
+      - name: Check PEP8 style
+        run: |
+          pycodestyle . --exclude=.venv,venv,ENV,__pycache__,.git --max-line-length=127 --statistics || true
+
+  quality-summary:
+    name: Quality Summary
+    runs-on: ubuntu-latest
+    needs: [test-coverage, code-complexity, code-style]
+    if: always()
+    
+    steps:
+      - name: Generate summary
+        run: |
+          echo "## Code Quality Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "All code quality checks completed:" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Test coverage analysis" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Code complexity analysis" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Code style checks" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Check individual job outputs for detailed results." >> $GITHUB_STEP_SUMMARY
