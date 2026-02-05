@@ -1,0 +1,346 @@
+# NUNA MetaTrader 5 Trading System - GitLab Pipeline Configuration
+# Custom CI/CD pipeline for MT5 Docker trading infrastructure
+
+variables:
+  PYTHON_EXEC: "python3.12"
+  PROJECT_IMAGE: "$CI_REGISTRY_IMAGE/nuna-trading-tools"
+  DOCKER_DRIVER: overlay2
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+
+phases:
+  - validate
+  - analyze
+  - containerize
+  - security_audit
+  - publish
+
+.setup_python_env: &setup_python_env
+  - $PYTHON_EXEC -m pip install --upgrade pip --quiet
+  - $PYTHON_EXEC -m pip install -r requirements.txt --quiet
+  - $PYTHON_EXEC -m pip install flake8 pytest coverage radon --quiet
+
+.docker_service_config: &docker_service_config
+  services:
+    - docker:24-dind
+  before_script:
+    - docker info
+
+# ==================== VALIDATION PHASE ====================
+
+verify_python_syntax:
+  stage: validate
+  image: python:3.12-slim
+  before_script:
+    - *setup_python_env
+  script:
+    - echo "🔍 Checking Python syntax across all modules..."
+    - |
+      for module in gdrive_cleanup trading_data_manager common_utils firebase_utils plugin_loader; do
+        echo "Validating ${module}.py"
+        $PYTHON_EXEC -m compileall -q ${module}.py
+      done
+    - echo "✅ All Python modules have valid syntax"
+  cache:
+    key: pip-deps-$CI_COMMIT_REF_SLUG
+    paths:
+      - .cache/pip
+  artifacts:
+    reports:
+      dotenv: build.env
+    expire_in: 1 hour
+
+lint_codebase:
+  stage: validate
+  image: python:3.12-slim
+  before_script:
+    - *setup_python_env
+  script:
+    - echo "🧹 Running code linter on NUNA trading system..."
+    - |
+      flake8 . \
+        --count \
+        --select=E9,F63,F7,F82 \
+        --show-source \
+        --statistics \
+        --exclude=.venv,venv,ENV,__pycache__,.git
+    - |
+      flake8 . \
+        --count \
+        --exit-zero \
+        --max-complexity=10 \
+        --max-line-length=127 \
+        --statistics \
+        --exclude=.venv,venv,ENV,__pycache__,.git > flake8_report.txt
+    - echo "✅ Linting complete"
+  cache:
+    key: pip-deps-$CI_COMMIT_REF_SLUG
+    paths:
+      - .cache/pip
+  artifacts:
+    paths:
+      - flake8_report.txt
+    expire_in: 1 week
+    when: always
+
+execute_unit_tests:
+  stage: validate
+  image: python:3.12-slim
+  before_script:
+    - *setup_python_env
+  script:
+    - echo "🧪 Executing NUNA unit test suite..."
+    - $PYTHON_EXEC -m unittest discover -s . -p "test_*.py" -v
+    - echo "✅ All unit tests passed"
+  cache:
+    key: pip-deps-$CI_COMMIT_REF_SLUG
+    paths:
+      - .cache/pip
+  coverage: '/TOTAL.*\s+(\d+%)$/'
+
+verify_cli_tools:
+  stage: validate
+  image: python:3.12-slim
+  before_script:
+    - *setup_python_env
+  script:
+    - echo "🛠️ Testing CLI interfaces for NUNA tools..."
+    - echo "Testing gdrive_cleanup CLI..."
+    - |
+      for cmd in "--help" "audit --help" "duplicates --help" "trash --help" "trash-query --help"; do
+        $PYTHON_EXEC gdrive_cleanup.py $cmd
+      done
+    - echo "Testing trading_data_manager CLI..."
+    - |
+      for cmd in "--help" "init --help" "run --help" "purge-trash --help"; do
+        $PYTHON_EXEC trading_data_manager.py $cmd
+      done
+    - echo "✅ All CLI tools are functional"
+  cache:
+    key: pip-deps-$CI_COMMIT_REF_SLUG
+    paths:
+      - .cache/pip
+
+# ==================== ANALYSIS PHASE ====================
+
+measure_test_coverage:
+  stage: analyze
+  image: python:3.12-slim
+  before_script:
+    - *setup_python_env
+  script:
+    - echo "📊 Measuring test coverage for NUNA system..."
+    - coverage run -m unittest discover -s . -p "test_*.py"
+    - coverage report -m
+    - coverage html
+    - coverage json
+    - |
+      COVERAGE=$(coverage json -o /dev/stdout | grep -o '"percent_covered": [0-9.]*' | cut -d' ' -f2)
+      echo "Coverage: ${COVERAGE}%"
+      if (( $(echo "$COVERAGE < 50" | bc -l) )); then
+        echo "⚠️ Warning: Coverage below 50%"
+      fi
+  artifacts:
+    paths:
+      - htmlcov/
+      - coverage.json
+    expire_in: 1 month
+  cache:
+    key: pip-deps-$CI_COMMIT_REF_SLUG
+    paths:
+      - .cache/pip
+  coverage: '/TOTAL.*\s+(\d+%)$/'
+
+assess_code_complexity:
+  stage: analyze
+  image: python:3.12-slim
+  before_script:
+    - *setup_python_env
+  script:
+    - echo "🧮 Analyzing code complexity for maintainability..."
+    - radon cc . -a -s -j > complexity_report.json
+    - radon mi . -s -j > maintainability_report.json
+    - echo "Complexity assessment complete"
+  artifacts:
+    paths:
+      - complexity_report.json
+      - maintainability_report.json
+    expire_in: 1 month
+  cache:
+    key: pip-deps-$CI_COMMIT_REF_SLUG
+    paths:
+      - .cache/pip
+  allow_failure: true
+
+# ==================== CONTAINERIZATION PHASE ====================
+
+build_trading_container:
+  stage: containerize
+  image: docker:24
+  <<: *docker_service_config
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - echo "🐳 Building NUNA trading system container..."
+    - |
+      docker build \
+        --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') \
+        --build-arg VCS_REF=$CI_COMMIT_SHORT_SHA \
+        --tag $PROJECT_IMAGE:build-$CI_COMMIT_SHORT_SHA \
+        --tag $PROJECT_IMAGE:$CI_COMMIT_REF_SLUG \
+        --cache-from $PROJECT_IMAGE:latest \
+        .
+    - echo "✅ Container built successfully"
+    - docker save $PROJECT_IMAGE:build-$CI_COMMIT_SHORT_SHA -o nuna-image.tar
+  artifacts:
+    paths:
+      - nuna-image.tar
+    expire_in: 1 day
+
+test_trading_container:
+  stage: containerize
+  image: docker:24
+  <<: *docker_service_config
+  needs:
+    - build_trading_container
+  script:
+    - echo "🧪 Testing NUNA trading container functionality..."
+    - docker load -i nuna-image.tar
+    - docker images
+    - echo "Testing gdrive_cleanup in container..."
+    - docker run --rm $PROJECT_IMAGE:build-$CI_COMMIT_SHORT_SHA python gdrive_cleanup.py --help
+    - echo "Testing trading_data_manager in container..."
+    - docker run --rm $PROJECT_IMAGE:build-$CI_COMMIT_SHORT_SHA python trading_data_manager.py --help
+    - echo "Running unit tests in container..."
+    - docker run --rm $PROJECT_IMAGE:build-$CI_COMMIT_SHORT_SHA python -m unittest discover -s . -p "test_*.py"
+    - echo "✅ Container tests passed"
+
+# ==================== SECURITY AUDIT PHASE ====================
+
+scan_python_dependencies:
+  stage: security_audit
+  image: python:3.12-slim
+  before_script:
+    - pip install pip-audit --quiet
+  script:
+    - echo "🔐 Auditing Python dependencies for vulnerabilities..."
+    - pip-audit --requirement requirements.txt --format json --output pip-audit-report.json || true
+    - pip-audit --requirement requirements.txt || true
+    - echo "Dependency audit complete"
+  artifacts:
+    paths:
+      - pip-audit-report.json
+    expire_in: 1 month
+    when: always
+  allow_failure: true
+
+scan_container_vulnerabilities:
+  stage: security_audit
+  image: docker:24
+  <<: *docker_service_config
+  needs:
+    - build_trading_container
+  script:
+    - echo "🔍 Scanning container for security vulnerabilities..."
+    - docker load -i nuna-image.tar
+    - apk add --no-cache curl
+    - |
+      curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+    - |
+      trivy image \
+        --exit-code 0 \
+        --severity CRITICAL,HIGH,MEDIUM \
+        --format json \
+        --output trivy-report.json \
+        $PROJECT_IMAGE:build-$CI_COMMIT_SHORT_SHA
+    - echo "Container vulnerability scan complete"
+  artifacts:
+    paths:
+      - trivy-report.json
+    expire_in: 1 month
+    when: always
+  allow_failure: true
+
+detect_secrets:
+  stage: security_audit
+  image: python:3.12-slim
+  before_script:
+    - pip install trufflehog --quiet
+  script:
+    - echo "🔑 Scanning repository for exposed secrets..."
+    - trufflehog filesystem . --json --only-verified > secrets-scan.json || true
+    - |
+      if [ -s secrets-scan.json ]; then
+        echo "⚠️ Potential secrets detected - review secrets-scan.json"
+      else
+        echo "✅ No verified secrets found"
+      fi
+  artifacts:
+    paths:
+      - secrets-scan.json
+    expire_in: 1 week
+    when: always
+  allow_failure: true
+
+# ==================== PUBLISH PHASE ====================
+
+deploy_to_registry:
+  stage: publish
+  image: docker:24
+  <<: *docker_service_config
+  needs:
+    - test_trading_container
+    - scan_container_vulnerabilities
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - echo "📦 Publishing NUNA trading container to registry..."
+    - docker load -i nuna-image.tar
+    - docker tag $PROJECT_IMAGE:build-$CI_COMMIT_SHORT_SHA $PROJECT_IMAGE:latest
+    - docker push $PROJECT_IMAGE:build-$CI_COMMIT_SHORT_SHA
+    - docker push $PROJECT_IMAGE:latest
+    - echo "✅ Container published successfully"
+    - echo "Pull command: docker pull $PROJECT_IMAGE:latest"
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  environment:
+    name: production
+    url: $CI_REGISTRY_IMAGE
+
+release_versioned_image:
+  stage: publish
+  image: docker:24
+  <<: *docker_service_config
+  needs:
+    - test_trading_container
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - echo "🏷️ Creating versioned release for NUNA trading system..."
+    - docker load -i nuna-image.tar
+    - |
+      VERSION=${CI_COMMIT_TAG#v}
+      MAJOR=$(echo $VERSION | cut -d. -f1)
+      MINOR=$(echo $VERSION | cut -d. -f1-2)
+    - docker tag $PROJECT_IMAGE:build-$CI_COMMIT_SHORT_SHA $PROJECT_IMAGE:$CI_COMMIT_TAG
+    - docker tag $PROJECT_IMAGE:build-$CI_COMMIT_SHORT_SHA $PROJECT_IMAGE:$VERSION
+    - docker tag $PROJECT_IMAGE:build-$CI_COMMIT_SHORT_SHA $PROJECT_IMAGE:$MAJOR
+    - docker tag $PROJECT_IMAGE:build-$CI_COMMIT_SHORT_SHA $PROJECT_IMAGE:$MINOR
+    - docker tag $PROJECT_IMAGE:build-$CI_COMMIT_SHORT_SHA $PROJECT_IMAGE:stable
+    - docker push $PROJECT_IMAGE:$CI_COMMIT_TAG
+    - docker push $PROJECT_IMAGE:$VERSION
+    - docker push $PROJECT_IMAGE:$MAJOR
+    - docker push $PROJECT_IMAGE:$MINOR
+    - docker push $PROJECT_IMAGE:stable
+    - echo "✅ Versioned release published"
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+$/
+  environment:
+    name: release/$CI_COMMIT_TAG
+    url: $CI_REGISTRY_IMAGE
