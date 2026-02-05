@@ -1,279 +1,316 @@
-# NUNA - MQL5 Trading Robots
+# MetaTrader 5 Logs Organization
 
-[![CI](https://github.com/A6-9V/NUNA/actions/workflows/ci.yml/badge.svg)](https://github.com/A6-9V/NUNA/actions/workflows/ci.yml)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+This directory contains organized log files from MetaTrader 5 terminal operations.
 
-```bash
-git clone https://github.com/A6-9V/NUNA.git
+## Directory Structure
+
+```
+logs/
+├── terminal/          # Daily terminal logs (YYYYMMDD.log format)
+│   └── *.log         # Contains terminal, experts, and network activity logs
+│
+├── metaeditor/        # MetaEditor compilation logs
+│   └── metaeditor.log # MQL5 compilation and build logs
+│
+└── hosting/           # Hosting service logs
+    ├── hosting.6759730.experts/    # Expert Advisor hosting logs
+    └── hosting.6759730.terminal/   # Terminal hosting logs
 ```
 
-This repository contains a collection of MQL5 trading robots (Expert Advisors) and Python utilities for managing trading data and Google Drive files.
+## Log Types
 
-## Robots
+### Terminal Logs (`terminal/`)
+- **Format**: `YYYYMMDD.log` (e.g., `20251227.log`)
+- **Content**: 
+  - Terminal startup/shutdown events
+  - Expert Advisor (EA) loading/unloading
+  - Network connections and authorization
+  - Trading operations
+  - System events
 
-*   **DarkCloud PiercingLine CCI**: This robot uses the Dark Cloud Cover and Piercing Line candlestick patterns in conjunction with the Commodity Channel Index (CCI) to identify trading opportunities.
-*   **HangingMan Hammer CCI**: This robot uses the Hanging Man and Hammer candlestick patterns in conjunction with the Commodity Channel Index (CCI) to identify trading opportunities.
-*   **DarkCloud PiercingLine RSI**: This robot uses the Dark Cloud Cover and Piercing Line candlestick patterns in conjunction with the Relative Strength Index (RSI) to identify trading opportunities.
+### MetaEditor Logs (`metaeditor/`)
+- **File**: `metaeditor.log`
+- **Content**:
+  - MQL5 code compilation results
+  - Build errors and warnings
+  - Compilation timings
 
-## Common Parameters
+### Hosting Logs (`hosting/`)
+- **Format**: `hosting.{ID}.{type}/YYYYMMDD.log`
+- **Content**:
+  - Expert Advisor execution logs (experts)
+  - Terminal hosting service logs (terminal)
+  - Remote hosting operations
 
-All robots share a common set of input parameters for configuration.
+## Notes
 
-### Indicator Parameters
-*   `InpAverBodyPeriod`: Period for calculating the average candlestick size (default: 12).
-*   `InpMAPeriod`: Trend MA period (default: 5).
-*   `InpPrice`: Price type to use for calculations (default: `PRICE_CLOSE`).
+- Current day's log file (`YYYYMMDD.log`) may remain in the root directory if MetaTrader is actively writing to it
+- Log files are automatically created by MetaTrader 5
+- Old logs can be archived or deleted as needed to save disk space
 
-### Specific Indicator Parameters
-*   `InpPeriodCCI` (for CCI-based robots): CCI period (default: 37).
-*   `InpPeriodRSI` (for RSI-based robots): RSI period (default: 37).
+## Automation
 
-### Trade Parameters
-*   `InpDuration`: Position holding time in bars (default: 10).
-*   `InpSL`: Stop Loss in points (default: 200).
-*   `InpTP`: Take Profit in points (default: 200).
-*   `InpSlippage`: Slippage in points (default: 10).
+### PowerShell Script (No Dependencies Required)
 
-### Money Management
-*   `InpLot`: Lot size for trades (default: 0.1).
-
-### Expert ID
-*   `InpMagicNumber`: A unique number to identify trades opened by a specific EA.
-    *   `DarkCloud PiercingLine CCI`: 120500
-    *   `HangingMan Hammer CCI`: 124100
-    *   `DarkCloud PiercingLine RSI`: 120700
-
-## Plugin System
-
-NUNA includes a flexible plugin system that allows you to extend its functionality with custom modules and integrations.
-
-### Quick Start with Plugins
-
-```bash
-# List available plugins
-python plugin_loader.py list
-
-# Load a specific plugin
-python plugin_loader.py load --plugin example
-
-# Get plugin information
-python plugin_loader.py info --plugin example
+Run the automated log organizer:
+```powershell
+.\organize-logs.ps1
 ```
 
-### External Plugin Integration
+This script will:
+- Automatically move daily terminal logs to `terminal/`
+- Organize MetaEditor logs to `metaeditor/`
+- Move hosting directories to `hosting/`
+- Skip files that are currently in use (locked by MT5)
 
-To integrate plugins from external sources (e.g., Mouy-leng/nuna):
+### Google Jules Agent CLI (Advanced Automation)
 
-```bash
-# The remote is already configured
-git remote -v
-
-# Fetch external content (when available)
-git fetch mouy-leng
-
-# Copy external plugins to plugins directory
-# cp -r /path/to/external/plugin plugins/
-```
-
-For detailed information about creating and using plugins, see [plugins/README.md](plugins/README.md).
-
-## Python Utilities
-
-This repository also includes Python utilities for file management and automation.
-
-### Setup
-
-#### Option 1: Using Docker (Recommended)
-
-```bash
-# Build and start with docker-compose (builds image if needed)
-./docker-compose up --build
-
-# Or build the Docker image manually
-docker build -t nuna-tools .
-
-# Or use native Docker Compose v2 command
-docker compose up -d
-```
-
-#### Option 2: Local Installation
-
-```bash
-# Using bash (Linux/Mac)
-./setup.sh
-
-# Or manually
-python3 -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-### Tools
-
-#### Google Drive Cleanup (`gdrive_cleanup.py`)
-Audit, find duplicates, and clean up Google Drive files.
-
-```bash
-# Local usage
-python gdrive_cleanup.py audit --top 50
-
-# Docker usage
-docker run --rm -v $(pwd)/credentials.json:/app/credentials.json nuna-tools python gdrive_cleanup.py audit --top 50
-
-# Find duplicates
-python gdrive_cleanup.py duplicates --show 10
-
-# Move files to trash (requires confirmation with actual count)
-python gdrive_cleanup.py trash-query --name-contains "old" --apply --confirm "TRASH 5 FILES"
-```
-
-#### Trading Data Manager (`trading_data_manager.py`)
-Manage trading logs and reports with automated CSV to XLSX conversion.
-
-```bash
-# Local usage
-python trading_data_manager.py init
-
-# Docker usage
-docker run --rm -v $(pwd)/data:/data nuna-tools python trading_data_manager.py init --root /data
-
-# Convert CSV files and organize (dry-run)
-python trading_data_manager.py run
-
-# Apply changes
-python trading_data_manager.py run --apply
-```
-
-### Docker Deployment
-
-#### Pre-built Images from GitHub Container Registry
-
-The repository automatically publishes Docker images to GitHub Container Registry on every push to the main branch.
-
-```bash
-# Pull latest from main branch
-docker pull ghcr.io/a6-9v/nuna:main
-
-# Pull specific commit by SHA tag (e.g., main-1890e95)
-docker pull ghcr.io/a6-9v/nuna:main-abc1234
-
-# Pull by digest for immutability (replace with actual digest)
-docker pull ghcr.io/a6-9v/nuna@sha256:07d977a6cfb628842793fcddae9ae5644800ddb367e9301063532eaa515fe381
-
-# Run the pre-built image
-docker run --rm ghcr.io/a6-9v/nuna:main python gdrive_cleanup.py --help
-```
-
-Available image tags:
-- `:main` - Latest build from the main branch
-- `:main-{short-sha}` - Specific commit (e.g., `main-1890e95`)
-- `@sha256:{digest}` - Immutable reference by content digest
-
-#### Using Docker Compose
-
-> **Note**: This repository includes a `docker-compose` wrapper script for backward compatibility with Docker Compose v1 syntax. Systems with Docker Compose v2 can use either `./docker-compose` or `docker compose` (native v2 command).
-
-```bash
-# Build and start services
-./docker-compose up --build
-
-# Or start services without rebuilding
-./docker-compose up -d
-
-# View logs
-./docker-compose logs -f
-
-# Stop services
-./docker-compose down
-```
-
-#### Manual Docker Commands
-
-```bash
-# Build image
-docker build -t nuna-tools .
-
-# Run with mounted credentials
-docker run --rm \
-  -v $(pwd)/credentials.json:/app/credentials.json \
-  -v $(pwd)/data:/data \
-  nuna-tools python gdrive_cleanup.py audit --top 20
-
-# Run tests in container
-docker run --rm nuna-tools python -m unittest discover -s . -p "test_*.py"
-```
-
-## Development
-
-### Running Tests
-
-```bash
-python -m unittest discover -s . -p "test_*.py" -v
-```
-
-### CI/CD
-
-The repository uses GitHub Actions for continuous integration and deployment:
-- **CI Workflow**: Python syntax checking, unit tests, CLI smoke tests, Docker build & test
-- **Deploy Workflow**: Automated Docker image building and publishing to GitHub Container Registry
-
-See [`.github/workflows/ci.yml`](.github/workflows/ci.yml) and [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) for details.
-
-#### Deployment to VPS
-
-To deploy on your VPS:
-
-```bash
-# Pull the latest image
-docker pull ghcr.io/a6-9v/nuna:main
-
-# Run with docker-compose
-./docker-compose up -d
-```
-
-For VPS hosting configuration and management details, see [VPS_HOSTING.md](VPS_HOSTING.md).
-
-## Configuration and Credentials
-
-### Environment Configuration
-
-NUNA uses environment variables for VPS, MetaTrader, and service configuration. The repository includes a 3-file layout for organized configuration management:
-
-- **`.env.vps.example`** - VPS provider, network, and hardware settings
-- **`.env.mt5.example`** - MetaTrader 5 and Expert Advisor configuration
-- **`.env.secrets.example`** - Service integrations and sensitive credentials (keep secure!)
-- **`.env.example`** - Combined configuration file (all-in-one option)
+For AI-powered automation and maintenance, see [setup-jules.md](setup-jules.md) for complete setup instructions.
 
 **Quick Start:**
+1. Install Node.js from https://nodejs.org/
+2. Install Jules: `npm install -g @google/jules`
+3. Authenticate: `jules login`
+4. Connect GitHub repository at [jules.google.com](https://jules.google.com)
+
+Once set up, delegate tasks to Jules:
 ```bash
-# Option 1: Separate files (recommended for security)
-cp .env.vps.example .env.vps
-cp .env.mt5.example .env.mt5
-cp .env.secrets.example .env.secrets
-
-# Option 2: Single file (simpler setup)
-cp .env.example .env
-
-# Edit with your actual values
-nano .env.vps  # or your preferred editor
+jules remote new --repo YOUR_REPO_NAME --session "Automatically organize and maintain log file structure daily"
 ```
 
-For detailed information about environment variables, security best practices, and usage examples, see [ENV_CONFIG.md](ENV_CONFIG.md).
+## Maintenance
 
-### Supabase Integration
+To keep logs organized:
+1. **Automated**: Run `.\organize-logs.ps1` manually or schedule it with Windows Task Scheduler
+2. **AI-Powered**: Use Google Jules to create and maintain automated workflows
+3. **Manual**: Periodically move any remaining daily logs from root to `terminal/`
+4. Archive old logs (older than 30/60/90 days) if needed
+5. Monitor disk space usage in the logs directory
 
-This repository is connected to a Supabase organization for backend services. For information about:
-- Accessing the Supabase dashboard
-- Setting up GitHub repository secrets
-- Security best practices for credential management
+## Files
 
-See [guidebook/09_supabase_credentials.md](guidebook/09_supabase_credentials.md).
+- `organize-logs.ps1` - PowerShell script for automatic log organization
+- `setup-jules.md` - Complete guide for setting up Google Jules Agent C# A6-9V Project Repository - Complete Device Setup
 
-### Other Configuration Files
+This repository contains the complete device skeleton structure, project blueprints, and setup scripts for the NuNa Windows 11 automation system, including the ZOLO-A6-9VxNUNA trading system.
 
-The repository includes several example configuration files:
-- `firebase-config.example.json` - Firebase configuration template
-- `plugin_config.example.json` - Plugin system configuration
-- `trading_data_config.example.json` - Trading data manager settings
+## 📁 Project Structure
 
-Copy these files and remove the `.example` suffix to create your own configuration files. Never commit actual credentials to the repository.
+```
+.
+├── .cursor/                          # Cursor IDE Configuration
+│   └── rules/                        # AI Assistant Rules
+├── Scripts/                          # PowerShell Automation Scripts
+│   ├── Setup Scripts/
+│   ├── Git Scripts/
+│   ├── Security Scripts/
+│   ├── GitHub Desktop Scripts/
+│   └── Utility Scripts/
+├── Documentation/                    # Project Documentation
+│   ├── DEVICE-SKELETON.md           # Complete device structure
+│   ├── PROJECT-BLUEPRINTS.md         # Project blueprints
+│   ├── SYSTEM-INFO.md               # System specifications
+│   ├── WORKSPACE-SETUP.md           # Workspace setup guide
+│   └── SET-REPOS-PRIVATE.md         # Instructions for private repos
+├── vps-services/                     # VPS 24/7 Trading System Services
+│   ├── exness-service.ps1           # Exness MT5 Terminal service
+│   ├── research-service.ps1         # Perplexity AI research service
+│   ├── website-service.ps1          # GitHub website service
+│   ├── cicd-service.ps1             # CI/CD automation service
+│   ├── mql5-service.ps1              # MQL5 Forge integration
+│   └── master-controller.ps1       # Master service controller
+├── projects/                         # Active development projects
+│   ├── Google AI Studio/            # AI Studio related projects
+│   └── LiteWriter/                  # LiteWriter application
+├── project-scanner/                  # Project Discovery & Execution System
+├── system-setup/                     # System Configuration & Optimization
+├── storage-management/               # Storage and drive management tools
+├── Document,sheed,PDF, PICTURE/     # Documentation and media
+├── Secrets/                          # Protected credentials (not tracked in git)
+└── TECHNO POVA 6 PRO/                # Device-specific files
+```
+
+## 🚀 Quick Start
+
+### Complete Device Setup
+
+Run the comprehensive device setup script:
+
+```powershell
+# Run as Administrator
+.\complete-device-setup.ps1
+```
+
+This will set up:
+- ✅ Workspace structure
+- ✅ Windows configuration
+- ✅ Cloud sync services
+- ✅ Git repositories
+- ✅ Security settings
+- ✅ Cursor rules
+- ✅ All automation projects
+
+### VPS 24/7 Trading System
+
+Start the complete 24/7 automated trading system:
+
+```powershell
+# Run as Administrator (fully automated, no user interaction)
+.\auto-start-vps-admin.ps1
+```
+
+Or double-click: `AUTO-START-VPS.bat`
+
+This will:
+- ✅ Deploy all VPS services
+- ✅ Start Exness MT5 Terminal
+- ✅ Start Web Research Service (Perplexity AI)
+- ✅ Start GitHub Website Service (ZOLO-A6-9VxNUNA)
+- ✅ Start CI/CD Automation Service
+- ✅ Start MQL5 Forge Integration
+- ✅ Handle all errors automatically
+
+### Windows Setup Automation
+
+```powershell
+# Run as Administrator
+.\auto-setup.ps1
+# or
+.\complete-windows-setup.ps1
+```
+
+### Workspace Verification
+
+```powershell
+.\setup-workspace.ps1
+```
+
+## 📋 Features
+
+### Windows Setup Scripts
+- ✅ Configure Windows Account Sync
+- ✅ Set up File Explorer preferences
+- ✅ Configure default browser and apps
+- ✅ Windows Defender exclusions for cloud folders
+- ✅ Windows Firewall rules for cloud services
+- ✅ Windows Security (Controlled Folder Access) configuration
+- ✅ Cloud sync service verification (OneDrive, Google Drive, Dropbox)
+
+### Git Automation
+- ✅ Multi-remote repository support
+- ✅ Automated git operations
+- ✅ Secure credential management
+
+### Security Validation
+- ✅ Comprehensive security checks
+- ✅ Token security validation
+- ✅ Script integrity verification
+
+### VPS 24/7 Trading System
+- ✅ Exness MT5 Terminal (24/7 operation)
+- ✅ Web Research Automation (Perplexity AI)
+- ✅ GitHub Website Hosting (ZOLO-A6-9VxNUNA)
+- ✅ CI/CD Automation (Python projects)
+- ✅ MQL5 Forge Integration
+- ✅ Automated error handling
+- ✅ Auto-restart capabilities
+
+### Project Scanner
+- ✅ Scan all local drives for development projects
+- ✅ Discover scripts, applications, and code projects
+- ✅ Execute projects in the background
+- ✅ Generate comprehensive reports
+
+### System Setup & Optimization
+- ✅ Drive cleanup and optimization
+- ✅ Drive role assignment and permissions
+- ✅ Registry optimizations
+- ✅ Cursor IDE configuration
+- ✅ MCP (Model Context Protocol) setup
+
+## 🔒 Security
+
+Sensitive files including credentials, API keys, certificates, and logs are automatically excluded from version control via `.gitignore`.
+
+**Protected file types:**
+- `.pem` files (certificates and keys)
+- `.json` credential files
+- `.csv` data exports
+- Log files
+- Screenshots
+- Temporary files
+- Personal directories and media files
+
+## 📚 Documentation
+
+- **DEVICE-SKELETON.md** - Complete device structure blueprint
+- **PROJECT-BLUEPRINTS.md** - Detailed project blueprints
+- **SYSTEM-INFO.md** - System specifications
+- **WORKSPACE-SETUP.md** - Workspace setup guide
+- **VPS-SETUP-GUIDE.md** - VPS 24/7 trading system guide
+- **AUTOMATION-RULES.md** - Automation patterns
+- **GITHUB-DESKTOP-RULES.md** - GitHub Desktop integration
+- **MANUAL-SETUP-GUIDE.md** - Manual setup instructions
+
+## 🏢 Organization
+
+Managed by **A6-9V** organization for better control and collaboration.
+
+## 📝 Accounts
+
+- **Microsoft/Outlook**: Lengkundee01@outlook.com
+- **Google/Gmail**: Lengkundee01@gmail.com
+- **GitHub**: Mouy-leng / A6-9V
+
+## 🔧 System Information
+
+- **Device**: NuNa
+- **OS**: Windows 11 Home Single Language 25H2 (Build 26220.7344)
+- **Processor**: Intel(R) Core(TM) i3-N305 (1.80 GHz)
+- **RAM**: 8.00 GB (7.63 GB usable)
+- **Architecture**: 64-bit x64-based processor
+
+## 📦 Git Repositories
+
+This workspace is connected to multiple repositories:
+
+- **Primary (origin)**: https://github.com/Mouy-leng/ZOLO-A6-9VxNUNA-.git
+- **Secondary 1 (bridges3rd)**: https://github.com/A6-9V/I-bride_bridges3rd.git
+- **Secondary 2 (drive-projects)**: https://github.com/A6-9V/my-drive-projects.git
+
+### Git Submodules
+
+The following repositories are integrated as git submodules:
+
+- **my-drive-projects**: https://github.com/A6-9V/my-drive-projects.git
+  - Location: `./my-drive-projects/`
+  - Contains drive project files and automation scripts
+  
+- **OS-Twin**: https://github.com/A6-9V/OS-Twin.git
+  - Location: `./OS-Twin/`
+  - Status: Repository placeholder (awaiting repository creation or access)
+  - To initialize once available: `git submodule update --init --recursive`
+
+## 🔐 Making Repositories Private
+
+See **SET-REPOS-PRIVATE.md** for instructions on making repositories private.
+
+## 📝 Notes
+
+- This workspace is synchronized with OneDrive and Google Drive
+- Duplicate files are excluded from version control
+- All sensitive data is gitignored for security
+- Complete device skeleton structure and blueprints included
+- VPS 24/7 trading system fully automated
+
+## License
+
+This project is for personal use.
+
+## Author
+
+Lengkundee01 / A6-9V
+LI
+- `package.json` - Node.js package configuration (for Jules integration)
+- `.gitignore` - Git ignore rules (excludes log files from version control)
+
