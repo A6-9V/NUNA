@@ -1,7 +1,7 @@
 # Dockerfile for EXNESS Terminal Support Services
 # This container runs supporting services that connect to the native MT5 installation
 
-FROM python:3.11-slim
+FROM python:3.14-slim
 
 # Set working directory
 WORKDIR /app
