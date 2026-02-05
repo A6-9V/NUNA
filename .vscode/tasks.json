@@ -36,6 +36,9 @@
             "linux": {
                 "command": "./setup.sh"
             },
+            "osx": {
+                "command": "./setup.sh"
+            },
             "problemMatcher": [],
             "presentation": {
                 "reveal": "always",
