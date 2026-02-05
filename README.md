@@ -2,6 +2,17 @@
 
 Docker containerization setup for EXNESS MetaTrader 5 terminal with supporting services.
 
+## 🌐 Cloud Development & Repository Integration
+
+**Multiple Development Environments:**
+- 💻 **GitHub**: https://github.com/A6-9V/NUNA (Primary repository)
+- ☁️ **Replit**: https://replit.com/@mouy-leng/httpsgithubcomA6-9VMetatrader5EXNESS (Cloud IDE)
+- 📦 **Forge MQL5**: https://forge.mql5.io/LengKundee/NUNA (MQL5 community)
+
+**Quick Links:**
+- [Replit Integration Guide](REPLIT_INTEGRATION.md) - Develop in the cloud
+- [Forge MQL5 Setup Guide](FORGE_MQL5_SETUP.md) - Sync with MQL5 community
+
 ## Table of Contents
 
 - [Architecture](#architecture)
@@ -152,6 +163,8 @@ Once launched, the following services are available:
 - [MQL5 Git Setup](docs/MQL5-GIT-SETUP.md) - Git repository configuration
 - [VPS Deployment](VPS_DEPLOYMENT.md) - **NEW**: Automated VPS deployment guide
 - [VPS Hosting](VPS_HOSTING.md) - VPS configuration and management
+- [Forge MQL5 Setup](FORGE_MQL5_SETUP.md) - **NEW**: forge.mql5.io integration and sync
+- [Replit Integration](REPLIT_INTEGRATION.md) - **NEW**: Cloud development with Replit
 
 ## Directory Structure
 
