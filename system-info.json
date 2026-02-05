@@ -169,6 +169,23 @@
         ]
       }
     }
+  },
+  "ssl_certificates": {
+    "cloudflare": {
+      "certificate_file": "./certs/cloudflare-cert.pem",
+      "private_key_file": "./certs/cloudflare-key.pem",
+      "issuer": "Cloudflare, Inc. (Managed CA)",
+      "subject": "Cloudflare",
+      "serial_number": "44:c5:14:b2:c0:4f:0e:5b:b7:87:66:50:a7:7f:bb:20:5a:7b:11:a2",
+      "valid_from": "2026-02-05 06:49:00 GMT",
+      "valid_until": "2036-02-03 06:49:00 GMT",
+      "key_algorithm": "RSA 2048-bit",
+      "purpose": "TLS Web Client Authentication",
+      "protocols_supported": ["TLSv1.2", "TLSv1.3"],
+      "installed_date": "2026-02-05",
+      "status": "active",
+      "documentation": "SSL_CERTIFICATE_SETUP.md"
+    }
   }
 }
 

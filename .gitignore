@@ -6,6 +6,11 @@
 *.pem
 *.cert
 
+# Exception: Allow certificate files in certs directory
+!certs/*.pem
+!certs/*.key
+!certs/*.cert
+
 # Python
 __pycache__/
 *.py[cod]
