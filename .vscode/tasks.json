@@ -1,0 +1,121 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Start Project",
+            "type": "shell",
+            "command": "docker-compose up -d",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "detail": "Start all Docker services for the NUNA MT5 Trading project"
+        },
+        {
+            "label": "Stop Project",
+            "type": "shell",
+            "command": "docker-compose down",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "detail": "Stop all Docker services"
+        },
+        {
+            "label": "Setup Python Environment",
+            "type": "shell",
+            "windows": {
+                "command": "powershell.exe -ExecutionPolicy Bypass -File setup.ps1"
+            },
+            "linux": {
+                "command": "./setup.sh"
+            },
+            "osx": {
+                "command": "./setup.sh"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "detail": "Setup Python virtual environment and install dependencies"
+        },
+        {
+            "label": "Validate Environment",
+            "type": "shell",
+            "command": "python validate_env.py",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "detail": "Validate environment configuration"
+        },
+        {
+            "label": "Check Docker Status",
+            "type": "shell",
+            "command": "docker-compose ps",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "detail": "Check the status of all Docker containers"
+        },
+        {
+            "label": "View Docker Logs",
+            "type": "shell",
+            "command": "docker-compose logs -f",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "detail": "View logs from all Docker containers",
+            "isBackground": true
+        },
+        {
+            "label": "Restart Docker Services",
+            "type": "shell",
+            "command": "docker-compose restart",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "detail": "Restart all Docker services"
+        },
+        {
+            "label": "Rebuild Docker Containers",
+            "type": "shell",
+            "command": "docker-compose build --no-cache && docker-compose up -d",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "detail": "Rebuild all Docker containers from scratch"
+        },
+        {
+            "label": "Full Project Setup",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Setup Python Environment",
+                "Validate Environment",
+                "Start Project"
+            ],
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "detail": "Complete project setup: Python environment, validation, and start Docker services"
+        }
+    ]
+}

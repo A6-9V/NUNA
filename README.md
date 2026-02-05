@@ -66,6 +66,24 @@ notepad .env
 docker-compose up -d
 ```
 
+**Option D: VS Code Tasks (Recommended for VS Code Users)**
+```
+Press Ctrl+Shift+P (or Cmd+Shift+P on Mac)
+Type "Tasks: Run Task"
+Select "Start Project"
+```
+
+Available VS Code tasks:
+- **Start Project**: Start all Docker services (default build task: Ctrl+Shift+B)
+- **Stop Project**: Stop all Docker services
+- **Full Project Setup**: Complete setup including Python environment, validation, and Docker startup
+- **Setup Python Environment**: Initialize Python virtual environment and install dependencies
+- **Validate Environment**: Validate environment configuration
+- **Check Docker Status**: View status of all containers
+- **View Docker Logs**: Stream logs from all containers
+- **Restart Docker Services**: Restart all containers
+- **Rebuild Docker Containers**: Rebuild all containers from scratch
+
 ### Step 3: Verify Services
 
 ```powershell
