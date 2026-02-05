@@ -1,0 +1,335 @@
+{
+  "symbols": [
+    {
+      "symbol": "EURUSD",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "Euro vs US Dollar"
+    },
+    {
+      "symbol": "GBPUSD",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "British Pound vs US Dollar"
+    },
+    {
+      "symbol": "USDJPY",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "US Dollar vs Japanese Yen"
+    },
+    {
+      "symbol": "AUDUSD",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "Australian Dollar vs US Dollar"
+    },
+    {
+      "symbol": "USDCAD",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "US Dollar vs Canadian Dollar"
+    },
+    {
+      "symbol": "NZDUSD",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "New Zealand Dollar vs US Dollar"
+    },
+    {
+      "symbol": "EURGBP",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "Euro vs British Pound"
+    },
+    {
+      "symbol": "EURJPY",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "Euro vs Japanese Yen"
+    },
+    {
+      "symbol": "GBPJPY",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "British Pound vs Japanese Yen"
+    },
+    {
+      "symbol": "USDCHF",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "US Dollar vs Swiss Franc"
+    },
+    {
+      "symbol": "XAUUSD",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "Gold vs US Dollar"
+    },
+    {
+      "symbol": "XAGUSD",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "Silver vs US Dollar"
+    },
+    {
+      "symbol": "BTCUSD",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 0.5,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 5.0,
+      "description": "Bitcoin vs US Dollar"
+    },
+    {
+      "symbol": "ETHUSD",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 0.5,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 5.0,
+      "description": "Ethereum vs US Dollar"
+    },
+    {
+      "symbol": "US30",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "US 30 Index (Dow Jones)"
+    },
+    {
+      "symbol": "NAS100",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "NASDAQ 100 Index"
+    },
+    {
+      "symbol": "SPX500",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "S&P 500 Index"
+    },
+    {
+      "symbol": "EURUSDm",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "Euro vs US Dollar (Micro)"
+    },
+    {
+      "symbol": "GBPUSDm",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "British Pound vs US Dollar (Micro)"
+    },
+    {
+      "symbol": "USDJPYm",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "US Dollar vs Japanese Yen (Micro)"
+    },
+    {
+      "symbol": "EURCAD",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "Euro vs Canadian Dollar"
+    },
+    {
+      "symbol": "EURCHF",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "Euro vs Swiss Franc"
+    },
+    {
+      "symbol": "EURAUD",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "Euro vs Australian Dollar"
+    },
+    {
+      "symbol": "EURNZD",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "Euro vs New Zealand Dollar"
+    },
+    {
+      "symbol": "GBPCHF",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "British Pound vs Swiss Franc"
+    },
+    {
+      "symbol": "GBPCAD",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "British Pound vs Canadian Dollar"
+    },
+    {
+      "symbol": "GBPAUD",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "British Pound vs Australian Dollar"
+    },
+    {
+      "symbol": "GBPNZD",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "British Pound vs New Zealand Dollar"
+    },
+    {
+      "symbol": "AUDJPY",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "Australian Dollar vs Japanese Yen"
+    },
+    {
+      "symbol": "CHFJPY",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "Swiss Franc vs Japanese Yen"
+    },
+    {
+      "symbol": "CADJPY",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "Canadian Dollar vs Japanese Yen"
+    },
+    {
+      "symbol": "NZDJPY",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "New Zealand Dollar vs Japanese Yen"
+    },
+    {
+      "symbol": "AUDNZD",
+      "broker": "EXNESS_DEMO",
+      "enabled": true,
+      "risk_percent": 1.0,
+      "max_positions": 1,
+      "min_lot_size": 0.01,
+      "max_lot_size": 10.0,
+      "description": "Australian Dollar vs New Zealand Dollar"
+    }
+  ]
+}
+

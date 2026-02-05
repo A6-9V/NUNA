@@ -1,0 +1,45 @@
+{
+  "mt5_config": {
+    "account": 279410452,
+    "server": "Exness-MT5Trial8",
+    "password": "Leng3A69V[@Una]",
+    "is_demo": true,
+    "account_type": "demo",
+    "description": "EXNESS Demo Account for Testing"
+  },
+  "trading_settings": {
+    "max_risk_per_trade": 1.0,
+    "max_daily_risk": 5.0,
+    "max_positions_per_symbol": 1,
+    "min_lot_size": 0.01,
+    "max_lot_size": 10.0,
+    "default_lot_size": 0.01,
+    "use_stop_loss": true,
+    "use_take_profit": true,
+    "default_stop_loss_pips": 50,
+    "default_take_profit_pips": 100
+  },
+  "enabled_symbols": [
+    "EURUSD",
+    "GBPUSD",
+    "USDJPY",
+    "AUDUSD",
+    "USDCAD",
+    "NZDUSD",
+    "EURGBP",
+    "EURJPY",
+    "GBPJPY",
+    "USDCHF",
+    "XAUUSD",
+    "XAGUSD",
+    "BTCUSD",
+    "ETHUSD",
+    "US30",
+    "NAS100",
+    "SPX500",
+    "EURUSDm",
+    "GBPUSDm",
+    "USDJPYm"
+  ]
+}
+

@@ -1,0 +1,21 @@
+{
+  "system_info": {
+    "last_updated": "2025-12-29 13:22:20",
+    "timezone": "Asia/Phnom_Penh",
+    "date_format": "yyyy-MM-dd",
+    "time_format": "HH:mm:ss",
+    "current_date": "2025-12-29",
+    "current_time": "13:22:20"
+  },
+  "demo_account": {
+    "account": 279410452,
+    "server": "Exness-MT5Trial8",
+    "type": "demo",
+    "configured_date": "2025-12-29"
+  },
+  "docker_services": {
+    "last_started": null,
+    "status": "stopped"
+  }
+}
+
