@@ -89,6 +89,38 @@
     "last_started": null,
     "status": "stopped"
   },
+  "repository_integrations": {
+    "github": {
+      "url": "https://github.com/A6-9V/NUNA",
+      "type": "primary",
+      "description": "Main development repository"
+    },
+    "forge_mql5": {
+      "url": "https://forge.mql5.io/LengKundee/NUNA.git",
+      "type": "mirror",
+      "description": "MQL5 community integration",
+      "authentication": "token-based",
+      "token_prefix": "PQEpZi...",
+      "configured_date": "2026-02-05",
+      "sync_scripts": [
+        "scripts/sync-forge.sh",
+        "scripts/sync-forge.ps1",
+        "scripts/cleanup-forge.sh",
+        "scripts/cleanup-forge.ps1"
+      ]
+    },
+    "replit": {
+      "url": "https://replit.com/@mouy-leng/httpsgithubcomA6-9VMetatrader5EXNESS",
+      "type": "cloud_ide",
+      "description": "Cloud development environment",
+      "fork_id": "74fbf663-fcf3-40e5-b496-2295edb70b17",
+      "configured_date": "2026-02-05",
+      "config_files": [
+        ".replit",
+        "replit.nix"
+      ]
+    }
+  },
   "network_adapters": {
     "wifi": {
       "ssid": "LengA6-9V",
