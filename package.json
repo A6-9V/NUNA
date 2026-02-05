@@ -1,0 +1,22 @@
+{
+  "name": "mt5-logs-organizer",
+  "version": "1.0.0",
+  "description": "MetaTrader 5 logs organization with Google Jules automation",
+  "main": "organize-logs.ps1",
+  "scripts": {
+    "organize": "powershell -ExecutionPolicy Bypass -File organize-logs.ps1",
+    "setup": "npm install -g @google/jules"
+  },
+  "keywords": [
+    "metatrader",
+    "mt5",
+    "logs",
+    "automation",
+    "jules"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {}
+}
+

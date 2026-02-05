@@ -1,16 +1,76 @@
+# Environment and Secrets
 .env
-tmp/
+.env.local
+.env.*.local
+*.key
+*.pem
+*.cert
+
+# Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
 .venv/
 venv/
+ENV/
+
+# Logs
+logs/
 *.log
-.DS_Store
+*.log.*
+
+# Data directories
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# IDE
+.vscode/*
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
 *.swp
 *.swo
 *~
 
-# Docker volumes and data
-data/
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# Build artifacts
+*.ex5
+*.ex4
+*.mq5.bak
+*.mq4.bak
+
+# Status and temporary reports
+CURRENT-STATUS.txt
+GIT-STATUS.txt
+STATUS-REPORT.md
+
+# Git internal files that were accidentally committed (root directory only)
+/COMMIT_EDITMSG
+/FETCH_HEAD
+/HEAD
+/ORIG_HEAD
+/description
+/index
+

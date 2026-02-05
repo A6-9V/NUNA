@@ -1,33 +1,148 @@
 services:
-  nuna-tools:
-    # Option 1: Build locally from Dockerfile
+  # Trading Bridge Service - Connects to MT5
+  trading-bridge:
     build:
       context: .
-      dockerfile: Dockerfile
-    image: nuna-tools:latest
-    
-    # Option 2: Use pre-built image from GitHub Container Registry
-    # Uncomment the line below and comment out the 'build' section above
-    # image: ghcr.io/a6-9v/nuna:main
-    
-    container_name: nuna-tools
+      dockerfile: ./docker/trading-bridge/Dockerfile
+    container_name: exness-trading-bridge
+    ports:
+      - "${BRIDGE_PORT:-5555}:5555"  # MT5 Bridge port
+      - "${API_PORT:-8000}:8000"  # API port
     volumes:
-      # Mount credentials and tokens
-      - ./credentials.json:/app/credentials.json:ro
-      - ./token.json:/app/token.json
-      # Mount data directories for persistence
-      - ./data:/data
-      # Mount local config if exists
-      - ./trading_data_config.json:/app/trading_data_config.json:ro
+      - ./config:/app/config:ro
+      - ./logs:/app/logs
+      - ./data:/app/data
+      # Mount MT5 terminal directory for file access
+      - ${MT5_PATH}:/mt5:ro
+    env_file:
+      - .env
     environment:
-      - PYTHONUNBUFFERED=1
-      # Add OneDrive client ID if needed
-      - ONEDRIVE_CLIENT_ID=${ONEDRIVE_CLIENT_ID:-}
-    command: ["python", "gdrive_cleanup.py", "--help"]
-    restart: unless-stopped
+      - MT5_TERMINAL_PATH=${MT5_TERMINAL_PATH:-/mt5}
+      - BRIDGE_PORT=${BRIDGE_PORT:-5555}
+      - API_PORT=${API_PORT:-8000}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - MT5_ACCOUNT=${EXNESS_LOGIN}
+      - MT5_SERVER=${EXNESS_SERVER}
+      - MT5_PASSWORD=${EXNESS_PASSWORD}
+      - MT5_IS_DEMO=${EXNESS_IS_DEMO:-true}
+      - SYMBOLS=${SYMBOLS:-EURUSD,GBPUSD,USDJPY}
     networks:
-      - nuna-network
+      - exness-network
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # PostgreSQL Database for trade history
+  postgres:
+    image: postgres:15-alpine
+    container_name: exness-postgres
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-exness_trading}
+      - POSTGRES_USER=${POSTGRES_USER:-exness_user}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-exness_password}
+    networks:
+      - exness-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-exness_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for caching and real-time data
+  redis:
+    image: redis:7-alpine
+    container_name: exness-redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - exness-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # InfluxDB for time-series metrics
+  influxdb:
+    image: influxdb:2.7-alpine
+    container_name: exness-influxdb
+    ports:
+      - "${INFLUXDB_PORT:-8086}:8086"
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+      - influxdb-config:/etc/influxdb2
+    env_file:
+      - .env
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_ADMIN_USER:-admin}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_ADMIN_PASSWORD:-adminpassword}
+      - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG:-exness}
+      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET:-trading_data}
+    networks:
+      - exness-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8086/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Grafana for monitoring and visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: exness-grafana
+    ports:
+      - "${GRAFANA_PORT:-3000}:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    env_file:
+      - .env
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+    networks:
+      - exness-network
+    restart: unless-stopped
+    depends_on:
+      influxdb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 networks:
-  nuna-network:
+  exness-network:
     driver: bridge
+
+volumes:
+  postgres-data:
+  redis-data:
+  influxdb-data:
+  influxdb-config:
+  grafana-data:
