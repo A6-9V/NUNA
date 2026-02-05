@@ -60,46 +60,16 @@ This document describes all the continuous integration and deployment workflows 
    - Semantic versioning support
    - Deployment summary with pull commands
    
-2. **Deploy to VPS** - Automated or manual VPS deployment
-   - **Automated Mode** (when secrets configured):
-     - Sets up SSH connection using SSH key
-     - Runs deployment script (`scripts/deploy-vps.sh`)
-     - Automatically deploys to configured VPS
-     - Provides deployment summary
-   - **Manual Mode** (when secrets not configured):
-     - Provides setup instructions for automated deployment
-     - Shows manual deployment commands
+2. **Deploy to VPS** (Optional) - Provides VPS deployment instructions
    - Only runs for main branch
-   - Requires `VPS_DEPLOYMENT_ENABLED` variable set to `true`
-
-**Required Secrets for Automated Deployment:**
-- `VPS_HOST` - VPS hostname or IP address
-- `VPS_USER` - SSH username for VPS access
-- `VPS_SSH_KEY` - Private SSH key for authentication
-- `VPS_DEPLOY_PATH` - Deployment path on VPS (optional, defaults to `/opt/nuna`)
-
-**Required Variables:**
-- `VPS_DEPLOYMENT_ENABLED` - Set to `true` to enable automated VPS deployment
+   - Shows manual deployment commands
 
 **Concurrency:** Prevents multiple simultaneous deployments
 
 **What it does:**
 - 🚀 Builds production Docker images
 - 📦 Pushes to ghcr.io
-- 🔄 Automatically deploys to VPS (when configured)
 - 📋 Generates deployment instructions
-
-**VPS Deployment Steps:**
-1. ✅ Connects to VPS via SSH
-2. ✅ Creates deployment directory
-3. ✅ Copies configuration files
-4. ✅ Installs Docker and Docker Compose (if needed)
-5. ✅ Pulls latest Docker image
-6. ✅ Stops existing containers
-7. ✅ Starts new containers
-8. ✅ Verifies deployment
-
-For detailed VPS deployment documentation, see [VPS_DEPLOYMENT.md](../VPS_DEPLOYMENT.md).
 
 ---
 
@@ -385,7 +355,6 @@ All workflows are designed to work together:
 3. **After merge:**
    - Monitor deployment workflow
    - Verify Docker image pushed successfully
-   - Check VPS deployment status (if enabled)
 
 ### For Maintainers
 
@@ -403,13 +372,6 @@ All workflows are designed to work together:
    - Review Dependabot PRs promptly
    - Keep workflows up to date
    - Monitor workflow usage and costs
-
-4. **VPS Deployment:**
-   - Configure VPS secrets for automated deployment
-   - Test deployment script locally before enabling
-   - Monitor VPS resources and container health
-   - Keep VPS system and Docker updated
-   - Backup VPS data regularly
 
 ---
 
@@ -441,23 +403,6 @@ docker run --rm nuna-tools:test python --version
 - Verify GITHUB_TOKEN has packages:write permission
 - Check Docker registry login
 
-**VPS Deployment Failing:**
-```bash
-# Test SSH connection
-ssh -v $VPS_USER@$VPS_HOST
-
-# Test deployment script locally
-export VPS_HOST="your-vps"
-export VPS_USER="your-user"
-bash -x scripts/deploy-vps.sh
-
-# Check GitHub Actions secrets are configured
-# Required: VPS_HOST, VPS_USER, VPS_SSH_KEY
-# Variable: VPS_DEPLOYMENT_ENABLED=true
-```
-
-For detailed VPS troubleshooting, see [VPS_DEPLOYMENT.md](../VPS_DEPLOYMENT.md#troubleshooting).
-
 ### Getting Help
 
 - Check workflow run logs in Actions tab
@@ -480,15 +425,6 @@ For detailed VPS troubleshooting, see [VPS_DEPLOYMENT.md](../VPS_DEPLOYMENT.md#t
 | `.github/workflows/stale.yml` | Stale item management |
 | `.github/dependabot.yml` | Dependency updates |
 | `.github/labeler.yml` | PR label configuration |
-| `scripts/deploy-vps.sh` | VPS deployment script |
-| `docker-compose.vps.yml` | VPS-optimized Docker Compose config |
-| `.env.vps.example` | VPS environment variables template |
-
-## Related Documentation
-
-- [VPS Deployment Guide](../VPS_DEPLOYMENT.md) - Complete VPS deployment documentation
-- [VPS Hosting Configuration](../VPS_HOSTING.md) - VPS server details and management
-- [README](../README.md) - Main project documentation
 
 ---
 

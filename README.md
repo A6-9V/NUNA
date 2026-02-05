@@ -132,8 +132,6 @@ Once launched, the following services are available:
 - [Configuration Guide](docs/CONFIGURATION.md) - Detailed configuration reference
 - [Migration Guide](docs/MIGRATION-GUIDE.md) - **NEW**: Guide for migrating to restructured project
 - [MQL5 Git Setup](docs/MQL5-GIT-SETUP.md) - Git repository configuration
-- [VPS Deployment](VPS_DEPLOYMENT.md) - **NEW**: Automated VPS deployment guide
-- [VPS Hosting](VPS_HOSTING.md) - VPS configuration and management
 
 ## Directory Structure
 
