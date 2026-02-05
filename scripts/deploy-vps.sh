@@ -18,11 +18,13 @@ echo ""
 # Check if required environment variables are set
 if [ -z "$VPS_HOST" ]; then
     echo -e "${RED}Error: VPS_HOST environment variable is not set${NC}"
+    echo -e "${YELLOW}Example: export VPS_HOST=203.147.134.90${NC}"
     exit 1
 fi
 
 if [ -z "$VPS_USER" ]; then
     echo -e "${RED}Error: VPS_USER environment variable is not set${NC}"
+    echo -e "${YELLOW}Example: export VPS_USER=ubuntu${NC}"
     exit 1
 fi
 
