@@ -44,9 +44,10 @@ void SendSignalToBridge(string message, bool enableWebRequest, string url, strin
    char result_data[];
    string result_headers;
    
-   // Create JSON payload
+   // Create JSON payload with escaped message
+   string escaped_message = EscapeJsonString(message);
    string json_payload = StringFormat("{\"message\":\"%s\",\"timestamp\":\"%s\",\"symbol\":\"%s\"}",
-                                      message,
+                                      escaped_message,
                                       TimeToString(TimeCurrent(), TIME_DATE|TIME_SECONDS),
                                       Symbol());
    
@@ -106,29 +107,40 @@ void SendSignalToBridge(string message, bool enableWebRequest, string url, strin
 }
 
 //+------------------------------------------------------------------+
-//| Simple encryption function (placeholder)                         |
-//| Note: For production use, implement proper encryption           |
+//| Escape special characters for JSON string                        |
 //+------------------------------------------------------------------+
-string EncryptMessage(string message, string key)
+string EscapeJsonString(string input)
 {
-   // Placeholder for encryption functionality
-   // In a real implementation, you would use proper encryption
-   // For now, just return the original message
-   if(StringLen(key) == 0)
-      return message;
+   string output = "";
+   int len = StringLen(input);
    
-   // Simple XOR encryption (not secure, just a placeholder)
-   string encrypted = "";
-   int key_len = StringLen(key);
-   
-   for(int i = 0; i < StringLen(message); i++)
+   for(int i = 0; i < len; i++)
    {
-      ushort msg_char = StringGetCharacter(message, i);
-      ushort key_char = StringGetCharacter(key, i % key_len);
-      ushort encrypted_char = msg_char ^ key_char;
-      encrypted += ShortToString(encrypted_char);
+      ushort ch = StringGetCharacter(input, i);
+      
+      switch(ch)
+      {
+         case '"':  output += "\\\""; break;  // Escape double quote
+         case '\\': output += "\\\\"; break;  // Escape backslash
+         case '/':  output += "\\/"; break;   // Escape forward slash
+         case '\b': output += "\\b"; break;   // Escape backspace
+         case '\f': output += "\\f"; break;   // Escape form feed
+         case '\n': output += "\\n"; break;   // Escape newline
+         case '\r': output += "\\r"; break;   // Escape carriage return
+         case '\t': output += "\\t"; break;   // Escape tab
+         default:
+            // For control characters, use unicode escape
+            if(ch < 32)
+            {
+               output += StringFormat("\\u%04x", ch);
+            }
+            else
+            {
+               output += ShortToString(ch);
+            }
+      }
    }
    
-   return encrypted;
+   return output;
 }
 //+------------------------------------------------------------------+
