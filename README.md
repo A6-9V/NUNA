@@ -2,6 +2,16 @@
 
 Docker containerization setup for EXNESS MetaTrader 5 terminal with supporting services.
 
+## 🚀 CI/CD Status
+
+**GitHub Actions:**
+[![CI](https://github.com/A6-9V/NUNA/actions/workflows/ci.yml/badge.svg)](https://github.com/A6-9V/NUNA/actions/workflows/ci.yml)
+[![Security](https://github.com/A6-9V/NUNA/actions/workflows/security.yml/badge.svg)](https://github.com/A6-9V/NUNA/actions/workflows/security.yml)
+[![Deploy](https://github.com/A6-9V/NUNA/actions/workflows/deploy.yml/badge.svg)](https://github.com/A6-9V/NUNA/actions/workflows/deploy.yml)
+
+**GitLab CI/CD:** Available - see [GitLab CI/CD Setup Guide](GITLAB_CI_SETUP.md)  
+_Note: After migrating to GitLab, add pipeline badge: `[![Pipeline](https://gitlab.com/<namespace>/NUNA/badges/main/pipeline.svg)](https://gitlab.com/<namespace>/NUNA/-/pipelines)`_
+
 ## 🌐 Cloud Development & Repository Integration
 
 **Multiple Development Environments:**
@@ -155,16 +165,26 @@ Once launched, the following services are available:
 
 ## Documentation
 
+### Getting Started
 - [Quick Start Guide](docs/QUICK-START.md) - Step-by-step setup instructions
 - [Demo Account Setup](docs/DEMO-SETUP.md) - Demo account configuration
 - [Architecture](docs/ARCHITECTURE.md) - System architecture and design
 - [Configuration Guide](docs/CONFIGURATION.md) - Detailed configuration reference
-- [Migration Guide](docs/MIGRATION-GUIDE.md) - **NEW**: Guide for migrating to restructured project
-- [MQL5 Git Setup](docs/MQL5-GIT-SETUP.md) - Git repository configuration
-- [VPS Deployment](VPS_DEPLOYMENT.md) - **NEW**: Automated VPS deployment guide
+
+### CI/CD & Automation
+- [CI/CD Overview](CI_CD_OVERVIEW.md) - GitHub Actions workflow overview
+- [CI/CD Documentation](CI_CD_DOCUMENTATION.md) - Detailed GitHub workflow reference
+- [GitLab CI/CD Setup](GITLAB_CI_SETUP.md) - **NEW**: GitLab pipeline configuration guide
+
+### Deployment & Integration
+- [VPS Deployment](VPS_DEPLOYMENT.md) - Automated VPS deployment guide
 - [VPS Hosting](VPS_HOSTING.md) - VPS configuration and management
-- [Forge MQL5 Setup](FORGE_MQL5_SETUP.md) - **NEW**: forge.mql5.io integration and sync
-- [Replit Integration](REPLIT_INTEGRATION.md) - **NEW**: Cloud development with Replit
+- [Migration Guide](docs/MIGRATION-GUIDE.md) - Guide for migrating to restructured project
+
+### Platform Integration
+- [MQL5 Git Setup](docs/MQL5-GIT-SETUP.md) - Git repository configuration
+- [Forge MQL5 Setup](FORGE_MQL5_SETUP.md) - forge.mql5.io integration and sync
+- [Replit Integration](REPLIT_INTEGRATION.md) - Cloud development with Replit
 
 ## Directory Structure
 
