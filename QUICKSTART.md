@@ -51,7 +51,8 @@ jules remote new --repo YOUR_REPO_NAME --session "Set up automated daily log org
 4. Trigger: Daily at 2:00 AM
 5. Action: Start a program
    - Program: `powershell.exe`
-   - Arguments: `-ExecutionPolicy Bypass -File "D:\Users\lengk\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075\Logs\organize-logs.ps1"`
+   - Arguments: `-ExecutionPolicy Bypass -File "D:\Users\USERNAME\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075\Logs\organize-logs.ps1"`
+   - Replace `USERNAME` with your Windows username
 
 ## Current Status
 

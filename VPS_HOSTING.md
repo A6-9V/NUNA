@@ -29,7 +29,9 @@ This document tracks the VPS hosting configuration for NUNA MQL5 Trading Robots.
 | **MT5 Account** | 411534497 |
 | **Account Name** | Exness MT5_Auto-Trad |
 | **Server** | Exness-MT5Real8 |
-| **Log Path** | D:\Users\lengk\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075\Logs\hosting.6773048.terminal |
+| **Log Path** | D:\Users\USERNAME\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075\Logs\hosting.6773048.terminal |
+
+**Note:** Replace `USERNAME` with your Windows username.
 
 #### Server Details
 
