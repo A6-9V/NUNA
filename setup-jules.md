@@ -92,7 +92,7 @@ If you prefer not to install Node.js, you can use the included PowerShell script
 4. Action: Start a program
    - Program: `powershell.exe`
    - Arguments: `-ExecutionPolicy Bypass -File "D:\Users\USERNAME\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075\Logs\organize-logs.ps1"`
-   - Replace `USERNAME` with your Windows username
+   - **Note:** Replace `USERNAME` with your Windows username and verify your drive letter (typically C:\ or D:\)
 
 ## Troubleshooting
 

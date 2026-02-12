@@ -49,7 +49,7 @@ See [Architecture Documentation](docs/ARCHITECTURE.md) for detailed system overv
 
 2. **MT5 Terminal** installed at:
    - `D:\Users\USERNAME\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075`
-   - Replace `USERNAME` with your Windows username
+   - **Note:** Replace `USERNAME` with your Windows username and verify your drive letter (typically C:\ or D:\)
 
 ## Quick Start
 

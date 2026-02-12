@@ -14,6 +14,7 @@
 # -----------------------------------------------------------------------------
 # Path to your MT5 terminal directory (Windows path)
 # Example: D:\Users\USERNAME\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075
+# Note: Replace USERNAME with your Windows username and verify your drive letter (typically C:\ or D:\)
 MT5_PATH=D:\Users\USERNAME\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075
 
 # Internal container path (do not change unless you know what you're doing)
