@@ -48,7 +48,8 @@ See [Architecture Documentation](docs/ARCHITECTURE.md) for detailed system overv
    - Ensure Docker Desktop is running before launching
 
 2. **MT5 Terminal** installed at:
-   - `C:\Users\USER\AppData\Roaming\MetaQuotes\Terminal\53785E099C927DB68A545C249CDBCE06`
+   - `D:\Users\USERNAME\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075`
+   - **Note:** Replace `USERNAME` with your Windows username and verify your drive letter (typically C:\ or D:\)
 
 ## Quick Start
 
