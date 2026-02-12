@@ -91,7 +91,7 @@ If you prefer not to install Node.js, you can use the included PowerShell script
 3. Set trigger (e.g., daily at 2 AM)
 4. Action: Start a program
    - Program: `powershell.exe`
-   - Arguments: `-ExecutionPolicy Bypass -File "C:\Users\USER\AppData\Roaming\MetaQuotes\Terminal\53785E099C927DB68A545C249CDBCE06\logs\organize-logs.ps1"`
+   - Arguments: `-ExecutionPolicy Bypass -File "D:\Users\lengk\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075\Logs\organize-logs.ps1"`
 
 ## Troubleshooting
 
