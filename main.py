@@ -149,7 +149,7 @@ def handle_bridge_client(client_socket, address):
         try:
             client_socket.close()
             logger.info(f"Closed connection from {address}")
-        except:
+        except Exception:
             pass
 
 def start_bridge_server():
@@ -195,7 +195,7 @@ def start_bridge_server():
         try:
             server_socket.close()
             logger.info("Bridge server shut down")
-        except:
+        except Exception:
             pass
 
 def start_api_server():

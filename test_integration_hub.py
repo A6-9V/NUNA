@@ -41,17 +41,18 @@ def test_load_symbols_config():
         assert len(symbols) >= 3, f"Should have at least 3 symbols, got {len(symbols)}"
         
         # Check structure of a symbol
-        if 'EURUSD' in symbols:
-            eurusd = symbols['EURUSD']
-            assert 'symbol' in eurusd, "Symbol should have 'symbol' field"
-            assert 'enabled' in eurusd, "Symbol should have 'enabled' field"
-            assert 'broker' in eurusd, "Symbol should have 'broker' field"
-            print(f"✓ Loaded {len(symbols)} symbols successfully")
-            print(f"  Sample: {list(symbols.keys())[:3]}")
-            return True
-        else:
-            print("⚠ No EURUSD symbol found")
-            return True
+        for symbol_key in ['EURUSD', 'GBPUSD', 'USDJPY']:
+            if symbol_key in symbols:
+                symbol_data = symbols[symbol_key]
+                assert 'symbol' in symbol_data, "Symbol should have 'symbol' field"
+                assert 'enabled' in symbol_data, "Symbol should have 'enabled' field"
+                assert 'broker' in symbol_data, "Symbol should have 'broker' field"
+                print(f"✓ Loaded {len(symbols)} symbols successfully")
+                print(f"  Sample: {list(symbols.keys())[:3]}")
+                return True
+        
+        print(f"⚠ None of the expected symbols found, but got {len(symbols)} symbols")
+        return len(symbols) > 0
     except Exception as e:
         print(f"✗ Error loading symbols: {e}")
         import traceback
