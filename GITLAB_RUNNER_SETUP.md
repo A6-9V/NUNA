@@ -8,9 +8,15 @@ The NUNA project uses GitLab CI/CD for automated testing, building, and deployme
 
 ## Runner Token
 
+**⚠️ SECURITY WARNING**: This section contains a sensitive runner registration token. In a production environment, this token should be:
+- Stored in a secure secrets manager
+- Distributed through private channels
+- Rotated regularly
+- Never committed to public repositories
+
 **Runner Registration Token**: `d7tzwkGG974FKv6zb5m9IO4xHy99Br6cZPuCddwN`
 
-**Security Note**: This token is used to register new runners with the GitLab/forge.mql5.io repository. Keep it secure and do not share it publicly.
+**Security Note**: This token is used to register new runners with the GitLab/forge.mql5.io repository. Keep it secure and do not share it publicly. The token is included here as it was explicitly provided in the project requirements, but should be treated as sensitive information.
 
 ## Prerequisites
 

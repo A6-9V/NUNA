@@ -1,6 +1,12 @@
 #!/bin/bash
 # Quick setup script for GitLab CI/CD integration with forge.mql5.io
 # This script helps configure GitLab runners for the NUNA project
+#
+# SECURITY NOTE: This script contains a default runner registration token.
+# For enhanced security, set the GITLAB_RUNNER_TOKEN environment variable
+# instead of using the hardcoded default:
+#   export GITLAB_RUNNER_TOKEN="your-secure-token"
+#   ./setup-gitlab-runner.sh
 
 set -e
 
@@ -34,7 +40,8 @@ echo ""
 
 # Runner configuration
 GITLAB_URL="https://forge.mql5.io/"
-RUNNER_TOKEN="d7tzwkGG974FKv6zb5m9IO4xHy99Br6cZPuCddwN"
+# Read token from environment variable or use the provided default
+RUNNER_TOKEN="${GITLAB_RUNNER_TOKEN:-d7tzwkGG974FKv6zb5m9IO4xHy99Br6cZPuCddwN}"
 RUNNER_NAME="NUNA Python Runner"
 RUNNER_EXECUTOR="docker"
 DOCKER_IMAGE="python:3.12-slim"
@@ -46,6 +53,10 @@ echo "  Name: $RUNNER_NAME"
 echo "  Executor: $RUNNER_EXECUTOR"
 echo "  Docker Image: $DOCKER_IMAGE"
 echo "  Tags: $RUNNER_TAGS"
+echo "  Token: ${RUNNER_TOKEN:0:10}... (masked)"
+echo ""
+echo "⚠️  SECURITY NOTE: The runner token is sensitive. Keep it secure."
+echo "    You can set GITLAB_RUNNER_TOKEN environment variable to override the default."
 echo ""
 
 # Check if Docker is available for Docker executor

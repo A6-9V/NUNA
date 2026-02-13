@@ -31,11 +31,13 @@ Visit: https://forge.mql5.io/LengKundee/NUNA/-/pipelines
 
 ## Runner Token
 
+**⚠️ SECURITY WARNING**: Treat this as sensitive information.
+
 ```
 d7tzwkGG974FKv6zb5m9IO4xHy99Br6cZPuCddwN
 ```
 
-**Security**: This token is used to register runners. Keep it secure.
+**Security**: This token is used to register runners. Keep it secure. Consider using environment variable `GITLAB_RUNNER_TOKEN` when using the setup script.
 
 ## Pipeline Stages
 
