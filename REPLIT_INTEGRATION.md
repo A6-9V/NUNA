@@ -7,6 +7,9 @@ This guide explains how to develop and deploy the NUNA MetaTrader 5 project usin
 The NUNA project is available on Replit for cloud-based development and testing:
 
 **Replit Project URL**: https://replit.com/@mouy-leng/httpsgithubcomA6-9VMetatrader5EXNESS
+**Integration Hub API**: https://mql-5-integration-hub--genxapitrading.replit.app
+
+For detailed API documentation, see [API_DOCUMENTATION.md](API_DOCUMENTATION.md).
 
 ## Features
 
@@ -16,6 +19,9 @@ The NUNA project is available on Replit for cloud-based development and testing:
 - 🔧 Integrated debugging tools
 - 📦 Pre-configured environment variables
 - 🚀 One-click deployment
+- 🌐 **NEW**: Enhanced REST API with comprehensive endpoints
+- 🔌 **NEW**: Improved bridge server with JSON protocol
+- 📊 **NEW**: Interactive API documentation (Swagger/ReDoc)
 
 ## Getting Started
 
@@ -192,12 +198,26 @@ The Replit environment exposes the following ports:
 
 | Service | Internal Port | External Port | Description |
 |---------|--------------|---------------|-------------|
-| API Server | 8000 | 80 | Main API endpoint |
-| Bridge Service | 5555 | 5555 | MT5 bridge service |
+| API Server | 8000 | 80 | REST API with enhanced endpoints |
+| Bridge Service | 5555 | 5555 | MT5 bridge service (JSON protocol) |
 
 Access services:
-- **API**: `https://your-repl-name.repl.co/`
-- **Bridge**: `your-repl-name.repl.co:5555`
+- **API**: `https://mql-5-integration-hub--genxapitrading.replit.app/`
+- **API Docs**: `https://mql-5-integration-hub--genxapitrading.replit.app/docs`
+- **Health Check**: `https://mql-5-integration-hub--genxapitrading.replit.app/health`
+- **Bridge**: `mql-5-integration-hub--genxapitrading.replit.app:5555`
+
+### Available API Endpoints
+
+The enhanced API provides:
+- `/` - API information and endpoint listing
+- `/health` - Comprehensive health check
+- `/system` - System and environment information
+- `/symbols` - Trading symbols management
+- `/symbols/{symbol}` - Specific symbol configuration
+- `/config` - Current configuration (non-sensitive)
+- `/docs` - Interactive Swagger documentation
+- `/redoc` - Alternative ReDoc documentation
 
 ## File Structure
 

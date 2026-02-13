@@ -166,6 +166,7 @@ Once launched, the following services are available:
 - [Demo Account Setup](docs/DEMO-SETUP.md) - Demo account configuration
 - [Architecture](docs/ARCHITECTURE.md) - System architecture and design
 - [Configuration Guide](docs/CONFIGURATION.md) - Detailed configuration reference
+- [API Documentation](API_DOCUMENTATION.md) - **NEW**: Complete REST API and Bridge Server reference
 - [Migration Guide](docs/MIGRATION-GUIDE.md) - **NEW**: Guide for migrating to restructured project
 - [MQL5 Git Setup](docs/MQL5-GIT-SETUP.md) - Git repository configuration
 - [VPS Deployment](VPS_DEPLOYMENT.md) - **NEW**: Automated VPS deployment guide
