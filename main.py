@@ -89,11 +89,12 @@ def handle_bridge_client(client_socket, address):
         client_socket.settimeout(30.0)
         
         # Send welcome message
+        from datetime import datetime
         welcome = {
             "status": "connected",
             "service": "NUNA MQL5 Bridge",
             "version": "2.0.0",
-            "timestamp": os.times()[4]
+            "timestamp": datetime.utcnow().isoformat()
         }
         client_socket.send(json.dumps(welcome).encode() + b"\n")
         
