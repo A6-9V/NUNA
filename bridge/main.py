@@ -34,7 +34,7 @@ def load_symbols_config():
     
     # Load detailed configuration from JSON
     symbol_config = {}
-    symbols_json_path = Path('/app/config/symbols.json')
+    symbols_json_path = Path(__file__).parent.parent / 'config' / 'symbols.json'
     if symbols_json_path.exists():
         try:
             with open(symbols_json_path) as f:
