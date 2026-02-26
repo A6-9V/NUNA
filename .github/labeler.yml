@@ -1,0 +1,44 @@
+# Configuration for PR auto-labeling
+# Labels are automatically applied based on changed files
+
+documentation:
+  - '**/*.md'
+  - 'docs/**/*'
+  - 'guidebook/**/*'
+
+docker:
+  - 'Dockerfile'
+  - 'docker-compose*.yml'
+  - '.dockerignore'
+  - 'docker/**/*'
+
+python:
+  - '**/*.py'
+  - 'requirements.txt'
+
+testing:
+  - '**/test_*.py'
+  - 'tests/**/*'
+
+ci-cd:
+  - '.github/**/*'
+  - '.github/workflows/**/*'
+
+configuration:
+  - '**/*.json'
+  - '**/*.yml'
+  - '**/*.yaml'
+  - '.env.*'
+  - 'env.*'
+  - '**/config/**/*'
+
+scripts:
+  - '**/*.ps1'
+  - '**/*.bat'
+  - '**/*.sh'
+  - 'scripts/**/*'
+
+security:
+  - '.github/workflows/security.yml'
+  - '**/secrets*'
+  - '**/*security*'

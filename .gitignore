@@ -6,6 +6,11 @@
 *.pem
 *.cert
 
+# Exception: Allow certificate files in certs directory
+!certs/*.pem
+!certs/*.key
+!certs/*.cert
+
 # Python
 __pycache__/
 *.py[cod]
@@ -35,7 +40,10 @@ data/
 docker-compose.override.yml
 
 # IDE
-.vscode/
+.vscode/*
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 .idea/
 *.swp
 *.swo
@@ -62,4 +70,12 @@ desktop.ini
 CURRENT-STATUS.txt
 GIT-STATUS.txt
 STATUS-REPORT.md
+
+# Git internal files that were accidentally committed (root directory only)
+/COMMIT_EDITMSG
+/FETCH_HEAD
+/HEAD
+/ORIG_HEAD
+/description
+/index
 

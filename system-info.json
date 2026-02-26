@@ -1,21 +1,211 @@
 {
   "system_info": {
-    "last_updated": "2025-12-29 13:22:20",
+    "last_updated": "2026-02-05 04:02:17",
     "timezone": "Asia/Phnom_Penh",
     "date_format": "yyyy-MM-dd",
     "time_format": "HH:mm:ss",
-    "current_date": "2025-12-29",
-    "current_time": "13:22:20"
+    "current_date": "2026-02-05",
+    "current_time": "04:02:17"
   },
-  "demo_account": {
-    "account": 279410452,
-    "server": "Exness-MT5Trial8",
-    "type": "demo",
-    "configured_date": "2025-12-29"
+  "operating_system": {
+    "name": "Windows 11",
+    "edition": "Home Single Language",
+    "version": "25H2",
+    "installed_on": "2025-12-09",
+    "os_build": "26220.7653",
+    "experience_pack": "Windows Feature Experience Pack 1000.26100.323.0"
+  },
+  "hardware": {
+    "device_name": "NUNA",
+    "processor": {
+      "model": "Intel(R) Core(TM) i3-N305",
+      "base_frequency": "1.80 GHz",
+      "architecture": "x64"
+    },
+    "memory": {
+      "installed_ram": "8.00 GB",
+      "usable_ram": "7.63 GB"
+    },
+    "device_id": "32680105-F98A-49B6-803C-8A525771ABA3",
+    "product_id": "00356-24782-61221-AAOEM",
+    "system_type": "64-bit operating system, x64-based processor",
+    "input_capabilities": {
+      "pen": false,
+      "touch": false,
+      "description": "No pen or touch input is available for this display"
+    }
+  },
+  "mt5_accounts": {
+    "demo_account": {
+      "account_number": 279410452,
+      "server": "Exness-MT5Trial8",
+      "type": "demo",
+      "configured_date": "2025-12-29",
+      "status": "active"
+    },
+    "real_accounts": [
+      {
+        "payment_id": "6773048",
+        "account_number": 411534497,
+        "account_name": "Exness MT5_Auto-Trad",
+        "server": "Exness-MT5Real8",
+        "type": "real",
+        "vps": {
+          "location": "VPS Singapore 09",
+          "region": "Singapore",
+          "provider": "Exness MetaTrader VPS"
+        },
+        "subscription": {
+          "cost": 15.00,
+          "currency": "USD",
+          "start_date": "2026-01-18",
+          "end_date": "2026-02-18",
+          "status": "active"
+        }
+      },
+      {
+        "payment_id": "6759730",
+        "account_number": 405347405,
+        "account_name": "I'm Good",
+        "server": "Exness-MT5Real8",
+        "type": "real",
+        "vps": {
+          "location": "VPS Jakarta 02",
+          "region": "Jakarta",
+          "provider": "Exness MetaTrader VPS"
+        },
+        "subscription": {
+          "cost": 10.00,
+          "currency": "USD",
+          "start_date": "2025-12-16",
+          "end_date": "2026-01-16",
+          "status": "expired",
+          "requires_cleanup": true
+        }
+      }
+    ]
   },
   "docker_services": {
     "last_started": null,
     "status": "stopped"
+  },
+  "repository_integrations": {
+    "github": {
+      "url": "https://github.com/A6-9V/NUNA",
+      "type": "primary",
+      "description": "Main development repository"
+    },
+    "forge_mql5": {
+      "url": "https://forge.mql5.io/LengKundee/NUNA.git",
+      "type": "mirror",
+      "description": "MQL5 community integration",
+      "authentication": "token-based",
+      "token_prefix": "PQEpZi...",
+      "configured_date": "2026-02-05",
+      "sync_scripts": [
+        "scripts/sync-forge.sh",
+        "scripts/sync-forge.ps1",
+        "scripts/cleanup-forge.sh",
+        "scripts/cleanup-forge.ps1"
+      ]
+    },
+    "replit": {
+      "url": "https://replit.com/@mouy-leng/httpsgithubcomA6-9VMetatrader5EXNESS",
+      "type": "cloud_ide",
+      "description": "Cloud development environment",
+      "fork_id": "74fbf663-fcf3-40e5-b496-2295edb70b17",
+      "configured_date": "2026-02-05",
+      "config_files": [
+        ".replit",
+        "replit.nix"
+      ]
+    }
+  },
+  "network_adapters": {
+    "wifi": {
+      "ssid": "LengA6-9V",
+      "description": "my wifi",
+      "protocol": "Wi-Fi 4 (802.11n)",
+      "security_type": "WPA2-Personal",
+      "hardware": {
+        "manufacturer": "Realtek Semiconductor Corp.",
+        "description": "Realtek RTL8188EU Wireless LAN 802.11n USB 2.0 Network Adapter",
+        "driver_version": "1030.52.1216.2025",
+        "mac_address": "78:20:51:54:60:5C"
+      },
+      "network_configuration": {
+        "band": "2.4 GHz",
+        "channel": 1,
+        "aggregated_link_speed": {
+          "receive_mbps": 150,
+          "transmit_mbps": 150
+        }
+      },
+      "ipv6": {
+        "link_local_address": "fe80::417b:4f29:7fd:caaa%12",
+        "dns_servers": [
+          {
+            "address": "2001:4860:4860::8888",
+            "encryption": "Unencrypted"
+          },
+          {
+            "address": "2606:4700:4700::1111",
+            "encryption": "Unencrypted"
+          }
+        ]
+      },
+      "ipv4": {
+        "address": "192.168.18.6",
+        "default_gateway": "192.168.18.1",
+        "dns_servers": [
+          {
+            "address": "8.8.8.8",
+            "encryption": "Unencrypted"
+          },
+          {
+            "address": "1.1.1.1",
+            "encryption": "Unencrypted"
+          }
+        ]
+      }
+    }
+  },
+  "ssl_certificates": {
+    "cloudflare": {
+      "certificate_file": "./certs/cloudflare-cert.pem",
+      "private_key_file": "./certs/cloudflare-key.pem",
+      "issuer": "Cloudflare, Inc. (Managed CA)",
+      "subject": "Cloudflare",
+      "serial_number": "44:c5:14:b2:c0:4f:0e:5b:b7:87:66:50:a7:7f:bb:20:5a:7b:11:a2",
+      "valid_from": "2026-02-05 06:49:00 GMT",
+      "valid_until": "2036-02-03 06:49:00 GMT",
+      "key_algorithm": "RSA 2048-bit",
+      "purpose": "TLS Web Client Authentication",
+      "protocols_supported": ["TLSv1.2", "TLSv1.3"],
+      "installed_date": "2026-02-05",
+      "status": "active",
+      "documentation": "SSL_CERTIFICATE_SETUP.md"
+    }
+  },
+  "api_credentials": {
+    "github": {
+      "token_type": "Personal Access Token (classic)",
+      "token_prefix": "ghp_B9WA5x...",
+      "configured_date": "2026-02-05",
+      "purpose": "Repository access, CI/CD workflows, secrets management",
+      "scopes": [
+        "repo",
+        "workflow",
+        "write:packages",
+        "admin:org"
+      ],
+      "status": "active",
+      "documentation": "GITHUB_TOKEN_SETUP.md",
+      "configuration_files": [
+        ".env.example",
+        ".env.secrets.example"
+      ]
+    }
   }
 }
 

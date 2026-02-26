@@ -36,6 +36,14 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install flake8
+
+      - name: Lint with flake8
+        run: |
+          # Stop the build if there are Python syntax errors or undefined names
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude=.venv,venv,ENV,__pycache__,.git
+          # Exit-zero treats all errors as warnings
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics --exclude=.venv,venv,ENV,__pycache__,.git
 
       - name: Syntax check
         run: |
@@ -43,10 +51,18 @@ jobs:
           python -m compileall -q trading_data_manager.py
           python -m compileall -q common_utils.py
           python -m compileall -q firebase_utils.py
+          python -m compileall -q plugin_loader.py
 
       - name: Run unit tests
         run: |
           python -m unittest discover -s . -p "test_*.py" -v
+
+      - name: Test Summary
+        if: always()
+        run: |
+          echo "## Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "Python version: ${{ matrix.python-version }}" >> $GITHUB_STEP_SUMMARY
+          echo "Tests completed" >> $GITHUB_STEP_SUMMARY
 
       - name: CLI smoke tests - gdrive_cleanup
         run: |

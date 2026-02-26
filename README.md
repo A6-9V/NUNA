@@ -1,6 +1,23 @@
 # EXNESS Docker Setup
 
+## 📓 Knowledge Base
+- **NotebookLM**: [Access here](https://notebooklm.google.com/notebook/e8f4c29d-9aec-4d5f-8f51-2ca168687616)
+- **Note**: This notebook is available for reading and writing. AI agents must read it before starting work.
+
+
 Docker containerization setup for EXNESS MetaTrader 5 terminal with supporting services.
+
+## 🌐 Cloud Development & Repository Integration
+
+**Multiple Development Environments:**
+- 💻 **GitHub**: https://github.com/A6-9V/NUNA (Primary repository)
+- ☁️ **Replit**: https://replit.com/@mouy-leng/httpsgithubcomA6-9VMetatrader5EXNESS (Cloud IDE)
+- 📦 **Forge MQL5**: https://forge.mql5.io/LengKundee/NUNA (MQL5 community)
+
+**Quick Links:**
+- [Replit Integration Guide](REPLIT_INTEGRATION.md) - Develop in the cloud
+- [Forge MQL5 Setup Guide](FORGE_MQL5_SETUP.md) - Sync with MQL5 community
+- [GitLab Runner Setup Guide](GITLAB_RUNNER_SETUP.md) - CI/CD with GitLab runners
 
 ## Table of Contents
 
@@ -32,7 +49,8 @@ See [Architecture Documentation](docs/ARCHITECTURE.md) for detailed system overv
    - Ensure Docker Desktop is running before launching
 
 2. **MT5 Terminal** installed at:
-   - `C:\Users\USER\AppData\Roaming\MetaQuotes\Terminal\53785E099C927DB68A545C249CDBCE06`
+   - `D:\Users\USERNAME\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075`
+   - **Note:** Replace `USERNAME` with your Windows username and verify your drive letter (typically C:\ or D:\)
 
 ## Quick Start
 
@@ -65,6 +83,24 @@ notepad .env
 ```powershell
 docker-compose up -d
 ```
+
+**Option D: VS Code Tasks (Recommended for VS Code Users)**
+```
+Press Ctrl+Shift+P (or Cmd+Shift+P on Mac)
+Type "Tasks: Run Task"
+Select "Start Project"
+```
+
+Available VS Code tasks:
+- **Start Project**: Start all Docker services (default build task: Ctrl+Shift+B)
+- **Stop Project**: Stop all Docker services
+- **Full Project Setup**: Complete setup including Python environment, validation, and Docker startup
+- **Setup Python Environment**: Initialize Python virtual environment and install dependencies
+- **Validate Environment**: Validate environment configuration
+- **Check Docker Status**: View status of all containers
+- **View Docker Logs**: Stream logs from all containers
+- **Restart Docker Services**: Restart all containers
+- **Rebuild Docker Containers**: Rebuild all containers from scratch
 
 ### Step 3: Verify Services
 
@@ -132,6 +168,11 @@ Once launched, the following services are available:
 - [Configuration Guide](docs/CONFIGURATION.md) - Detailed configuration reference
 - [Migration Guide](docs/MIGRATION-GUIDE.md) - **NEW**: Guide for migrating to restructured project
 - [MQL5 Git Setup](docs/MQL5-GIT-SETUP.md) - Git repository configuration
+- [VPS Deployment](VPS_DEPLOYMENT.md) - **NEW**: Automated VPS deployment guide
+- [VPS Hosting](VPS_HOSTING.md) - VPS configuration and management
+- [Forge MQL5 Setup](FORGE_MQL5_SETUP.md) - **NEW**: forge.mql5.io integration and sync
+- [Replit Integration](REPLIT_INTEGRATION.md) - **NEW**: Cloud development with Replit
+- [GitLab Runner Setup](GITLAB_RUNNER_SETUP.md) - **NEW**: GitLab CI/CD runner configuration
 
 ## Directory Structure
 

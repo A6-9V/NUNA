@@ -29,7 +29,9 @@ This document tracks the VPS hosting configuration for NUNA MQL5 Trading Robots.
 | **MT5 Account** | 411534497 |
 | **Account Name** | Exness MT5_Auto-Trad |
 | **Server** | Exness-MT5Real8 |
-| **Log Path** | C:\Users\USER\AppData\Roaming\MetaQuotes\Terminal\4260A113DD8DC0E474D390C530B6647D\logs\hosting.6773048.terminal |
+| **Log Path** | D:\Users\USERNAME\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075\Logs\hosting.6773048.terminal |
+
+**Note:** Replace `USERNAME` with your Windows username and verify your drive letter (typically C:\ or D:\).
 
 #### Server Details
 
@@ -41,7 +43,39 @@ This document tracks the VPS hosting configuration for NUNA MQL5 Trading Robots.
 
 #### Deployment
 
-To deploy the NUNA trading robots to VPS Singapore 09:
+**🚀 Automated Deployment Available!**
+
+For detailed deployment instructions, see [VPS_DEPLOYMENT.md](VPS_DEPLOYMENT.md).
+
+**Quick Setup:**
+
+1. **Automated Deployment via GitHub Actions:**
+   - Configure GitHub Secrets (VPS_HOST, VPS_USER, VPS_SSH_KEY)
+   - Enable VPS_DEPLOYMENT_ENABLED variable
+   - Push to main branch - automatic deployment!
+
+2. **Manual Deployment Script:**
+   ```bash
+   export VPS_HOST="your-vps-ip"
+   export VPS_USER="your-username"
+   ./scripts/deploy-vps.sh
+   ```
+
+3. **Direct VPS Deployment:**
+   ```bash
+   # On your VPS
+   cd /opt/nuna
+   docker pull ghcr.io/a6-9v/nuna:main
+   docker-compose -f docker-compose.vps.yml up -d
+   ```
+
+For complete setup instructions, troubleshooting, and monitoring, see:
+- [VPS Deployment Guide](VPS_DEPLOYMENT.md) - Comprehensive deployment documentation
+- [CI/CD Documentation](CI_CD_DOCUMENTATION.md) - Automated deployment workflows
+
+#### Legacy Manual Deployment
+
+To deploy the NUNA trading robots to VPS Singapore 09 (manual method):
 
 1. **Connect to the VPS:**
    - For Windows VPS: Use Remote Desktop Connection (RDP)
@@ -63,10 +97,10 @@ For containerized deployment:
 docker pull ghcr.io/a6-9v/nuna:main
 
 # Run with docker-compose
-./docker-compose up -d
+docker-compose -f docker-compose.vps.yml up -d
 ```
 
-See [README.md](README.md) for more deployment details.
+See [VPS_DEPLOYMENT.md](VPS_DEPLOYMENT.md) for complete Docker deployment guide.
 
 ---
 

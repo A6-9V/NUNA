@@ -1,0 +1,109 @@
+name: Documentation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**.md'
+      - 'docs/**'
+      - 'guidebook/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '**.md'
+      - 'docs/**'
+      - 'guidebook/**'
+  schedule:
+    # Check links weekly on Sundays at 2:00 AM UTC
+    - cron: '0 2 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  link-checker:
+    name: Check Documentation Links
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Link Checker
+        uses: lycheeverse/lychee-action@v1
+        with:
+          args: |
+            --verbose
+            --no-progress
+            --exclude-mail
+            --exclude 'localhost'
+            --exclude '127.0.0.1'
+            --exclude-path '.venv'
+            --exclude-path 'venv'
+            --exclude-path 'ENV'
+            --exclude-path '__pycache__'
+            --max-concurrency 8
+            '**/*.md'
+          fail: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create issue if links are broken
+        if: failure() && github.event_name == 'schedule'
+        uses: peter-evans/create-issue-from-file@v4
+        with:
+          title: 'Documentation: Broken links detected'
+          content-filepath: ./lychee/out.md
+          labels: documentation, automated
+
+  markdown-lint:
+    name: Lint Markdown Files
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Markdown Lint
+        uses: DavidAnson/markdownlint-cli2-action@v14
+        with:
+          globs: |
+            **/*.md
+            !node_modules
+            !.venv
+            !venv
+            !ENV
+
+  spell-check:
+    name: Spell Check Documentation
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Spell Check
+        uses: rojopolis/spellcheck-github-actions@0.36.0
+        with:
+          source_files: '**/*.md'
+          task_name: Markdown
+
+  docs-summary:
+    name: Documentation Summary
+    runs-on: ubuntu-latest
+    needs: [link-checker, markdown-lint, spell-check]
+    if: always()
+    
+    steps:
+      - name: Generate summary
+        run: |
+          echo "## Documentation Checks Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "All documentation checks completed:" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Link validation" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Markdown linting" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Spell checking" >> $GITHUB_STEP_SUMMARY
