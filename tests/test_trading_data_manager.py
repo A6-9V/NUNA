@@ -8,7 +8,7 @@ import copy
 from pathlib import Path
 from unittest.mock import patch
 
-import trading_data_manager as tdm
+from bridge import trading_data_manager as tdm
 
 
 class TestTradingDataManager(unittest.TestCase):

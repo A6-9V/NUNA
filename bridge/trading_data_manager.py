@@ -31,7 +31,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
-from common_utils import deep_merge, eprint, load_json_config, mkdirp, now_local_stamp
+from .common_utils import deep_merge, eprint, load_json_config, mkdirp, now_local_stamp
 
 
 DEFAULT_CONFIG: Dict[str, Any] = {

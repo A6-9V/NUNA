@@ -26,7 +26,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
-from common_utils import eprint, human_bytes, now_stamp, write_json
+from bridge.common_utils import eprint, human_bytes, now_stamp, write_json
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow

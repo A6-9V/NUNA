@@ -7,7 +7,7 @@ import tempfile
 import shutil
 import json
 from pathlib import Path
-from plugin_loader import PluginLoader
+from bridge.plugin_loader import PluginLoader
 
 
 class TestPluginLoader(unittest.TestCase):
