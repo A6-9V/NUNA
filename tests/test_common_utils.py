@@ -7,7 +7,7 @@ import shutil
 import json
 import os
 
-from common_utils import (
+from bridge.common_utils import (
     eprint,
     human_bytes,
     now_stamp,

@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 import firebase_admin
-from common_utils import eprint
+from .common_utils import eprint
 from firebase_admin import credentials, firestore
 
 def load_firebase_config(config_path: str = "firebase-config.json") -> Dict[str, Any]:

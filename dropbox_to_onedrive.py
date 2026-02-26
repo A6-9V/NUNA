@@ -30,7 +30,7 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
 from urllib.parse import parse_qsl, quote, urlencode, urlparse, urlunparse
 
-from common_utils import eprint, human_bytes, now_stamp
+from bridge.common_utils import eprint, human_bytes, now_stamp
 import msal
 import requests
 from tqdm import tqdm
