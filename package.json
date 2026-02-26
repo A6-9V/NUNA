@@ -4,6 +4,9 @@
   "description": "MetaTrader 5 logs organization with Google Jules automation",
   "main": "organize-logs.ps1",
   "scripts": {
+    "push": "bash scripts/sync-forge.sh",
+    "go": "python3 -m bridge.main",
+    "submit": "echo 'Please call the jules submit tool directly'",
     "organize": "powershell -ExecutionPolicy Bypass -File organize-logs.ps1",
     "setup": "npm install -g @google/jules"
   },
@@ -19,4 +22,3 @@
   "devDependencies": {},
   "dependencies": {}
 }
-

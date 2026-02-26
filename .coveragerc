@@ -1,0 +1,17 @@
+[run]
+relative_files = true
+branch = true
+omit =
+    /tmp/*
+    tests/*
+    test_*.py
+    .venv/*
+    venv/*
+
+[report]
+skip_empty = true
+exclude_lines =
+    pragma: no cover
+    if __name__ == .__main__.:
+    def __repr__
+    raise NotImplementedError

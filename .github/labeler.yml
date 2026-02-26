@@ -1,44 +1,25 @@
-# Configuration for PR auto-labeling
-# Labels are automatically applied based on changed files
-
+# Configuration for PR auto-labeling (actions/labeler@v5 format)
 documentation:
-  - '**/*.md'
-  - 'docs/**/*'
-  - 'guidebook/**/*'
-
+  - changed-files:
+    - any-glob-to-any-file: ['**/*.md', 'docs/**/*', 'guidebook/**/*']
 docker:
-  - 'Dockerfile'
-  - 'docker-compose*.yml'
-  - '.dockerignore'
-  - 'docker/**/*'
-
+  - changed-files:
+    - any-glob-to-any-file: ['Dockerfile', 'docker-compose*.yml', '.dockerignore', 'docker/**/*']
 python:
-  - '**/*.py'
-  - 'requirements.txt'
-
+  - changed-files:
+    - any-glob-to-any-file: ['**/*.py', 'requirements.txt']
 testing:
-  - '**/test_*.py'
-  - 'tests/**/*'
-
+  - changed-files:
+    - any-glob-to-any-file: ['**/test_*.py', 'tests/**/*']
 ci-cd:
-  - '.github/**/*'
-  - '.github/workflows/**/*'
-
+  - changed-files:
+    - any-glob-to-any-file: ['.github/**/*', '.github/workflows/**/*']
 configuration:
-  - '**/*.json'
-  - '**/*.yml'
-  - '**/*.yaml'
-  - '.env.*'
-  - 'env.*'
-  - '**/config/**/*'
-
+  - changed-files:
+    - any-glob-to-any-file: ['**/*.json', '**/*.yml', '**/*.yaml', '.env.*', 'env.*', '**/config/**/*']
 scripts:
-  - '**/*.ps1'
-  - '**/*.bat'
-  - '**/*.sh'
-  - 'scripts/**/*'
-
+  - changed-files:
+    - any-glob-to-any-file: ['**/*.ps1', '**/*.bat', '**/*.sh', 'scripts/**/*']
 security:
-  - '.github/workflows/security.yml'
-  - '**/secrets*'
-  - '**/*security*'
+  - changed-files:
+    - any-glob-to-any-file: ['.github/workflows/security.yml', '**/secrets*', '**/*security*']
