@@ -99,6 +99,20 @@ jobs:
           echo '```bash' >> $GITHUB_STEP_SUMMARY
           echo "docker run --rm ghcr.io/${{ github.repository }}:main python gdrive_cleanup.py --help" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
+      - name: Send Telegram Notification (Success)
+        if: success()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: ./scripts/send-telegram.sh "🚀 <b>Deployment Successful</b>\n\n<b>Repo:</b> ${{ github.repository }}\n<b>Env:</b> ${{ github.event.inputs.environment || 'production' }}\n<b>Image:</b> ghcr.io/${{ github.repository }}:main"
+
+      - name: Send Telegram Notification (Failure)
+        if: failure()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: ./scripts/send-telegram.sh "⚠️ <b>Deployment Failed</b>\n\n<b>Repo:</b> ${{ github.repository }}\n<b>Env:</b> ${{ github.event.inputs.environment || 'production' }}"
+
 
   # Optional: Add deployment to VPS
   deploy-to-vps:
@@ -164,3 +178,16 @@ jobs:
           echo "docker pull ghcr.io/${{ github.repository }}:main" >> $GITHUB_STEP_SUMMARY
           echo "docker-compose -f docker-compose.vps.yml up -d" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
+      - name: Send Telegram Notification (Success)
+        if: success()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: ./scripts/send-telegram.sh "🚀 <b>Deployment Successful</b>\n\n<b>Repo:</b> ${{ github.repository }}\n<b>Env:</b> ${{ github.event.inputs.environment || 'production' }}\n<b>Image:</b> ghcr.io/${{ github.repository }}:main"
+
+      - name: Send Telegram Notification (Failure)
+        if: failure()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: ./scripts/send-telegram.sh "⚠️ <b>Deployment Failed</b>\n\n<b>Repo:</b> ${{ github.repository }}\n<b>Env:</b> ${{ github.event.inputs.environment || 'production' }}"

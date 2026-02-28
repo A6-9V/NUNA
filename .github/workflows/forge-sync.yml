@@ -1,0 +1,39 @@
+name: Sync to Forge MQL5
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync:
+    name: Sync to Forge
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Sync to forge
+        env:
+          FORGE_TOKEN: ${{ secrets.FORGE_TOKEN }}
+        run: |
+          # Use the existing sync script with the token from secrets
+          # We need to ensure the remote is set up with the token
+          git remote add forge https://${FORGE_TOKEN}@forge.mql5.io/LengKundee/NUNA.git || git remote set-url forge https://${FORGE_TOKEN}@forge.mql5.io/LengKundee/NUNA.git
+          ./scripts/sync-forge.sh main
+
+      - name: Send Telegram Notification (Success)
+        if: success()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: ./scripts/send-telegram.sh "🔄 <b>Forge MQL5 Sync Successful</b>\n\n<b>Repo:</b> ${{ github.repository }}\n<b>Branch:</b> main"
+
+      - name: Send Telegram Notification (Failure)
+        if: failure()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: ./scripts/send-telegram.sh "⚠️ <b>Forge MQL5 Sync Failed</b>\n\n<b>Repo:</b> ${{ github.repository }}\n<b>Branch:</b> main"
