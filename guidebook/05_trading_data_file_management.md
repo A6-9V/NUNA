@@ -1,6 +1,9 @@
 # Trading Data File Management (Local Workflow)
 
-This guide describes a clean, automated workflow for managing **trading logs**, **raw exports**, and **final reports** on your local machine. It also documents the included helper script: `trading_data_manager.py`.
+This guide describes a clean, automated workflow for managing **trading logs**,
+
+**raw exports**, and **final reports** on your local machine. It also documents
+the included helper script: `trading_data_manager.py`.
 
 ## Goals (what “good” looks like)
 
@@ -70,7 +73,8 @@ Good filenames make automation and auditing much easier:
 - **Reports**: `report_YYYY-MM-DD.xlsx`
 - **If you create multiple per day**: `report_YYYY-MM-DD_v2.xlsx` (or include a timestamp)
 
-If you don’t use a naming convention, the tool still works; it groups “per day” using the file’s **local modified time**.
+If you don’t use a naming convention, the tool still works; it groups “per day”
+using the file’s **local modified time**.
 
 ## Automation script: `trading_data_manager.py`
 

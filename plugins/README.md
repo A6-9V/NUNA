@@ -1,22 +1,25 @@
 # NUNA Plugin System
 
-The NUNA plugin system allows you to extend the functionality of NUNA with custom modules and integrations.
+The NUNA plugin system allows you to extend the functionality of NUNA with
+custom modules and integrations.
 
 ## Overview
 
-Plugins are self-contained modules that can add new features, integrations, or functionality to NUNA. Each plugin resides in its own directory under the `plugins/` folder.
+Plugins are self-contained modules that can add new features, integrations, or
+functionality to NUNA. Each plugin resides in its own directory under the
+`plugins/` folder.
 
 ## Plugin Structure
 
 A plugin should have the following structure:
 
-```
+```bash
 plugins/
   └── my_plugin/
       ├── plugin.json       # Plugin metadata (optional but recommended)
-      ├── __init__.py       # Main plugin code
+      ├── **init**.py       # Main plugin code
       └── README.md         # Plugin documentation (optional)
-```
+```bash
 
 ### Plugin Metadata (plugin.json)
 
@@ -30,11 +33,12 @@ The `plugin.json` file contains metadata about your plugin:
   "author": "Your Name",
   "entry_point": "main"
 }
-```
+```bash
 
-### Plugin Code (__init__.py)
+### Plugin Code (**init**.py)
 
-The `__init__.py` file contains your plugin's code. At minimum, it should define:
+The `**init**.py` file contains your plugin's code. At minimum, it should
+define:
 
 - `initialize()` - Called when the plugin is loaded
 - `main()` - The main entry point for the plugin
@@ -59,7 +63,7 @@ def get_info():
         "version": "1.0.0",
         "capabilities": ["feature1", "feature2"]
     }
-```
+```bash
 
 ## Using the Plugin Loader
 
@@ -86,7 +90,7 @@ loader.load_all_plugins()
 
 # Get a loaded plugin
 plugin = loader.get_plugin("my_plugin")
-```
+```bash
 
 ### Command Line Interface
 
@@ -99,41 +103,46 @@ python plugin_loader.py load --plugin my_plugin
 
 # Get plugin information
 python plugin_loader.py info --plugin my_plugin
-```
+```bash
 
 ## External Plugin Integration
 
 To integrate external plugins (e.g., from the Mouy-leng/nuna repository):
 
 1. **Add the remote repository:**
-   ```bash
-   git remote add mouy-leng https://github.com/Mouy-leng/nuna.git
-   ```
+
+```bash
+git remote add mouy-leng https://github.com/Mouy-leng/nuna.git
+```bash
 
 2. **Fetch the external plugins:**
-   ```bash
-   git fetch mouy-leng
-   ```
+
+```bash
+git fetch mouy-leng
+```bash
 
 3. **Copy/link the plugin to your plugins directory:**
-   ```bash
+
+```bash
    # Option 1: Copy the plugin
-   cp -r /path/to/external/plugin plugins/
+cp -r /path/to/external/plugin plugins/
 
    # Option 2: Create a symbolic link
-   ln -s /path/to/external/plugin plugins/
-   ```
+ln -s /path/to/external/plugin plugins/
+```bash
 
 4. **Load the plugin:**
-   ```python
-   from plugin_loader import PluginLoader
-   loader = PluginLoader()
-   plugin = loader.load_plugin("external_plugin_name")
-   ```
+
+```python
+from plugin_loader import PluginLoader
+loader = PluginLoader()
+plugin = loader.load_plugin("external_plugin_name")
+```bash
 
 ## Example Plugin
 
-See the `plugins/example/` directory for a complete example plugin implementation.
+See the `plugins/example/` directory for a complete example plugin
+implementation.
 
 ## Best Practices
 
@@ -155,13 +164,15 @@ See the `plugins/example/` directory for a complete example plugin implementatio
 ### Plugin Not Found
 
 If a plugin is not discovered:
+
 - Check that the plugin directory exists under `plugins/`
-- Ensure the plugin has an `__init__.py` file
+- Ensure the plugin has an `**init**.py` file
 - Verify the directory name doesn't start with underscore
 
 ### Plugin Load Errors
 
 If a plugin fails to load:
+
 - Check for syntax errors in the plugin code
 - Verify all required dependencies are installed
 - Review the error message for specific issues

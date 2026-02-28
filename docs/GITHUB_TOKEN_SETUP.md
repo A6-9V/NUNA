@@ -2,7 +2,8 @@
 
 ## Overview
 
-This guide documents the GitHub Personal Access Token (PAT) configuration for the NUNA project.
+This guide documents the GitHub Personal Access Token (PAT) configuration for
+the NUNA project.
 
 ## Token Information
 
@@ -10,7 +11,8 @@ This guide documents the GitHub Personal Access Token (PAT) configuration for th
 - **Purpose**: Repository access, CI/CD workflows, secrets management
 - **Type**: Personal Access Token (classic)
 
-⚠️ **Security Note**: This token is documented here for initial setup. In production:
+⚠️ **Security Note**: This token is documented here for initial setup. In
+production:
 
 - Store in environment variables
 - Use GitHub Secrets for CI/CD
@@ -284,19 +286,21 @@ gh repo edit A6-9V/NUNA --description "Test access"
 When rotating the token:
 
 1. **Generate New Token**
-   ```bash
+
+```bash
    # Store old token as backup
-   OLD_TOKEN=$GITHUB_TOKEN
-   ```
+OLD_TOKEN=$GITHUB_TOKEN
+```
 
 2. **Update Configurations**
-   ```bash
+
+```bash
    # Update .env file
-   sed -i 's/GITHUB_TOKEN=.*/GITHUB_TOKEN=NEW_TOKEN/' .env
+sed -i 's/GITHUB_TOKEN=.*/GITHUB_TOKEN=NEW_TOKEN/' .env
    
    # Update environment variables
-   export GITHUB_TOKEN=NEW_TOKEN
-   ```
+export GITHUB_TOKEN=NEW_TOKEN
+```
 
 3. **Update GitHub Secrets**
 
@@ -305,11 +309,12 @@ When rotating the token:
    - Update organization secrets
 
 4. **Verify New Token**
-   ```bash
+
+```bash
    # Test new token
-   gh auth status
-   git pull
-   ```
+gh auth status
+git pull
+```
 
 5. **Revoke Old Token**
 

@@ -1,10 +1,12 @@
 # `dropbox_to_onedrive.py` Documentation
 
-This document provides detailed documentation for the `dropbox_to_onedrive.py` script.
+This document provides detailed documentation for the `dropbox_to_onedrive.py`
+script.
 
 ## Purpose
 
-The `dropbox_to_onedrive.py` script is a tool for importing a shared folder from Dropbox into your OneDrive. It automates the process of:
+The `dropbox_to_onedrive.py` script is a tool for importing a shared folder from
+Dropbox into your OneDrive. It automates the process of:
 
 1.  Downloading the Dropbox shared folder as a ZIP file.
 2.  Extracting the ZIP file locally.
@@ -23,11 +25,13 @@ The `dropbox_to_onedrive.py` script is a tool for importing a shared folder from
         *   `User.Read`
 
 2.  **Set the `ONEDRIVE_CLIENT_ID` environment variable:**
+
     *   Copy the **Application (client) ID** from your app registration.
     *   Set it as an environment variable:
-        ```bash
-        export ONEDRIVE_CLIENT_ID="YOUR_CLIENT_ID"
-        ```
+
+```bash
+export ONEDRIVE_CLIENT_ID="YOUR_CLIENT_ID"
+```
 
 ## Usage
 
@@ -37,7 +41,9 @@ The `dropbox_to_onedrive.py` script is a tool for importing a shared folder from
 python3 dropbox_to_onedrive.py --dropbox-url "<DROPBOX_SHARED_FOLDER_URL>" --onedrive-folder "My Dropbox Import"
 ```
 
-The first time you run the script, it will provide you with a device login code and a URL. Open the URL in your browser and enter the code to authorize the script to access your OneDrive.
+The first time you run the script, it will provide you with a device login code
+and a URL. Open the URL in your browser and enter the code to authorize the
+script to access your OneDrive.
 
 **Arguments:**
 

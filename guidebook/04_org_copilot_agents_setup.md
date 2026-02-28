@@ -1,6 +1,7 @@
 # GitHub Copilot & Jules Agents: Organization Setup Guide
 
-This guide explains how to enable **GitHub Copilot coding agents** and **Jules (Google)** at the organization level for multiple orgs and personal accounts.
+This guide explains how to enable **GitHub Copilot coding agents** and **Jules
+(Google)** at the organization level for multiple orgs and personal accounts.
 
 ---
 
@@ -47,6 +48,7 @@ gh copilot --version
 ```
 
 Or install via the GitHub Marketplace:
+
 1. Visit: `https://github.com/apps/copilot-swe-agent`
 2. Click **Install** → Select your organization
 3. Grant access to **All repositories** (recommended) or select specific repos
@@ -63,6 +65,7 @@ gh api repos/YOUR-ORG/REPO-NAME/copilot \
 ```
 
 Or via UI:
+
 1. Go to repo **Settings** → **Copilot**
 2. Enable **Allow Copilot to make changes**
 3. Set permission level to **Write**

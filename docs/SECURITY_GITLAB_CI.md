@@ -122,11 +122,11 @@ Replace in all documentation and scripts:
 
 ```bash
 
-# Instead of:
+# Instead of
 
 RUNNER_TOKEN="d7tzwkGG974FKv6zb5m9IO4xHy99Br6cZPuCddwN"
 
-# Use:
+# Use
 
 RUNNER_TOKEN="${GITLAB_RUNNER_TOKEN:?Error: GITLAB_RUNNER_TOKEN must be set}"
 
@@ -147,7 +147,6 @@ Mark as:
 ```bash
 
 # Generate new token in GitLab
-
 
 # Update all runners
 

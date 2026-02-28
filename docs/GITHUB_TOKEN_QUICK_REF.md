@@ -70,9 +70,9 @@ git remote set-url origin https://${GITHUB_TOKEN}@github.com/A6-9V/NUNA.git
 
 ## Security Notes
 
-⚠️ **Never commit `.env` file with actual token**  
-⚠️ **Rotate token every 90 days**  
-⚠️ **Store securely in GitHub Secrets**  
+⚠️ **Never commit `.env` file with actual token**
+⚠️ **Rotate token every 90 days**
+⚠️ **Store securely in GitHub Secrets**
 ⚠️ **Revoke immediately if exposed**
 
 ## Next Steps

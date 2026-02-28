@@ -1,6 +1,7 @@
 # Forge MQL5 Setup Guide
 
-This guide explains how to set up and maintain the integration between GitHub (A6-9V/NUNA) and forge.mql5.io (LengKundee/NUNA).
+This guide explains how to set up and maintain the integration between GitHub
+(A6-9V/NUNA) and forge.mql5.io (LengKundee/NUNA).
 
 ## Overview
 
@@ -49,7 +50,8 @@ origin  https://github.com/A6-9V/NUNA (push)
 
 ### Token-Based Authentication
 
-The forge.mql5.io repository uses token-based authentication. The token is embedded in the remote URL:
+The forge.mql5.io repository uses token-based authentication. The token is
+embedded in the remote URL:
 
 - **Token**: `PQEpZiFttpnKv82uWnYEfw6dJAFcdu1msL8x03LW`
 - **Repository**: `forge.mql5.io/LengKundee/NUNA.git`
@@ -182,7 +184,8 @@ MQL5_Deployment_Package/
 
 ```bash
 
-These files are automatically synced to forge.mql5.io and are accessible to the MQL5 community.
+These files are automatically synced to forge.mql5.io and are accessible to the
+MQL5 community.
 
 ## Troubleshooting
 
@@ -191,14 +194,16 @@ These files are automatically synced to forge.mql5.io and are accessible to the 
 If you encounter authentication errors:
 
 1. Verify the token is correct in the remote URL:
-   ```bash
-   git remote get-url forge
-   ```
+
+```bash
+git remote get-url forge
+```
 
 2. Update the token if needed:
-   ```bash
-   git remote set-url forge https://NEW_TOKEN@forge.mql5.io/LengKundee/NUNA.git
-   ```
+
+```bash
+git remote set-url forge https://NEW_TOKEN@forge.mql5.io/LengKundee/NUNA.git
+```
 
 ### Push Rejected
 

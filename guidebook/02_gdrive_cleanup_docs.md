@@ -1,10 +1,12 @@
 # `gdrive_cleanup.py` Documentation
 
-This document provides detailed documentation for the `gdrive_cleanup.py` script.
+This document provides detailed documentation for the `gdrive_cleanup.py`
+script.
 
 ## Purpose
 
-The `gdrive_cleanup.py` script is a tool for auditing and cleaning up your Google Drive. It can be used to:
+The `gdrive_cleanup.py` script is a tool for auditing and cleaning up your
+Google Drive. It can be used to:
 
 *   Identify the largest files in your Google Drive.
 *   Find duplicate files based on their MD5 checksum.
@@ -18,13 +20,15 @@ The `gdrive_cleanup.py` script is a tool for auditing and cleaning up your Googl
     *   In the **APIs & Services** > **Library**, search for "Google Drive API" and enable it.
 
 2.  **Create OAuth 2.0 credentials:**
+
     *   In the **APIs & Services** > **Credentials**, create a new **OAuth client ID**.
     *   Select **Desktop app** as the application type.
     *   Download the JSON file and save it as `credentials.json` in the root of this repository.
 
 ## Commands
 
-The `gdrive_cleanup.py` script has several commands, each with its own set of arguments.
+The `gdrive_cleanup.py` script has several commands, each with its own set of
+arguments.
 
 ### `audit`
 

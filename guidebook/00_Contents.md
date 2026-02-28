@@ -1,6 +1,7 @@
 # Contents
 
-This guide book provides a comprehensive overview of the **Google Drive Cleanup and Dropbox to OneDrive Importer** repository.
+This guide book provides a comprehensive overview of the **Google Drive Cleanup
+and Dropbox to OneDrive Importer** repository.
 
 ## Guides
 
@@ -20,11 +21,13 @@ This guide book provides a comprehensive overview of the **Google Drive Cleanup 
 
 ## VPS Hosting
 
-For VPS hosting configuration and management, see [../VPS_HOSTING.md](../VPS_HOSTING.md).
+For VPS hosting configuration and management, see
+[../VPS_HOSTING.md](../docs/../VPS_HOSTING.md).
 
 ## Repository Cloning Instructions
 
-To get a local copy of this repository, you can use one of the following methods.
+To get a local copy of this repository, you can use one of the following
+methods.
 
 ### HTTPS
 
@@ -43,6 +46,7 @@ git clone git@github.com:USERNAME/REPOSITORY.git
 ```bash
 gh repo clone USERNAME/REPOSITORY
 ```
+
 ---
 
 *Note: Replace `USERNAME/REPOSITORY` with the actual username and repository name.*

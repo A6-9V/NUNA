@@ -56,21 +56,23 @@ For detailed deployment instructions, see
    - Push to main branch - automatic deployment!
 
 2. **Manual Deployment Script:**
-   ```bash
-   export VPS_HOST="your-vps-ip"
-   export VPS_USER="your-username"
-   ./scripts/deploy-vps.sh
-   ```
+
+```bash
+export VPS_HOST="your-vps-ip"
+export VPS_USER="your-username"
+./scripts/deploy-vps.sh
+```
 
 3. **Direct VPS Deployment:**
-   ```bash
+
+```bash
 
    # On your VPS
 
-   cd /opt/nuna
-   docker pull ghcr.io/a6-9v/nuna:main
-   docker-compose -f docker-compose.vps.yml up -d
-   ```
+cd /opt/nuna
+docker pull ghcr.io/a6-9v/nuna:main
+docker-compose -f docker-compose.vps.yml up -d
+```
 
 For complete setup instructions, troubleshooting, and monitoring, see:
 

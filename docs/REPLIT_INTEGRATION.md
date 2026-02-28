@@ -1,6 +1,7 @@
 # Replit Integration Guide
 
-This guide explains how to develop and deploy the NUNA MetaTrader 5 project using Replit.
+This guide explains how to develop and deploy the NUNA MetaTrader 5 project
+using Replit.
 
 ## Overview
 
@@ -300,22 +301,25 @@ Then create a PR on GitHub.
 
 1. Check the Console for errors
 2. Verify all dependencies are installed:
-   ```bash
-   pip install -r requirements.txt
-   ```
+
+```bash
+pip install -r requirements.txt
+```
 3. Check environment variables in Secrets
 
 ### Git Push Fails
 
 1. Verify authentication:
-   ```bash
-   git remote -v
-   ```
+
+```bash
+git remote -v
+```
 2. Update credentials if needed
 3. Try force push (if safe):
-   ```bash
-   git push --force origin main
-   ```
+
+```bash
+git push --force origin main
+```
 
 ### Missing Dependencies
 
@@ -344,9 +348,10 @@ If port conflicts occur:
 1. Minimize unnecessary dependencies
 2. Use `.gitignore` to exclude large files
 3. Clear unused packages:
-   ```bash
-   pip uninstall unused-package
-   ```
+
+```bash
+pip uninstall unused-package
+```
 
 ### Reduce Resource Usage
 

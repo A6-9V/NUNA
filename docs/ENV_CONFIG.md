@@ -274,7 +274,6 @@ services:
 
     # Or single file
 
-
     # env_file: .env
 
 ```bash
@@ -484,7 +483,6 @@ If you have existing configuration files:
 cp old_config.ini old_config.ini.backup
 
 # Extract and map to new .env format
-
 
 # (Manual process - review each value)
 

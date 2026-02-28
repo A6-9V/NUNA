@@ -124,20 +124,23 @@ exness-docker/
 ## Next Steps for Users
 
 1. **Create `.env` file**:
-   ```powershell
-   Copy-Item .env.example .env
+
+```powershell
+Copy-Item .env.example .env
    # Edit .env with your credentials
-   ```
+```
 
 2. **Launch services**:
-   ```powershell
-   .\scripts\launch-docker.ps1
-   ```
+
+```powershell
+.\scripts\launch-docker.ps1
+```
 
 3. **Verify**:
-   ```powershell
-   docker-compose ps
-   ```
+
+```powershell
+docker-compose ps
+```
 
 ## Migration Notes
 

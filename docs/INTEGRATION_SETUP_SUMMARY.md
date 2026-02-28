@@ -2,7 +2,8 @@
 
 ## Overview
 
-This document summarizes the forge.mql5.io and Replit integration setup completed on 2026-02-05.
+This document summarizes the forge.mql5.io and Replit integration setup
+completed on 2026-02-05.
 
 ## What Was Configured
 
@@ -47,12 +48,12 @@ These files enable the project to run seamlessly on Replit.
 
 Created four scripts for managing the forge.mql5.io integration:
 
-#### Bash Scripts (Linux/Mac):
+#### Bash Scripts (Linux/Mac)
 
 - **`scripts/sync-forge.sh`**: Sync repository to forge.mql5.io
 - **`scripts/cleanup-forge.sh`**: Reset forge.mql5.io to clean state
 
-#### PowerShell Scripts (Windows):
+#### PowerShell Scripts (Windows)
 
 - **`scripts/sync-forge.ps1`**: Sync repository to forge.mql5.io
 - **`scripts/cleanup-forge.ps1`**: Reset forge.mql5.io to clean state
@@ -184,9 +185,10 @@ git push forge --tags
 ### Developing on Replit
 
 1. Open the Replit project:
-   ```
-   https://replit.com/@mouy-leng/httpsgithubcomA6-9VMetatrader5EXNESS
-   ```
+
+```
+https://replit.com/@mouy-leng/httpsgithubcomA6-9VMetatrader5EXNESS
+```
 
 2. The environment is pre-configured with:
 
@@ -242,9 +244,10 @@ git push forge --tags
 ### Immediate Actions
 
 1. **Test forge.mql5.io sync**:
-   ```bash
-   ./scripts/sync-forge.sh main
-   ```
+
+```bash
+./scripts/sync-forge.sh main
+```
 
 2. **Test Replit environment**:
 
@@ -253,9 +256,10 @@ git push forge --tags
    - Make a test commit and push
 
 3. **Verify git remotes**:
-   ```bash
-   git remote -v
-   ```
+
+```bash
+git remote -v
+```
 
 ### Regular Workflow
 
@@ -292,9 +296,10 @@ git push forge --tags
 2. Verify forge.mql5.io is accessible: `ping forge.mql5.io`
 3. Check token is correct in `.git/config`
 4. Try updating the remote URL:
-   ```bash
-   git remote set-url forge https://NEW_TOKEN@forge.mql5.io/LengKundee/NUNA.git
-   ```
+
+```bash
+git remote set-url forge https://NEW_TOKEN@forge.mql5.io/LengKundee/NUNA.git
+```
 
 ### Replit environment not working
 

@@ -287,7 +287,6 @@ For production environments, test your SSL configuration:
 
 # Using SSL Labs (requires public domain)
 
-
 # Visit: https://www.ssllabs.com/ssltest/
 
 # Using testssl.sh
@@ -343,7 +342,6 @@ Set up automated monitoring:
 ```bash
 
 #!/bin/bash
-
 
 # check-cert-expiration.sh
 
@@ -458,42 +456,46 @@ When approaching certificate expiration:
    - Obtain new certificate and private key
 
 2. **Backup Old Certificate**
-   ```bash
-   mv certs/cloudflare-cert.pem certs/cloudflare-cert.pem.old
-   mv certs/cloudflare-key.pem certs/cloudflare-key.pem.old
-   ```
+
+```bash
+mv certs/cloudflare-cert.pem certs/cloudflare-cert.pem.old
+mv certs/cloudflare-key.pem certs/cloudflare-key.pem.old
+```
 
 3. **Install New Certificate**
-   ```bash
+
+```bash
 
    # Copy new files
 
-   cp new-cert.pem certs/cloudflare-cert.pem
-   cp new-key.pem certs/cloudflare-key.pem
+cp new-cert.pem certs/cloudflare-cert.pem
+cp new-key.pem certs/cloudflare-key.pem
    
    # Set permissions
 
-   chmod 644 certs/cloudflare-cert.pem
-   chmod 600 certs/cloudflare-key.pem
-   ```
+chmod 644 certs/cloudflare-cert.pem
+chmod 600 certs/cloudflare-key.pem
+```
 
 4. **Restart Services**
-   ```bash
+
+```bash
 
    # Docker
 
-   docker-compose restart
+docker-compose restart
    
    # Systemd
 
-   sudo systemctl restart your-service
-   ```
+sudo systemctl restart your-service
+```
 
 5. **Verify New Certificate**
-   ```bash
-   openssl x509 -in certs/cloudflare-cert.pem -noout -dates
-   curl -v https://localhost:8443
-   ```
+
+```bash
+openssl x509 -in certs/cloudflare-cert.pem -noout -dates
+curl -v https://localhost:8443
+```
 
 ## Best Practices
 

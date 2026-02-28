@@ -2,7 +2,9 @@
 
 ## Overview
 
-The NUNA plugin system provides a flexible framework for extending functionality through modular plugins. This guide covers plugin development, integration, and management.
+The NUNA plugin system provides a flexible framework for extending functionality
+through modular plugins. This guide covers plugin development, integration, and
+management.
 
 ## Table of Contents
 
@@ -17,7 +19,7 @@ The NUNA plugin system provides a flexible framework for extending functionality
 
 ### Directory Structure
 
-```
+```bash
 NUNA/
 ├── plugins/                    # Plugin directory
 │   ├── __init__.py            # Plugin system initialization
@@ -31,7 +33,7 @@ NUNA/
 │       └── plugin.json
 ├── plugin_loader.py           # Plugin loader utility
 └── plugin_config.example.json # Plugin configuration template
-```
+```bash
 
 ### Plugin Components
 
@@ -49,6 +51,7 @@ Each plugin consists of:
 Create a new directory under `plugins/` with the following structure:
 
 **plugins/my_plugin/__init__.py:**
+
 ```python
 """
 My Plugin - Description of what it does
@@ -89,9 +92,10 @@ def get_info():
 def perform_plugin_task():
     """Helper functions for your plugin logic."""
     return "Plugin executed successfully"
-```
+```bash
 
 **plugins/my_plugin/plugin.json:**
+
 ```json
 {
   "name": "my_plugin",
@@ -104,7 +108,7 @@ def perform_plugin_task():
     "python": ">=3.8"
   }
 }
-```
+```bash
 
 ## Plugin API
 
@@ -114,6 +118,7 @@ Every plugin must implement these functions:
 
 #### `initialize()`
 Called when the plugin is first loaded. Use for:
+
 - Loading configuration
 - Setting up resources
 - Initializing state
@@ -125,10 +130,11 @@ def initialize():
     config = load_plugin_config()
     # Setup
     setup_resources()
-```
+```bash
 
 #### `main()`
 The main entry point for plugin execution. Should:
+
 - Perform the plugin's primary function
 - Return a dictionary with status and results
 
@@ -140,7 +146,7 @@ def main():
         return {"status": "success", "data": result}
     except Exception as e:
         return {"status": "error", "message": str(e)}
-```
+```bash
 
 #### `get_info()`
 Returns metadata about the plugin.
@@ -153,7 +159,7 @@ def get_info():
         "version": "1.0.0",
         "capabilities": ["list", "of", "features"]
     }
-```
+```bash
 
 ### Optional Functions
 
@@ -171,7 +177,7 @@ def configure(settings):
 def health_check():
     """Check if plugin is functioning correctly."""
     return {"healthy": True}
-```
+```bash
 
 ## Loading and Managing Plugins
 
@@ -206,7 +212,7 @@ all_plugins = loader.load_all_plugins()
 
 # Get a previously loaded plugin
 plugin = loader.get_plugin("my_plugin")
-```
+```bash
 
 ### Using Command Line
 
@@ -222,7 +228,7 @@ python plugin_loader.py info --plugin my_plugin
 
 # Use custom plugin directory
 python plugin_loader.py list --plugin-dir /path/to/plugins
-```
+```bash
 
 ## External Plugin Integration
 
@@ -239,31 +245,34 @@ git fetch mouy-leng
 
 # 3. List available remotes
 git remote -v
-```
+```bash
 
 ### Installing External Plugins
 
 **Option 1: Copy Plugin Files**
+
 ```bash
 # Copy plugin from external source
 cp -r /path/to/external/plugin plugins/external_plugin
 
 # Verify plugin structure
 ls -la plugins/external_plugin
-```
+```bash
 
 **Option 2: Symbolic Link**
+
 ```bash
 # Create symlink to external plugin
 ln -s /path/to/external/plugin plugins/external_plugin
-```
+```bash
 
 **Option 3: Git Subtree**
+
 ```bash
 # Add external plugin as subtree
 git subtree add --prefix=plugins/external_plugin \
   https://github.com/user/plugin.git main --squash
-```
+```bash
 
 ### Plugin Configuration
 
@@ -271,7 +280,7 @@ Create `plugin_config.json` from the example:
 
 ```bash
 cp plugin_config.example.json plugin_config.json
-```
+```bash
 
 Edit to enable/configure plugins:
 
@@ -293,7 +302,7 @@ Edit to enable/configure plugins:
     }
   }
 }
-```
+```bash
 
 ## Best Practices
 
@@ -305,41 +314,44 @@ Edit to enable/configure plugins:
    - Handle missing dependencies gracefully
 
 2. **Error Handling**
-   ```python
-   def main():
-       try:
-           result = risky_operation()
-           return {"status": "success", "data": result}
-       except ValueError as e:
-           return {"status": "error", "type": "validation", "message": str(e)}
-       except Exception as e:
-           return {"status": "error", "type": "unexpected", "message": str(e)}
-   ```
+
+```python
+def main():
+try:
+result = risky_operation()
+return {"status": "success", "data": result}
+except ValueError as e:
+return {"status": "error", "type": "validation", "message": str(e)}
+except Exception as e:
+return {"status": "error", "type": "unexpected", "message": str(e)}
+```bash
 
 3. **Logging**
-   ```python
-   import logging
+
+```python
+import logging
    
-   logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
    
-   def main():
-       logger.info("Plugin execution started")
+def main():
+logger.info("Plugin execution started")
        # ... plugin logic
-       logger.info("Plugin execution completed")
-   ```
+logger.info("Plugin execution completed")
+```bash
 
 4. **Configuration Management**
-   ```python
-   import json
-   from pathlib import Path
+
+```python
+import json
+from pathlib import Path
    
-   def load_config():
-       config_file = Path(__file__).parent / "config.json"
-       if config_file.exists():
-           with open(config_file) as f:
-               return json.load(f)
-       return {}
-   ```
+def load_config():
+config_file = Path(__file__).parent / "config.json"
+if config_file.exists():
+with open(config_file) as f:
+return json.load(f)
+return {}
+```bash
 
 ### Security Considerations
 
@@ -377,7 +389,7 @@ class TestMyPlugin(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-```
+```bash
 
 ### Documentation
 
@@ -403,7 +415,7 @@ Detailed API documentation.
 
 ## Troubleshooting
 Common issues and solutions.
-```
+```bash
 
 ## Examples
 
@@ -436,7 +448,7 @@ def get_info():
         "version": "1.0.0",
         "capabilities": ["statistics", "processing"]
     }
-```
+```bash
 
 ### API Integration Plugin
 
@@ -491,7 +503,7 @@ def main():
 
 def get_info():
     return _plugin.get_info()
-```
+```bash
 
 ## Troubleshooting
 
@@ -514,13 +526,14 @@ def get_info():
 
 ## Additional Resources
 
-- [Plugin README](../plugins/README.md) - Detailed plugin documentation
+- [Plugin README](../docs/../plugins/README.md) - Detailed plugin documentation
 - [Example Plugin](../plugins/example/) - Working example implementation
 - [Plugin Loader Source](../plugin_loader.py) - Loader implementation
 
 ## Support
 
 For questions or issues:
+
 1. Check existing documentation
 2. Review example plugins
 3. Open an issue on GitHub

@@ -277,9 +277,10 @@ Expected commits:
    - Review `INTEGRATION_SETUP_SUMMARY.md` for details
 
 2. **Test Sync (When Ready)**
-   ```bash
-   ./scripts/sync-forge.sh main
-   ```
+
+```bash
+./scripts/sync-forge.sh main
+```bash
 
 3. **Test Replit**
 

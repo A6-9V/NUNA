@@ -115,7 +115,8 @@ Enable in Settings → Actions:
 - ✅ Read and write permissions for GITHUB_TOKEN
 
 ### Required Secrets
-None required! All workflows use `secrets.GITHUB_TOKEN` which is automatically provided.
+None required! All workflows use `secrets.GITHUB_TOKEN` which is automatically
+provided.
 
 ### Optional Secrets (for enhanced features)
 
@@ -155,7 +156,7 @@ None required! All workflows use `secrets.GITHUB_TOKEN` which is automatically p
 
 ## Cost Optimization
 
-### Strategies Used:
+### Strategies Used
 
 1. **Caching**
    - Docker layer caching with GitHub Actions cache
@@ -180,7 +181,7 @@ None required! All workflows use `secrets.GITHUB_TOKEN` which is automatically p
    - Stale check during low-usage hours
    - Dependabot batches updates
 
-### Estimated Monthly Usage:
+### Estimated Monthly Usage
 
 - CI runs: ~300-500 runs/month
 - Security scans: ~10-15 runs/month
@@ -211,4 +212,5 @@ None required! All workflows use `secrets.GITHUB_TOKEN` which is automatically p
 
 ---
 
-For detailed workflow documentation, see [CI_CD_DOCUMENTATION.md](CI_CD_DOCUMENTATION.md)
+For detailed workflow documentation, see
+[CI_CD_DOCUMENTATION.md](CI_CD_DOCUMENTATION.md)

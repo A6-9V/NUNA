@@ -34,7 +34,7 @@ For comprehensive documentation including:
 - Troubleshooting guide
 
 See:
-[guidebook/09_supabase_credentials.md](guidebook/09_supabase_credentials.md)
+[guidebook/09_supabase_credentials.md](../guidebook/09_supabase_credentials.md)
 
 ---
 

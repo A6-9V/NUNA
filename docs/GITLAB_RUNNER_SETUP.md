@@ -1,10 +1,13 @@
 # GitLab Runner Setup Guide
 
-This guide explains how to set up and configure GitLab CI/CD runners for the NUNA project on forge.mql5.io.
+This guide explains how to set up and configure GitLab CI/CD runners for the
+NUNA project on forge.mql5.io.
 
 ## Overview
 
-The NUNA project uses GitLab CI/CD for automated testing, building, and deployment on the forge.mql5.io platform. This document covers the setup and configuration of GitLab runners.
+The NUNA project uses GitLab CI/CD for automated testing, building, and
+deployment on the forge.mql5.io platform. This document covers the setup and
+configuration of GitLab runners.
 
 ## Runner Token
 
@@ -63,11 +66,12 @@ brew services start gitlab-runner
 1. Download GitLab Runner from: https://docs.gitlab.com/runner/install/windows.html
 2. Extract to `C:\GitLab-Runner`
 3. Open PowerShell as Administrator and run:
-   ```powershell
-   cd C:\GitLab-Runner
-   .\gitlab-runner.exe install
-   .\gitlab-runner.exe start
-   ```
+
+```powershell
+cd C:\GitLab-Runner
+.\gitlab-runner.exe install
+.\gitlab-runner.exe start
+```
 
 ## Registering a Runner
 
@@ -107,7 +111,8 @@ Then provide the following information when prompted:
 
 ## Runner Configuration
 
-The runner configuration is stored in `/etc/gitlab-runner/config.toml` (Linux) or `C:\GitLab-Runner\config.toml` (Windows).
+The runner configuration is stored in `/etc/gitlab-runner/config.toml` (Linux)
+or `C:\GitLab-Runner\config.toml` (Windows).
 
 ### Example Configuration
 
@@ -142,7 +147,8 @@ check_interval = 0
 
 ## CI/CD Pipeline
 
-The GitLab CI/CD pipeline is defined in `.gitlab-ci.yml` and includes the following stages:
+The GitLab CI/CD pipeline is defined in `.gitlab-ci.yml` and includes the
+following stages:
 
 ### Stages
 
@@ -167,7 +173,8 @@ The GitLab CI/CD pipeline is defined in `.gitlab-ci.yml` and includes the follow
 
 ### Automatic Execution
 
-Python code is automatically executed on every push or merge request through the GitLab CI/CD pipeline:
+Python code is automatically executed on every push or merge request through the
+GitLab CI/CD pipeline:
 
 1. Push code to the repository
 2. GitLab runner picks up the job
@@ -209,14 +216,16 @@ Visit: https://forge.mql5.io/LengKundee/NUNA/-/pipelines
 #### Runner Not Picking Up Jobs
 
 1. Check runner status:
-   ```bash
-   sudo gitlab-runner verify
-   ```
+
+```bash
+sudo gitlab-runner verify
+```
 
 2. Ensure runner is active:
-   ```bash
-   sudo gitlab-runner list
-   ```
+
+```bash
+sudo gitlab-runner list
+```
 
 3. Check runner tags match job tags
 
@@ -239,7 +248,7 @@ If you encounter SSL/TLS errors:
 # Edit config.toml
 sudo nano /etc/gitlab-runner/config.toml
 
-# Add or modify:
+# Add or modify
 [runners.docker]
   tls_verify = false
 

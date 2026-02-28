@@ -2,7 +2,8 @@
 
 ## Overview
 
-This document summarizes the GitLab CI/CD integration implemented for the NUNA project to enable automated Python code execution on forge.mql5.io.
+This document summarizes the GitLab CI/CD integration implemented for the NUNA
+project to enable automated Python code execution on forge.mql5.io.
 
 ## What Was Implemented
 
@@ -144,36 +145,41 @@ python main.py --help
 ### For Developers
 
 1. **Local Development**:
-   ```bash
-   pip install -r requirements.txt
-   python -m unittest discover -s . -p "test_*.py"
-   ```
+
+```bash
+pip install -r requirements.txt
+python -m unittest discover -s . -p "test_*.py"
+```
 
 2. **Push Code**:
-   ```bash
-   git push forge main
-   ```
+
+```bash
+git push forge main
+```
 
 3. **View Pipeline**:
-   Visit: https://forge.mql5.io/LengKundee/NUNA/-/pipelines
+Visit: https://forge.mql5.io/LengKundee/NUNA/-/pipelines
 
 ### For CI/CD Administrators
 
 1. **Install GitLab Runner**:
-   ```bash
+
+```bash
    # See GITLAB_RUNNER_SETUP.md for detailed instructions
-   ```
+```
 
 2. **Register Runner**:
-   ```bash
-   ./scripts/setup-gitlab-runner.sh
-   ```
+
+```bash
+./scripts/setup-gitlab-runner.sh
+```
 
 3. **Monitor**:
-   ```bash
-   sudo gitlab-runner list
-   sudo gitlab-runner status
-   ```
+
+```bash
+sudo gitlab-runner list
+sudo gitlab-runner status
+```
 
 ## Security Considerations
 

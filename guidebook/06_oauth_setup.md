@@ -1,6 +1,7 @@
 # OAuth Setup Guide for NUNA Tools
 
-This guide will help you set up OAuth credentials for both Google Drive and OneDrive.
+This guide will help you set up OAuth credentials for both Google Drive and
+OneDrive.
 
 ## Part 1: Google Drive OAuth Setup
 
@@ -23,6 +24,7 @@ This guide will help you set up OAuth credentials for both Google Drive and OneD
 1. Go to **"APIs & Services" → "Credentials"**
 2. Click **"+ CREATE CREDENTIALS"** → **"OAuth client ID"**
 3. If prompted, configure the OAuth consent screen first:
+
    - User Type: **External** (unless you have a Google Workspace)
    - App name: `NUNA Drive Cleanup`
    - User support email: Your email
@@ -37,22 +39,26 @@ This guide will help you set up OAuth credentials for both Google Drive and OneD
    - Click **"Back to Dashboard"**
 
 4. Now create the OAuth client ID:
+
    - Application type: **Desktop app**
    - Name: `NUNA Drive Cleanup Client`
    - Click **"Create"**
 
 5. Download the credentials:
+
    - Click the **download icon** (⬇️) next to your newly created OAuth client
    - Save the file as `credentials.json` in the `H:\Pictures\.Gallery2\recycle\bins` directory
 
 ### Step 4: Verify Setup
 
 Run this command to test:
+
 ```bash
 python gdrive_cleanup.py audit --top 5
 ```
 
-The first time, it will open a browser for authentication and create `token.json`.
+The first time, it will open a browser for authentication and create
+`token.json`.
 
 ---
 
@@ -68,7 +74,8 @@ The first time, it will open a browser for authentication and create `token.json
 ### Step 2: Register the Application
 
 1. **Name**: `NUNA OneDrive Import` (or any name)
-2. **Supported account types**: 
+2. **Supported account types**:
+
    - Select **"Accounts in any organizational directory and personal Microsoft accounts"** (most common)
    - OR select what matches your needs
 3. **Redirect URI**: Leave empty (we'll use device code flow)
@@ -88,6 +95,7 @@ The first time, it will open a browser for authentication and create `token.json
 3. Select **"Microsoft Graph"**
 4. Select **"Delegated permissions"**
 5. Add these permissions:
+
    - `Files.ReadWrite.All` - Read and write all files
    - `User.Read` - Sign in and read user profile
 6. Click **"Add permissions"**
@@ -101,22 +109,26 @@ The first time, it will open a browser for authentication and create `token.json
 
 ### Step 6: Set Environment Variable
 
-#### Windows PowerShell:
+#### Windows PowerShell
+
 ```powershell
 $env:ONEDRIVE_CLIENT_ID = "YOUR_CLIENT_ID_HERE"
 ```
 
-#### Windows Command Prompt:
+#### Windows Command Prompt
+
 ```cmd
 set ONEDRIVE_CLIENT_ID=YOUR_CLIENT_ID_HERE
 ```
 
-#### Permanent (PowerShell - User level):
+#### Permanent (PowerShell - User level)
+
 ```powershell
 [System.Environment]::SetEnvironmentVariable('ONEDRIVE_CLIENT_ID', 'YOUR_CLIENT_ID_HERE', 'User')
 ```
 
-#### Permanent (Command Prompt):
+#### Permanent (Command Prompt)
+
 ```cmd
 setx ONEDRIVE_CLIENT_ID "YOUR_CLIENT_ID_HERE"
 ```
@@ -126,17 +138,20 @@ setx ONEDRIVE_CLIENT_ID "YOUR_CLIENT_ID_HERE"
 ### Step 7: Verify Setup
 
 Run this command to test (dry-run):
+
 ```bash
 python dropbox_to_onedrive.py --dropbox-url "YOUR_DROPBOX_URL" --dry-run
 ```
 
-The first time, it will print a device code and URL. Open the URL in your browser and enter the code to authenticate.
+The first time, it will print a device code and URL. Open the URL in your
+browser and enter the code to authenticate.
 
 ---
 
 ## Quick Setup Scripts
 
 I've created helper scripts to make this easier. See:
+
 - `setup-google-oauth.ps1` - Interactive Google OAuth setup
 - `setup-onedrive-oauth.ps1` - Interactive OneDrive OAuth setup
 
@@ -144,12 +159,14 @@ I've created helper scripts to make this easier. See:
 
 ## Troubleshooting
 
-### Google Drive Issues:
+### Google Drive Issues
+
 - **403 Error**: Make sure Google Drive API is enabled
 - **Credentials not found**: Ensure `credentials.json` is in the `H:\Pictures\.Gallery2\recycle\bins` directory
 - **Scope errors**: Check that you added the required scopes in OAuth consent screen
 
-### OneDrive Issues:
+### OneDrive Issues
+
 - **Client ID not found**: Make sure environment variable is set correctly
 - **Permission denied**: Check that `Files.ReadWrite.All` permission is added
 - **Device code expired**: The code expires after 15 minutes, run the command again
