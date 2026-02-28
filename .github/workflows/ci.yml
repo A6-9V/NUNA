@@ -78,6 +78,22 @@ jobs:
           python trading_data_manager.py init --help
           python trading_data_manager.py run --help
           python trading_data_manager.py purge-trash --help
+      - name: Send Telegram Notification (Success)
+        if: success() && secrets.TELEGRAM_BOT_TOKEN != '' && secrets.TELEGRAM_CHAT_ID != ''
+        continue-on-error: true
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: ./scripts/send-telegram.sh "✅ <b>CI Passed</b>\n\n<b>Repo:</b> ${{ github.repository }}\n<b>Branch:</b> ${{ github.ref_name }}\n<b>Commit:</b> ${{ github.sha }}"
+
+      - name: Send Telegram Notification (Failure)
+        if: failure() && secrets.TELEGRAM_BOT_TOKEN != '' && secrets.TELEGRAM_CHAT_ID != ''
+        continue-on-error: true
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: ./scripts/send-telegram.sh "❌ <b>CI Failed</b>\n\n<b>Repo:</b> ${{ github.repository }}\n<b>Branch:</b> ${{ github.ref_name }}\n<b>Commit:</b> ${{ github.sha }}"
+
 
   docker-build:
     name: Docker Build & Test
@@ -107,3 +123,18 @@ jobs:
           docker run --rm nuna-tools:test python gdrive_cleanup.py --help
           docker run --rm nuna-tools:test python trading_data_manager.py --help
           docker run --rm nuna-tools:test python -m unittest discover -s . -p "test_*.py"
+      - name: Send Telegram Notification (Success)
+        if: success() && secrets.TELEGRAM_BOT_TOKEN != '' && secrets.TELEGRAM_CHAT_ID != ''
+        continue-on-error: true
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: ./scripts/send-telegram.sh "✅ <b>CI Passed</b>\n\n<b>Repo:</b> ${{ github.repository }}\n<b>Branch:</b> ${{ github.ref_name }}\n<b>Commit:</b> ${{ github.sha }}"
+
+      - name: Send Telegram Notification (Failure)
+        if: failure() && secrets.TELEGRAM_BOT_TOKEN != '' && secrets.TELEGRAM_CHAT_ID != ''
+        continue-on-error: true
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: ./scripts/send-telegram.sh "❌ <b>CI Failed</b>\n\n<b>Repo:</b> ${{ github.repository }}\n<b>Branch:</b> ${{ github.ref_name }}\n<b>Commit:</b> ${{ github.sha }}"

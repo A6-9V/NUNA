@@ -16,12 +16,16 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy and install Python dependencies
-COPY docker/trading-bridge/requirements.txt .
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy bridge service
-COPY bridge/ ./bridge/
-COPY config/ ./config/
+# Copy service files
+COPY main.py .
+COPY common_utils.py .
+COPY firebase_utils.py .
+COPY plugin_loader.py .
+COPY brokers.json .
+COPY symbols.json .
 
 # Expose ports
 EXPOSE 5555 8000
@@ -31,5 +35,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 
 # Start the bridge service
-CMD ["python", "-m", "bridge.main"]
-
+CMD ["python", "main.py"]

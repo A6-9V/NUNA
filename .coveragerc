@@ -1,0 +1,9 @@
+[run]
+omit =
+    */tmp*
+    */temp*
+    */test_*
+    setup.py
+
+[report]
+ignore_errors = True
