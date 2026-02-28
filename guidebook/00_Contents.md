@@ -16,6 +16,7 @@ This guide book provides a comprehensive overview of the **Google Drive Cleanup 
 | [08_plugin_system.md](08_plugin_system.md) | Plugin system guide - extending NUNA with custom modules |
 | [09_supabase_credentials.md](09_supabase_credentials.md) | Supabase organization credentials and GitHub secrets setup |
 | [10_kubernetes_introduction.md](10_kubernetes_introduction.md) | Introduction to Kubernetes - container orchestration platform |
+| [11_gke_deployment_guide.md](11_gke_deployment_guide.md) | GKE Deployment Guide - deploying to Google Kubernetes Engine |
 
 ## VPS Hosting
 
