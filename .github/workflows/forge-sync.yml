@@ -25,14 +25,16 @@ jobs:
           ./scripts/sync-forge.sh main
 
       - name: Send Telegram Notification (Success)
-        if: success()
+        if: success() && secrets.TELEGRAM_BOT_TOKEN != '' && secrets.TELEGRAM_CHAT_ID != ''
+        continue-on-error: true
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: ./scripts/send-telegram.sh "🔄 <b>Forge MQL5 Sync Successful</b>\n\n<b>Repo:</b> ${{ github.repository }}\n<b>Branch:</b> main"
 
       - name: Send Telegram Notification (Failure)
-        if: failure()
+        if: failure() && secrets.TELEGRAM_BOT_TOKEN != '' && secrets.TELEGRAM_CHAT_ID != ''
+        continue-on-error: true
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
