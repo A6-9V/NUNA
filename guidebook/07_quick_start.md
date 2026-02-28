@@ -1,19 +1,14 @@
-# Quick Start
+# Quick Start Guide
 
-## Common Commands
+## Prerequisites
+- Python 3.12+
+- Docker installed
+- GKE access configured
 
-### Setup Environment
+## Installation
+1. Clone the repo.
+2. Install dependencies: `pip install -r docker/trading-bridge/requirements.txt`.
+3. Configure environment variables.
 
-```bash
-cp docs/env.template .env
-```bash
-
-### Run Services
-
-```bash
-docker-compose up -d
-```bash
-
-## Need Help?
-
-- See docs/CONFIGURATION.md for details.
+## Running
+Execute `docker-compose up` to start the bridge locally.
