@@ -11,25 +11,33 @@
 ## ⚡ Quick Commands
 
 ### Sync to forge.mql5.io
+
 ```bash
+
 # Linux/Mac
 ./scripts/sync-forge.sh
 
 # Windows
 .\scripts\sync-forge.ps1
-```
+
+```bash
 
 ### Reset forge.mql5.io
+
 ```bash
+
 # Linux/Mac
 ./scripts/cleanup-forge.sh
 
 # Windows
 .\scripts\cleanup-forge.ps1
-```
+
+```bash
 
 ### Manual Git Operations
+
 ```bash
+
 # Check remotes
 git remote -v
 
@@ -42,7 +50,8 @@ git push forge main
 
 # Fetch from forge
 git fetch forge
-```
+
+```bash
 
 ## 📚 Documentation
 
@@ -53,31 +62,39 @@ git fetch forge
 ## 🔐 Authentication
 
 ### forge.mql5.io
+
 - **Token**: `PQEpZiFttpnKv82uWnYEfw6dJAFcdu1msL8x03LW`
 - **Location**: `.git/config` (not committed)
 
 ### Replit
+
 - **Method**: GitHub OAuth
 - **Access via**: Replit website with GitHub account
 
 ## 🎯 Common Tasks
 
 ### Start Development on Replit
+
 1. Go to: https://replit.com/@mouy-leng/httpsgithubcomA6-9VMetatrader5EXNESS
 2. Click "Run"
 3. Edit code in the cloud IDE
 
 ### Sync All Repositories
+
 ```bash
+
 # Push to GitHub
 git push origin main
 
 # Sync to forge
 ./scripts/sync-forge.sh main
-```
+
+```bash
 
 ### Update forge After Major Changes
+
 ```bash
+
 # Commit changes
 git add .
 git commit -m "Your changes"
@@ -85,16 +102,20 @@ git push origin main
 
 # Sync to forge
 ./scripts/sync-forge.sh main
-```
+
+```bash
 
 ### Reset forge to Clean State
+
 ```bash
+
 # Full cleanup (interactive)
 ./scripts/cleanup-forge.sh
 
 # Or force cleanup
 ./scripts/cleanup-forge.sh --force
-```
+
+```bash
 
 ## 🛠️ Troubleshooting
 

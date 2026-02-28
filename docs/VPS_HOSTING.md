@@ -45,7 +45,8 @@ This document tracks the VPS hosting configuration for NUNA MQL5 Trading Robots.
 
 **🚀 Automated Deployment Available!**
 
-For detailed deployment instructions, see [VPS_DEPLOYMENT.md](VPS_DEPLOYMENT.md).
+For detailed deployment instructions, see
+[VPS_DEPLOYMENT.md](VPS_DEPLOYMENT.md).
 
 **Quick Setup:**
 
@@ -63,13 +64,16 @@ For detailed deployment instructions, see [VPS_DEPLOYMENT.md](VPS_DEPLOYMENT.md)
 
 3. **Direct VPS Deployment:**
    ```bash
+
    # On your VPS
+
    cd /opt/nuna
    docker pull ghcr.io/a6-9v/nuna:main
    docker-compose -f docker-compose.vps.yml up -d
    ```
 
 For complete setup instructions, troubleshooting, and monitoring, see:
+
 - [VPS Deployment Guide](VPS_DEPLOYMENT.md) - Comprehensive deployment documentation
 - [CI/CD Documentation](CI_CD_DOCUMENTATION.md) - Automated deployment workflows
 
@@ -83,22 +87,28 @@ To deploy the NUNA trading robots to VPS Singapore 09 (manual method):
    - Connection details should be provided by the VPS hosting provider
 2. Install MetaTrader 5 platform if not already installed
 3. Deploy trading robots from the repository:
+
    - Copy Expert Advisors from `Experts/` directory
    - Copy Indicators from `Indicators/` directory
    - Copy Include files from `Include/` directory
-4. Configure the VPS Monitor indicator (`Logs/Indicators/Downloads/VPS Monitor.mq5`) to monitor the VPS status
+4. Configure the VPS Monitor indicator (`Logs/Indicators/Downloads/VPS
+Monitor.mq5`) to monitor the VPS status
 
 #### Docker Deployment (Alternative)
 
 For containerized deployment:
 
 ```bash
+
 # Pull the latest image
+
 docker pull ghcr.io/a6-9v/nuna:main
 
 # Run with docker-compose
+
 docker-compose -f docker-compose.vps.yml up -d
-```
+
+```bash
 
 See [VPS_DEPLOYMENT.md](VPS_DEPLOYMENT.md) for complete Docker deployment guide.
 

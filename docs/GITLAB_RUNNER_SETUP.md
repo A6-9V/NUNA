@@ -30,6 +30,7 @@ The NUNA project uses GitLab CI/CD for automated testing, building, and deployme
 ### Linux
 
 ```bash
+
 # Download the binary
 sudo curl -L --output /usr/local/bin/gitlab-runner https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-linux-amd64
 
@@ -42,17 +43,20 @@ sudo useradd --comment 'GitLab Runner' --create-home gitlab-runner --shell /bin/
 # Install and run as service
 sudo gitlab-runner install --user=gitlab-runner --working-directory=/home/gitlab-runner
 sudo gitlab-runner start
-```
+
+```bash
 
 ### macOS
 
 ```bash
+
 # Install using Homebrew
 brew install gitlab-runner
 
 # Start the service
 brew services start gitlab-runner
-```
+
+```bash
 
 ### Windows
 
@@ -71,6 +75,7 @@ brew services start gitlab-runner
 
 ```bash
 sudo gitlab-runner register \
+
   --non-interactive \
   --url "https://forge.mql5.io/" \
   --registration-token "d7tzwkGG974FKv6zb5m9IO4xHy99Br6cZPuCddwN" \
@@ -81,13 +86,15 @@ sudo gitlab-runner register \
   --run-untagged="false" \
   --locked="false" \
   --access-level="not_protected"
-```
+
+```bash
 
 ### Interactive Registration
 
 ```bash
 sudo gitlab-runner register
-```
+
+```bash
 
 Then provide the following information when prompted:
 
@@ -130,7 +137,8 @@ check_interval = 0
     disable_cache = false
     volumes = ["/cache"]
     shm_size = 0
-```
+
+```bash
 
 ## CI/CD Pipeline
 
@@ -182,13 +190,15 @@ To manually trigger Python code execution:
 
 ```bash
 sudo gitlab-runner status
-```
+
+```bash
 
 ### View Runner Logs
 
 ```bash
 sudo gitlab-runner --debug run
-```
+
+```bash
 
 ### Check Pipeline Status
 
@@ -213,23 +223,27 @@ Visit: https://forge.mql5.io/LengKundee/NUNA/-/pipelines
 #### Docker Permission Issues
 
 ```bash
+
 # Add gitlab-runner user to docker group
 sudo usermod -aG docker gitlab-runner
 sudo systemctl restart gitlab-runner
-```
+
+```bash
 
 #### Network/SSL Issues
 
 If you encounter SSL/TLS errors:
 
 ```bash
+
 # Edit config.toml
 sudo nano /etc/gitlab-runner/config.toml
 
 # Add or modify:
 [runners.docker]
   tls_verify = false
-```
+
+```bash
 
 ## Security Best Practices
 
@@ -248,14 +262,16 @@ sudo gitlab-runner stop
 sudo curl -L --output /usr/local/bin/gitlab-runner https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-linux-amd64
 sudo chmod +x /usr/local/bin/gitlab-runner
 sudo gitlab-runner start
-```
+
+```bash
 
 ### macOS
 
 ```bash
 brew upgrade gitlab-runner
 brew services restart gitlab-runner
-```
+
+```bash
 
 ### Windows
 
@@ -269,6 +285,7 @@ brew services restart gitlab-runner
 You can register multiple runners for different purposes:
 
 ```bash
+
 # Runner for Python tests
 gitlab-runner register --executor docker --docker-image python:3.12-slim --tag-list "python,tests"
 
@@ -277,7 +294,8 @@ gitlab-runner register --executor docker --docker-image docker:24-dind --tag-lis
 
 # Runner for deployments
 gitlab-runner register --executor shell --tag-list "deployment"
-```
+
+```bash
 
 ## Environment Variables
 
@@ -285,6 +303,7 @@ Set environment variables for runners in GitLab:
 
 1. Go to **Settings > CI/CD > Variables**
 2. Add variables:
+
    - `EXNESS_LOGIN`: MT5 account login
    - `EXNESS_PASSWORD`: MT5 account password (masked)
    - `EXNESS_SERVER`: MT5 server name
@@ -300,6 +319,7 @@ Set environment variables for runners in GitLab:
 ## Integration with GitHub
 
 The NUNA project is synchronized between:
+
 - **GitHub**: https://github.com/A6-9V/NUNA (Primary)
 - **forge.mql5.io**: https://forge.mql5.io/LengKundee/NUNA (GitLab)
 
@@ -308,6 +328,7 @@ See [FORGE_MQL5_SETUP.md](FORGE_MQL5_SETUP.md) for syncing instructions.
 ## Support
 
 For issues related to:
+
 - **Runner setup**: Check GitLab Runner documentation
 - **Pipeline configuration**: Review `.gitlab-ci.yml` syntax
 - **forge.mql5.io access**: Contact MQL5 support

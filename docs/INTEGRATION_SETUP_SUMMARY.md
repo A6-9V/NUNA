@@ -12,22 +12,27 @@ A new git remote named `forge` has been added to the repository:
 
 ```bash
 git remote add forge https://PQEpZiFttpnKv82uWnYEfw6dJAFcdu1msL8x03LW@forge.mql5.io/LengKundee/NUNA.git
-```
+
+```bash
 
 **Configuration Location**: `.git/config`
 
 **Verification**:
+
 ```bash
 git remote -v
-```
+
+```bash
 
 Should show:
-```
+
+```bash
 forge   https://PQEpZiFttpnKv82uWnYEfw6dJAFcdu1msL8x03LW@forge.mql5.io/LengKundee/NUNA.git (fetch)
 forge   https://PQEpZiFttpnKv82uWnYEfw6dJAFcdu1msL8x03LW@forge.mql5.io/LengKundee/NUNA.git (push)
 origin  https://github.com/A6-9V/NUNA (fetch)
 origin  https://github.com/A6-9V/NUNA (push)
-```
+
+```bash
 
 ### 2. Replit Configuration Files
 
@@ -43,10 +48,12 @@ These files enable the project to run seamlessly on Replit.
 Created four scripts for managing the forge.mql5.io integration:
 
 #### Bash Scripts (Linux/Mac):
+
 - **`scripts/sync-forge.sh`**: Sync repository to forge.mql5.io
 - **`scripts/cleanup-forge.sh`**: Reset forge.mql5.io to clean state
 
 #### PowerShell Scripts (Windows):
+
 - **`scripts/sync-forge.ps1`**: Sync repository to forge.mql5.io
 - **`scripts/cleanup-forge.ps1`**: Reset forge.mql5.io to clean state
 
@@ -90,14 +97,17 @@ Updated `system-info.json` with repository integration details:
     }
   }
 }
-```
+
+```bash
 
 ## How to Use
 
 ### Syncing to forge.mql5.io
 
 **Linux/Mac**:
+
 ```bash
+
 # Sync current branch
 ./scripts/sync-forge.sh
 
@@ -106,10 +116,13 @@ Updated `system-info.json` with repository integration details:
 
 # Sync all branches and tags
 ./scripts/sync-forge.sh --all
-```
+
+```bash
 
 **Windows**:
+
 ```powershell
+
 # Sync current branch
 .\scripts\sync-forge.ps1
 
@@ -118,31 +131,39 @@ Updated `system-info.json` with repository integration details:
 
 # Sync all branches and tags
 .\scripts\sync-forge.ps1 -All
-```
+
+```bash
 
 ### Cleaning Up forge.mql5.io
 
 **Linux/Mac**:
+
 ```bash
+
 # Interactive cleanup (asks for confirmation)
 ./scripts/cleanup-forge.sh
 
 # Force cleanup (no confirmation)
 ./scripts/cleanup-forge.sh --force
-```
+
+```bash
 
 **Windows**:
+
 ```powershell
+
 # Interactive cleanup
 .\scripts\cleanup-forge.ps1
 
 # Force cleanup
 .\scripts\cleanup-forge.ps1 -Force
-```
+
+```bash
 
 ### Manual Git Commands
 
 ```bash
+
 # Push to forge
 git push forge main
 
@@ -157,7 +178,8 @@ git push forge --all
 
 # Push all tags
 git push forge --tags
-```
+
+```bash
 
 ### Developing on Replit
 
@@ -167,6 +189,7 @@ git push forge --tags
    ```
 
 2. The environment is pre-configured with:
+
    - Python 3.11
    - All dependencies from requirements.txt
    - Port forwarding (8000, 5555)
@@ -186,12 +209,14 @@ git push forge --tags
 ## Authentication
 
 ### forge.mql5.io
+
 - **Method**: Token-based authentication
 - **Token**: `PQEpZiFttpnKv82uWnYEfw6dJAFcdu1msL8x03LW`
 - **Storage**: Embedded in git remote URL (`.git/config`)
 - **Security**: Token is not committed to repository, only stored locally
 
 ### Replit
+
 - **Method**: OAuth with GitHub
 - **Access**: Requires Replit account linked to GitHub
 - **Permissions**: Read/write access to repository
@@ -222,6 +247,7 @@ git push forge --tags
    ```
 
 2. **Test Replit environment**:
+
    - Open the Replit URL
    - Click "Run" to verify the environment
    - Make a test commit and push
@@ -238,10 +264,12 @@ git push forge --tags
    - Commit and push changes to GitHub
 
 2. **Sync to forge.mql5.io**:
+
    - Run sync script after major updates
    - Keep MQL5 community in sync with GitHub
 
 3. **Cleanup (if needed)**:
+
    - Run cleanup script to reset forge.mql5.io
    - Use when forge repository gets out of sync
 
@@ -299,6 +327,7 @@ git push forge --tags
 ## Support
 
 For help with:
+
 - **forge.mql5.io issues**: See `FORGE_MQL5_SETUP.md`
 - **Replit issues**: See `REPLIT_INTEGRATION.md`
 - **GitHub issues**: Open an issue at https://github.com/A6-9V/NUNA/issues

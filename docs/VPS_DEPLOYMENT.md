@@ -1,6 +1,7 @@
 # VPS Deployment Guide
 
-This guide provides instructions for deploying NUNA to a VPS (Virtual Private Server).
+This guide provides instructions for deploying NUNA to a VPS (Virtual Private
+Server).
 
 ## Table of Contents
 
@@ -17,7 +18,8 @@ This guide provides instructions for deploying NUNA to a VPS (Virtual Private Se
 
 ## Overview
 
-NUNA can be deployed to a VPS for continuous operation. The deployment uses Docker containers to ensure consistency and ease of management.
+NUNA can be deployed to a VPS for continuous operation. The deployment uses
+Docker containers to ensure consistency and ease of management.
 
 ### Supported VPS Providers
 
@@ -65,7 +67,8 @@ Automated deployment is triggered on every push to the `main` branch.
 
 3. **Configure GitHub Secrets**:
    
-   Go to: `Settings` → `Secrets and variables` → `Actions` → `New repository secret`
+   Go to: `Settings` → `Secrets and variables` → `Actions` → `New repository
+secret`
 
    Add the following secrets:
    
@@ -81,6 +84,7 @@ Automated deployment is triggered on every push to the `main` branch.
    Go to: `Settings` → `Secrets and variables` → `Actions` → `Variables`
    
    Add a new variable:
+
    - **Name**: `VPS_DEPLOYMENT_ENABLED`
    - **Value**: `true`
 
@@ -109,7 +113,8 @@ The automated deployment performs the following steps:
 
 ### Manual Deployment
 
-If you prefer manual control or don't have GitHub Actions access, you can deploy manually.
+If you prefer manual control or don't have GitHub Actions access, you can deploy
+manually.
 
 #### Option 1: Using the Deployment Script
 
@@ -162,10 +167,13 @@ If you prefer manual control or don't have GitHub Actions access, you can deploy
 
 5. **Download configuration files**:
    ```bash
+
    # Download docker-compose file
+
    curl -o docker-compose.yml https://raw.githubusercontent.com/A6-9V/NUNA/main/docker-compose.vps.yml
 
    # Download example environment file
+
    curl -o .env https://raw.githubusercontent.com/A6-9V/NUNA/main/.env.vps.example
    ```
 
@@ -197,23 +205,29 @@ If you prefer manual control or don't have GitHub Actions access, you can deploy
 Create a `.env` file on your VPS with the following variables:
 
 ```bash
+
 # VPS Configuration
+
 VPS_PROVIDER=YOUR_PROVIDER
 VPS_REGION=YOUR_REGION
 TZ=UTC
 
 # Database Configuration (optional)
+
 POSTGRES_DB=nuna_trading
 POSTGRES_USER=nuna_user
 POSTGRES_PASSWORD=your_secure_password
 POSTGRES_PORT=5432
 
 # Redis Configuration (optional)
+
 REDIS_PORT=6379
 
 # Logging
+
 LOG_LEVEL=INFO
-```
+
+```bash
 
 ### Docker Compose Configuration
 
@@ -224,9 +238,11 @@ The `docker-compose.vps.yml` file is optimized for VPS deployment and includes:
 - **redis**: Redis cache (optional)
 
 To use a custom compose file:
+
 ```bash
 docker-compose -f docker-compose.vps.yml up -d
-```
+
+```bash
 
 ---
 
@@ -236,37 +252,50 @@ docker-compose -f docker-compose.vps.yml up -d
 
 ```bash
 docker-compose ps
-```
+
+```bash
 
 ### View Logs
 
 ```bash
+
 # All containers
+
 docker-compose logs -f
 
 # Specific container
+
 docker-compose logs -f nuna-tools
-```
+
+```bash
 
 ### Resource Usage
 
 ```bash
+
 # Container stats
+
 docker stats
 
 # Disk usage
+
 docker system df
-```
+
+```bash
 
 ### Health Checks
 
 ```bash
+
 # Check if containers are healthy
+
 docker-compose ps
 
 # Detailed inspection
+
 docker inspect nuna-tools
-```
+
+```bash
 
 ---
 
@@ -276,35 +305,43 @@ docker inspect nuna-tools
 
 ```bash
 docker-compose up -d
-```
+
+```bash
 
 ### Stop Services
 
 ```bash
 docker-compose down
-```
+
+```bash
 
 ### Restart Services
 
 ```bash
 docker-compose restart
-```
+
+```bash
 
 ### Update to Latest Version
 
 ```bash
+
 # Pull latest image
+
 docker pull ghcr.io/a6-9v/nuna:main
 
 # Recreate containers with new image
+
 docker-compose up -d --force-recreate
-```
+
+```bash
 
 ### Remove Everything (including volumes)
 
 ```bash
 docker-compose down -v
-```
+
+```bash
 
 ---
 
@@ -389,15 +426,20 @@ If you get port conflict errors:
 If you get permission errors:
 
 ```bash
+
 # Add user to docker group
+
 sudo usermod -aG docker $USER
 
 # Log out and log back in, or run:
+
 newgrp docker
 
 # Test docker without sudo
+
 docker ps
-```
+
+```bash
 
 ---
 
@@ -424,26 +466,35 @@ docker ps
 ### Backup
 
 ```bash
+
 # Backup volumes
+
 docker-compose down
 sudo tar -czf /backup/nuna-data-$(date +%Y%m%d).tar.gz /var/lib/docker/volumes/
 
 # Backup configuration
+
 tar -czf /backup/nuna-config-$(date +%Y%m%d).tar.gz /opt/nuna/.env /opt/nuna/docker-compose.yml
-```
+
+```bash
 
 ### Restore
 
 ```bash
+
 # Restore volumes
+
 sudo tar -xzf /backup/nuna-data-20260205.tar.gz -C /
 
 # Restore configuration
+
 tar -xzf /backup/nuna-config-20260205.tar.gz -C /opt/nuna/
 
 # Start services
+
 docker-compose up -d
-```
+
+```bash
 
 ---
 

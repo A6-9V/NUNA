@@ -63,6 +63,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          file: docker/trading-bridge/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -74,33 +75,15 @@ jobs:
           echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Docker Image Tags" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo '\`\`\`' >> $GITHUB_STEP_SUMMARY
           echo "${{ steps.meta.outputs.tags }}" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo '\`\`\`' >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Image Digest" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo '\`\`\`' >> $GITHUB_STEP_SUMMARY
           echo "${{ steps.build.outputs.digest }}" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Pull Commands" >> $GITHUB_STEP_SUMMARY
-          echo '```bash' >> $GITHUB_STEP_SUMMARY
-          echo "# Pull latest from main branch:" >> $GITHUB_STEP_SUMMARY
-          echo "docker pull ghcr.io/${{ github.repository }}:main" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "# Pull by commit SHA tag:" >> $GITHUB_STEP_SUMMARY
-          echo "docker pull ghcr.io/${{ github.repository }}:main-\${SHORT_SHA}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "# Pull by digest (immutable):" >> $GITHUB_STEP_SUMMARY
-          echo "docker pull ghcr.io/${{ github.repository }}@${{ steps.build.outputs.digest }}" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Run Command" >> $GITHUB_STEP_SUMMARY
-          echo '```bash' >> $GITHUB_STEP_SUMMARY
-          echo "docker run --rm ghcr.io/${{ github.repository }}:main python gdrive_cleanup.py --help" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo '\`\`\`' >> $GITHUB_STEP_SUMMARY
 
-  # Optional: Add deployment to VPS
   deploy-to-vps:
     name: Deploy to VPS
     runs-on: ubuntu-latest
@@ -128,39 +111,5 @@ jobs:
           DOCKER_IMAGE: ghcr.io/${{ github.repository }}:main
           COMPOSE_FILE: docker-compose.vps.yml
         run: |
-          # Make deployment script executable
           chmod +x scripts/deploy-vps.sh
-          
-          # Run deployment
           ./scripts/deploy-vps.sh
-          
-          echo "## VPS Deployment Success" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Deployed to VPS: $VPS_HOST" >> $GITHUB_STEP_SUMMARY
-          echo "📦 Docker Image: ghcr.io/${{ github.repository }}:main" >> $GITHUB_STEP_SUMMARY
-          echo "📍 Deploy Path: $VPS_DEPLOY_PATH" >> $GITHUB_STEP_SUMMARY
-
-      - name: Deployment Instructions
-        if: ${{ !secrets.VPS_SSH_KEY }}
-        run: |
-          echo "## VPS Deployment" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "⚠️ **Automated deployment is not configured**" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "To enable automated VPS deployment, configure these secrets:" >> $GITHUB_STEP_SUMMARY
-          echo "- \`VPS_HOST\`: Your VPS hostname or IP address" >> $GITHUB_STEP_SUMMARY
-          echo "- \`VPS_USER\`: SSH username for VPS access" >> $GITHUB_STEP_SUMMARY
-          echo "- \`VPS_SSH_KEY\`: Private SSH key for authentication" >> $GITHUB_STEP_SUMMARY
-          echo "- \`VPS_DEPLOY_PATH\`: Deployment path on VPS (optional, defaults to /opt/nuna)" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "And set this repository variable:" >> $GITHUB_STEP_SUMMARY
-          echo "- \`VPS_DEPLOYMENT_ENABLED\`: Set to 'true' to enable automated deployment" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Manual Deployment" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "To deploy manually, SSH into your VPS and run:" >> $GITHUB_STEP_SUMMARY
-          echo '```bash' >> $GITHUB_STEP_SUMMARY
-          echo "cd /opt/nuna" >> $GITHUB_STEP_SUMMARY
-          echo "docker pull ghcr.io/${{ github.repository }}:main" >> $GITHUB_STEP_SUMMARY
-          echo "docker-compose -f docker-compose.vps.yml up -d" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY

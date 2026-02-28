@@ -23,9 +23,10 @@ The NUNA project is available on Replit for cloud-based development and testing:
 
 Open the project in your browser:
 
-```
+```bash
 https://replit.com/@mouy-leng/httpsgithubcomA6-9VMetatrader5EXNESS?v=1
-```
+
+```bash
 
 ### 2. Fork the Repl (Optional)
 
@@ -36,6 +37,7 @@ If you want your own copy:
 3. You can make changes without affecting the original
 
 Fork URL parameters:
+
 - `forkRepl=74fbf663-fcf3-40e5-b496-2295edb70b17`
 - `forkContext=coverPage`
 
@@ -55,7 +57,8 @@ Click the "Run" button in Replit, or use the console:
 
 ```bash
 python main.py
-```
+
+```bash
 
 ### Installing Dependencies
 
@@ -63,19 +66,22 @@ Dependencies are automatically installed from `requirements.txt`:
 
 ```bash
 pip install -r requirements.txt
-```
+
+```bash
 
 ### Testing
 
 Run the test suite:
 
 ```bash
+
 # Run all tests
 python -m unittest discover
 
 # Run specific test
 python -m unittest test_trading_data_manager.py
-```
+
+```bash
 
 ### Debugging
 
@@ -93,6 +99,7 @@ Replit provides integrated debugging:
 The Repl is connected to GitHub repository: `https://github.com/A6-9V/NUNA`
 
 ```bash
+
 # Pull latest changes from GitHub
 git pull origin main
 
@@ -102,19 +109,22 @@ git commit -m "Your commit message"
 
 # Push to GitHub
 git push origin main
-```
+
+```bash
 
 ### Connecting to forge.mql5.io
 
 The forge.mql5.io remote is already configured:
 
 ```bash
+
 # Push to forge
 git push forge main
 
 # Pull from forge
 git pull forge main
-```
+
+```bash
 
 **Authentication Token**: `PQEpZiFttpnKv82uWnYEfw6dJAFcdu1msL8x03LW`
 
@@ -124,7 +134,8 @@ Use the sync script to update all remotes:
 
 ```bash
 ./scripts/sync-forge.sh
-```
+
+```bash
 
 ## Environment Variables
 
@@ -135,6 +146,7 @@ Configure the following secrets in Replit:
 Add these in the Replit "Secrets" tab (🔒 icon):
 
 ```env
+
 # MetaTrader 5 Configuration
 EXNESS_LOGIN=your_mt5_account
 EXNESS_PASSWORD=your_mt5_password
@@ -147,11 +159,13 @@ REDIS_PASSWORD=your_redis_password
 # API Keys (if using external services)
 FIREBASE_API_KEY=your_firebase_key
 GOOGLE_API_KEY=your_google_key
-```
+
+```bash
 
 ### Optional Variables
 
 ```env
+
 # Trading Configuration
 SYMBOLS=EURUSD,GBPUSD,USDJPY
 BRIDGE_PORT=5555
@@ -160,7 +174,8 @@ API_PORT=8000
 # Logging
 LOG_LEVEL=INFO
 DEBUG=false
-```
+
+```bash
 
 ## Deployment
 
@@ -178,13 +193,15 @@ Deploy directly from Replit:
 Export your Repl and deploy to a VPS:
 
 ```bash
+
 # Download as ZIP or clone via Git
 git clone https://github.com/A6-9V/NUNA
 cd NUNA
 
 # Deploy to VPS (see VPS_DEPLOYMENT.md)
 ./scripts/deploy-vps.sh
-```
+
+```bash
 
 ## Ports and Services
 
@@ -196,6 +213,7 @@ The Replit environment exposes the following ports:
 | Bridge Service | 5555 | 5555 | MT5 bridge service |
 
 Access services:
+
 - **API**: `https://your-repl-name.repl.co/`
 - **Bridge**: `your-repl-name.repl.co:5555`
 
@@ -203,7 +221,7 @@ Access services:
 
 The Replit environment includes:
 
-```
+```bash
 NUNA/
 ├── .replit                 # Replit configuration
 ├── replit.nix             # System packages
@@ -214,13 +232,15 @@ NUNA/
 ├── Include/               # MQL5 include files
 ├── Scripts/               # Utility scripts
 └── MQL5_Deployment_Package/ # MQL5 distribution files
-```
+
+```bash
 
 ## IDE Features
 
 ### Code Completion
 
 Python language server is enabled for:
+
 - Autocomplete
 - Syntax highlighting
 - Error detection
@@ -229,6 +249,7 @@ Python language server is enabled for:
 ### Terminal
 
 Access the integrated terminal:
+
 - Click "Shell" in the sidebar
 - Run bash commands
 - Execute Python scripts
@@ -237,6 +258,7 @@ Access the integrated terminal:
 ### File Explorer
 
 Navigate your project:
+
 - Browse files in the left sidebar
 - Create/delete files and folders
 - Upload files
@@ -257,6 +279,7 @@ Invite collaborators to edit together:
 Create pull requests directly from Replit:
 
 ```bash
+
 # Create a feature branch
 git checkout -b feature/new-strategy
 
@@ -266,7 +289,8 @@ git commit -m "Add new trading strategy"
 
 # Push to GitHub
 git push origin feature/new-strategy
-```
+
+```bash
 
 Then create a PR on GitHub.
 
@@ -298,9 +322,12 @@ Then create a PR on GitHub.
 If packages are missing:
 
 ```bash
+
 # Update replit.nix with required packages
+
 # Then refresh the environment
-```
+
+```bash
 
 ### Port Already in Use
 
@@ -342,13 +369,15 @@ Download your entire Repl:
 ```bash
 git clone https://github.com/A6-9V/NUNA
 cd NUNA
-```
+
+```bash
 
 ## Best Practices
 
 ### 1. Use Secrets for Sensitive Data
 
 Never hardcode credentials:
+
 - Use Replit Secrets for API keys
 - Use environment variables
 - Keep `.env.example` updated
@@ -356,15 +385,18 @@ Never hardcode credentials:
 ### 2. Regular Git Commits
 
 Commit frequently:
+
 ```bash
 git add .
 git commit -m "Descriptive message"
 git push
-```
+
+```bash
 
 ### 3. Test Before Deploying
 
 Always test in Replit before pushing to production:
+
 - Run unit tests
 - Test API endpoints
 - Verify MT5 connection
@@ -372,10 +404,12 @@ Always test in Replit before pushing to production:
 ### 4. Keep Dependencies Updated
 
 Regularly update packages:
+
 ```bash
 pip list --outdated
 pip install --upgrade package-name
-```
+
+```bash
 
 ## Resources
 
@@ -387,6 +421,7 @@ pip install --upgrade package-name
 ## Support
 
 For help with:
+
 - **Replit Issues**: Contact Replit support or visit their community
 - **NUNA Project**: Open an issue on GitHub
 - **MQL5 Integration**: See FORGE_MQL5_SETUP.md

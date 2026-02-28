@@ -15,9 +15,9 @@ Docker containerization setup for EXNESS MetaTrader 5 terminal with supporting s
 - 📦 **Forge MQL5**: https://forge.mql5.io/LengKundee/NUNA (MQL5 community)
 
 **Quick Links:**
-- [Replit Integration Guide](REPLIT_INTEGRATION.md) - Develop in the cloud
-- [Forge MQL5 Setup Guide](FORGE_MQL5_SETUP.md) - Sync with MQL5 community
-- [GitLab Runner Setup Guide](GITLAB_RUNNER_SETUP.md) - CI/CD with GitLab runners
+- [Replit Integration Guide](docs/REPLIT_INTEGRATION.md) - Develop in the cloud
+- [Forge MQL5 Setup Guide](docs/FORGE_MQL5_SETUP.md) - Sync with MQL5 community
+- [GitLab Runner Setup Guide](docs/GITLAB_RUNNER_SETUP.md) - CI/CD with GitLab runners
 
 ## Table of Contents
 
@@ -168,11 +168,11 @@ Once launched, the following services are available:
 - [Configuration Guide](docs/CONFIGURATION.md) - Detailed configuration reference
 - [Migration Guide](docs/MIGRATION-GUIDE.md) - **NEW**: Guide for migrating to restructured project
 - [MQL5 Git Setup](docs/MQL5-GIT-SETUP.md) - Git repository configuration
-- [VPS Deployment](VPS_DEPLOYMENT.md) - **NEW**: Automated VPS deployment guide
-- [VPS Hosting](VPS_HOSTING.md) - VPS configuration and management
-- [Forge MQL5 Setup](FORGE_MQL5_SETUP.md) - **NEW**: forge.mql5.io integration and sync
-- [Replit Integration](REPLIT_INTEGRATION.md) - **NEW**: Cloud development with Replit
-- [GitLab Runner Setup](GITLAB_RUNNER_SETUP.md) - **NEW**: GitLab CI/CD runner configuration
+- [VPS Deployment](docs/VPS_DEPLOYMENT.md) - **NEW**: Automated VPS deployment guide
+- [VPS Hosting](docs/VPS_HOSTING.md) - VPS configuration and management
+- [Forge MQL5 Setup](docs/FORGE_MQL5_SETUP.md) - **NEW**: forge.mql5.io integration and sync
+- [Replit Integration](docs/REPLIT_INTEGRATION.md) - **NEW**: Cloud development with Replit
+- [GitLab Runner Setup](docs/GITLAB_RUNNER_SETUP.md) - **NEW**: GitLab CI/CD runner configuration
 
 ## Directory Structure
 

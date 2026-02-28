@@ -2,43 +2,25 @@
 # Labels are automatically applied based on changed files
 
 documentation:
-  - '**/*.md'
-  - 'docs/**/*'
-  - 'guidebook/**/*'
+  - any-glob-to-any-file: ['**/*.md', 'docs/**/*', 'guidebook/**/*']
 
 docker:
-  - 'Dockerfile'
-  - 'docker-compose*.yml'
-  - '.dockerignore'
-  - 'docker/**/*'
+  - any-glob-to-any-file: ['docker/trading-bridge/Dockerfile', 'docker-compose*.yml', '.dockerignore', 'docker/**/*']
 
 python:
-  - '**/*.py'
-  - 'requirements.txt'
+  - any-glob-to-any-file: ['**/*.py', 'docker/trading-bridge/requirements.txt']
 
 testing:
-  - '**/test_*.py'
-  - 'tests/**/*'
+  - any-glob-to-any-file: ['**/test_*.py', 'tests/**/*']
 
 ci-cd:
-  - '.github/**/*'
-  - '.github/workflows/**/*'
+  - any-glob-to-any-file: ['.github/**/*', '.github/workflows/**/*']
 
 configuration:
-  - '**/*.json'
-  - '**/*.yml'
-  - '**/*.yaml'
-  - '.env.*'
-  - 'env.*'
-  - '**/config/**/*'
+  - any-glob-to-any-file: ['**/*.json', '**/*.yml', '**/*.yaml', '.env.*', 'env.*', '**/config/**/*']
 
 scripts:
-  - '**/*.ps1'
-  - '**/*.bat'
-  - '**/*.sh'
-  - 'scripts/**/*'
+  - any-glob-to-any-file: ['**/*.ps1', '**/*.bat', '**/*.sh', 'scripts/**/*']
 
 security:
-  - '.github/workflows/security.yml'
-  - '**/secrets*'
-  - '**/*security*'
+  - any-glob-to-any-file: ['.github/workflows/security.yml', '**/secrets*', '**/*security*']

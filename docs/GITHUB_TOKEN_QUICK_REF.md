@@ -12,6 +12,7 @@
 ⚠️ **SECURITY NOTE**: The actual token is stored separately for security.
 
 To retrieve the token:
+
 1. Check your secure password manager
 2. Or contact repository administrator
 3. Or regenerate at: https://github.com/settings/tokens
@@ -21,29 +22,38 @@ To retrieve the token:
 ## Quick Commands
 
 ### Set Environment Variable
+
 ```bash
 export GITHUB_TOKEN=your_token_here
-```
+
+```bash
 
 ### Verify Token
+
 ```bash
+
 # Check authentication
 curl -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/user
 
 # Using GitHub CLI
 echo "$GITHUB_TOKEN" | gh auth login --with-token
 gh auth status
-```
+
+```bash
 
 ### Clone with Token
+
 ```bash
 git clone https://${GITHUB_TOKEN}@github.com/A6-9V/NUNA.git
-```
+
+```bash
 
 ### Set Git Remote
+
 ```bash
 git remote set-url origin https://${GITHUB_TOKEN}@github.com/A6-9V/NUNA.git
-```
+
+```bash
 
 ## Configuration Files
 

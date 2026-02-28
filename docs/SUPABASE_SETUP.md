@@ -6,7 +6,8 @@
 - **Dashboard**: https://supabase.com/dashboard/org/ntjdaoifwrjtcyozomys
 - **Password**: See GitHub Repository Secrets
 
-> **Note**: Repository administrators can find the actual password in the `.supabase-credentials.CONFIDENTIAL` file (not committed to repository).
+> **Note**: Repository administrators can find the actual password in the
+`.supabase-credentials.CONFIDENTIAL` file (not committed to repository).
 
 ## Quick Setup
 
@@ -26,12 +27,14 @@ https://supabase.com/dashboard/org/ntjdaoifwrjtcyozomys
 ## Complete Documentation
 
 For comprehensive documentation including:
+
 - Detailed setup instructions
 - Security best practices
 - GitHub Actions integration examples
 - Troubleshooting guide
 
-See: [guidebook/09_supabase_credentials.md](guidebook/09_supabase_credentials.md)
+See:
+[guidebook/09_supabase_credentials.md](guidebook/09_supabase_credentials.md)
 
 ---
 

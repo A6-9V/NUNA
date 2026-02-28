@@ -66,7 +66,8 @@ graph TB
     style Deploy fill:#e1ffe1
     style Release fill:#f0e1ff
     style Scheduled fill:#fff0f5
-```
+
+```bash
 
 ## Workflow Status Badges
 
@@ -77,7 +78,8 @@ Add these to your README.md:
 [![Security Scanning](https://github.com/A6-9V/NUNA/actions/workflows/security.yml/badge.svg)](https://github.com/A6-9V/NUNA/actions/workflows/security.yml)
 [![Code Quality](https://github.com/A6-9V/NUNA/actions/workflows/code-quality.yml/badge.svg)](https://github.com/A6-9V/NUNA/actions/workflows/code-quality.yml)
 [![Deploy](https://github.com/A6-9V/NUNA/actions/workflows/deploy.yml/badge.svg)](https://github.com/A6-9V/NUNA/actions/workflows/deploy.yml)
-```
+
+```bash
 
 ## Workflow Summary
 
@@ -95,6 +97,7 @@ Add these to your README.md:
 ## Permissions Required
 
 ### Workflows
+
 - `contents: read` - Read repository content
 - `contents: write` - Create releases, update files
 - `packages: write` - Push to GitHub Container Registry
@@ -105,6 +108,7 @@ Add these to your README.md:
 
 ### Repository Settings
 Enable in Settings → Actions:
+
 - ✅ Allow GitHub Actions
 - ✅ Allow actions created by GitHub
 - ✅ Allow specified actions (if using restrictive policy)
@@ -114,13 +118,14 @@ Enable in Settings → Actions:
 None required! All workflows use `secrets.GITHUB_TOKEN` which is automatically provided.
 
 ### Optional Secrets (for enhanced features)
+
 - `VPS_SSH_KEY` - For automated VPS deployment
 - `SLACK_WEBHOOK` - For deployment notifications
 - `CODECOV_TOKEN` - For codecov.io integration
 
 ## Workflow Dependencies
 
-```
+```bash
 ┌─────────────────┐
 │   Dependabot    │
 │  (Weekly Auto)  │
@@ -145,32 +150,38 @@ None required! All workflows use `secrets.GITHUB_TOKEN` which is automatically p
     │  Deploy / Release│
     │  (Main/Tags)    │
     └─────────────────┘
-```
+
+```bash
 
 ## Cost Optimization
 
 ### Strategies Used:
+
 1. **Caching**
    - Docker layer caching with GitHub Actions cache
    - Python pip dependency caching
    - Reduces build time by 60-80%
 
 2. **Conditional Execution**
+
    - Documentation checks only on doc changes
    - Security scans on schedule for non-PR runs
    - Deployment only on main branch
 
 3. **Parallel Jobs**
+
    - Security scans run in parallel
    - Quality checks run concurrently
    - Reduces overall pipeline time
 
 4. **Efficient Scheduling**
+
    - Weekly scans instead of daily
    - Stale check during low-usage hours
    - Dependabot batches updates
 
 ### Estimated Monthly Usage:
+
 - CI runs: ~300-500 runs/month
 - Security scans: ~10-15 runs/month
 - Quality checks: ~200-300 runs/month
@@ -181,16 +192,19 @@ None required! All workflows use `secrets.GITHUB_TOKEN` which is automatically p
 ## Maintenance Schedule
 
 ### Weekly
+
 - [ ] Review security scan results
 - [ ] Check Dependabot PRs
 - [ ] Monitor workflow success rates
 
 ### Monthly
+
 - [ ] Review and update workflow configurations
 - [ ] Check for action version updates
 - [ ] Audit workflow permissions
 
 ### Quarterly
+
 - [ ] Review caching strategies
 - [ ] Optimize slow workflows
 - [ ] Update documentation

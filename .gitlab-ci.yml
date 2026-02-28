@@ -29,7 +29,7 @@ before_script:
   - python --version
   - pip --version
   - pip install --upgrade pip
-  - pip install -r requirements.txt
+  - pip install -r docker/trading-bridge/requirements.txt
 
 # Setup job - verify environment
 setup:
@@ -39,7 +39,7 @@ setup:
     - echo "Python version:" $(python --version)
     - echo "Pip version:" $(pip --version)
     - echo "Installing dependencies..."
-    - pip install -r requirements.txt
+    - pip install -r docker/trading-bridge/requirements.txt
     - echo "Dependencies installed successfully"
     - python -c "import sys; print('Python path:', sys.path)"
   artifacts:

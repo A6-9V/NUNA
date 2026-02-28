@@ -11,6 +11,7 @@ This guide documents the GitHub Personal Access Token (PAT) configuration for th
 - **Type**: Personal Access Token (classic)
 
 ⚠️ **Security Note**: This token is documented here for initial setup. In production:
+
 - Store in environment variables
 - Use GitHub Secrets for CI/CD
 - Never hardcode in source code
@@ -21,6 +22,7 @@ This guide documents the GitHub Personal Access Token (PAT) configuration for th
 Ensure the token has the following scopes:
 
 ### Required Scopes
+
 - ✅ **repo** - Full control of private repositories
   - repo:status
   - repo_deployment
@@ -37,6 +39,7 @@ Ensure the token has the following scopes:
   - read:org
 
 ### Optional Scopes
+
 - **admin:repo_hook** - Full control of repository hooks
 - **notifications** - Access notifications
 - **delete_repo** - Delete repositories (use with caution)
@@ -57,7 +60,8 @@ Set the token as an environment variable:
 
 ```bash
 export GITHUB_TOKEN=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
-```
+
+```bash
 
 ### In .env File
 
@@ -65,7 +69,8 @@ Add to your `.env` file:
 
 ```env
 GITHUB_TOKEN=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
-```
+
+```bash
 
 ### In Python Scripts
 
@@ -83,7 +88,8 @@ headers = {
 }
 
 response = requests.get('https://api.github.com/user', headers=headers)
-```
+
+```bash
 
 ### In GitHub Actions
 
@@ -98,6 +104,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+
       - uses: actions/checkout@v3
       
       - name: Use GitHub Token
@@ -105,11 +112,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh api user
-```
+
+```bash
 
 ### With Git Commands
 
 ```bash
+
 # Clone repository using token
 git clone https://${GITHUB_TOKEN}@github.com/A6-9V/NUNA.git
 
@@ -118,12 +127,15 @@ git remote set-url origin https://${GITHUB_TOKEN}@github.com/A6-9V/NUNA.git
 
 # Push with token
 git push https://${GITHUB_TOKEN}@github.com/A6-9V/NUNA.git main
-```
+
+```bash
 
 **Example with actual token** (for initial setup only):
+
 ```bash
 git clone https://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@github.com/A6-9V/NUNA.git
-```
+
+```bash
 
 ## GitHub Secrets Setup
 
@@ -164,21 +176,25 @@ For organization-wide access:
    - Rotate tokens if exposed
 
 2. **Limit Token Scope**
+
    - Use only required permissions
    - Create separate tokens for different purposes
    - Use fine-grained tokens when possible
 
 3. **Token Rotation**
+
    - Rotate tokens periodically (every 90 days recommended)
    - Update all configurations after rotation
    - Revoke old tokens after successful rotation
 
 4. **Access Control**
+
    - Limit who has access to tokens
    - Use organization secrets for team access
    - Monitor token usage in audit logs
 
 5. **Environment Variables**
+
    - Use environment variables, not hardcoded values
    - Use secrets management tools (e.g., Vault, AWS Secrets Manager)
    - Never log token values
@@ -188,6 +204,7 @@ For organization-wide access:
 ### Verify Token Validity
 
 ```bash
+
 # Check token authentication (replace with your token)
 curl -H "Authorization: token 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" \
      https://api.github.com/user
@@ -195,25 +212,30 @@ curl -H "Authorization: token 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" \
 # Using GitHub CLI
 echo "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" | gh auth login --with-token
 gh auth status
-```
+
+```bash
 
 ### Check Token Scopes
 
 ```bash
+
 # View token scopes (replace with your token)
 curl -I -H "Authorization: token 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" \
      https://api.github.com/user | grep -i x-oauth-scopes
-```
+
+```bash
 
 ### Test Repository Access
 
 ```bash
+
 # Test read access
 gh repo view A6-9V/NUNA
 
 # Test write access (dry run)
 gh repo edit A6-9V/NUNA --description "Test access"
-```
+
+```bash
 
 ## Troubleshooting
 
@@ -277,6 +299,7 @@ When rotating the token:
    ```
 
 3. **Update GitHub Secrets**
+
    - Update repository secrets
    - Update environment secrets
    - Update organization secrets
@@ -289,6 +312,7 @@ When rotating the token:
    ```
 
 5. **Revoke Old Token**
+
    - Go to: https://github.com/settings/tokens
    - Find old token
    - Click **Revoke**
@@ -316,6 +340,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -325,11 +350,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ./scripts/deploy.sh
-```
+
+```bash
 
 ### Docker Build
 
 ```yaml
+
 - name: Login to GitHub Container Registry
   uses: docker/login-action@v2
   with:
@@ -342,16 +369,19 @@ jobs:
   with:
     push: true
     tags: ghcr.io/a6-9v/nuna:latest
-```
+
+```bash
 
 ### Package Release
 
 ```yaml
+
 - name: Publish Package
   run: |
     npm config set //npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}
     npm publish
-```
+
+```bash
 
 ## Support
 

@@ -33,6 +33,7 @@ This document describes all the continuous integration and deployment workflows 
    - CLI smoke tests for gdrive_cleanup and trading_data_manager
    
 2. **Docker Build & Test** - Builds and tests Docker image
+
    - Builds Docker image with Buildx
    - Tests image with basic commands
    - Uses GitHub Actions cache for faster builds
@@ -61,6 +62,7 @@ This document describes all the continuous integration and deployment workflows 
    - Deployment summary with pull commands
    
 2. **Deploy to VPS** - Automated or manual VPS deployment
+
    - **Automated Mode** (when secrets configured):
      - Sets up SSH connection using SSH key
      - Runs deployment script (`scripts/deploy-vps.sh`)
@@ -120,16 +122,19 @@ For detailed VPS deployment documentation, see [VPS_DEPLOYMENT.md](../VPS_DEPLOY
    - Results uploaded to GitHub Security tab
    
 2. **Python Dependency Scan** - Check for vulnerable dependencies
+
    - Uses pip-audit
    - Generates JSON audit reports
    - Uploads artifacts for review
    
 3. **Docker Image Security Scan** - Container vulnerability scanning
+
    - Uses Trivy scanner
    - Scans for CRITICAL, HIGH, and MEDIUM vulnerabilities
    - Results uploaded to GitHub Security tab
    
 4. **Secret Scan** - Detect accidentally committed secrets
+
    - Uses TruffleHog
    - Scans entire git history
    - Only reports verified secrets
@@ -160,11 +165,13 @@ For detailed VPS deployment documentation, see [VPS_DEPLOYMENT.md](../VPS_DEPLOY
    - Minimum thresholds: 70% green, 50% orange
    
 2. **Code Complexity Analysis** - Analyzes code maintainability
+
    - Cyclomatic complexity with radon
    - Maintainability index calculation
    - Checks complexity thresholds
    
 3. **Code Style Check** - Enforces consistent code style
+
    - Black formatter checking
    - isort import sorting
    - PEP8 style validation
@@ -194,6 +201,7 @@ For detailed VPS deployment documentation, see [VPS_DEPLOYMENT.md](../VPS_DEPLOY
    - Marks pre-releases (versions with `-` like v1.0.0-beta)
    
 2. **Build & Push Release Images** - Multi-architecture Docker builds
+
    - Builds for linux/amd64 and linux/arm64
    - Tags with semantic versioning
    - Tags latest for stable releases
@@ -253,10 +261,12 @@ For detailed VPS deployment documentation, see [VPS_DEPLOYMENT.md](../VPS_DEPLOY
    - Creates issues for broken links (scheduled runs)
    
 2. **Markdown Lint** - Ensures markdown formatting consistency
+
    - Uses markdownlint-cli2
    - Checks all *.md files
    
 3. **Spell Check** - Catches typos and misspellings
+
    - Checks spelling in documentation
    - Uses custom dictionary if configured
    
@@ -310,9 +320,11 @@ For detailed VPS deployment documentation, see [VPS_DEPLOYMENT.md](../VPS_DEPLOY
    - Max 5 open PRs
    
 2. **GitHub Actions** - Workflow action versions
+
    - Max 3 open PRs
    
 3. **Docker** - Base image updates
+
    - Max 3 open PRs
 
 **PR Configuration:**
@@ -333,7 +345,7 @@ For detailed VPS deployment documentation, see [VPS_DEPLOYMENT.md](../VPS_DEPLOY
 
 All workflows are designed to work together:
 
-```
+```bash
 ┌─────────────────────────────────────────────────────────────┐
 │                    Developer Push/PR                         │
 └──────────────────┬──────────────────────────────────────────┘
@@ -363,7 +375,8 @@ All workflows are designed to work together:
     │ Deploy  │         │ Release │
     │to GHCR  │         │(on tag) │
     └─────────┘         └─────────┘
-```
+
+```bash
 
 ---
 
@@ -377,12 +390,14 @@ All workflows are designed to work together:
    - Verify changes build: `docker build -t test .`
 
 2. **During PR:**
+
    - Wait for all CI checks to pass
    - Address security findings immediately
    - Review coverage reports
    - Check auto-applied labels
 
 3. **After merge:**
+
    - Monitor deployment workflow
    - Verify Docker image pushed successfully
    - Check VPS deployment status (if enabled)
@@ -395,16 +410,19 @@ All workflows are designed to work together:
    - Keep dependencies up to date
 
 2. **Releases:**
+
    - Use semantic versioning
    - Tag releases: `git tag v1.0.0 && git push --tags`
    - Review generated changelog before release
 
 3. **Maintenance:**
+
    - Review Dependabot PRs promptly
    - Keep workflows up to date
    - Monitor workflow usage and costs
 
 4. **VPS Deployment:**
+
    - Configure VPS secrets for automated deployment
    - Test deployment script locally before enabling
    - Monitor VPS resources and container health
@@ -418,11 +436,14 @@ All workflows are designed to work together:
 ### Workflow Failures
 
 **CI Tests Failing:**
+
 ```bash
+
 # Run locally
 python -m unittest discover -s . -p "test_*.py" -v
 flake8 . --exclude=.venv,venv,ENV,__pycache__,.git
-```
+
+```bash
 
 **Security Scan Failing:**
 - Check CodeQL alerts in Security tab
@@ -430,11 +451,14 @@ flake8 . --exclude=.venv,venv,ENV,__pycache__,.git
 - Update vulnerable dependencies
 
 **Docker Build Failing:**
+
 ```bash
+
 # Test locally
 docker build -t nuna-tools:test .
 docker run --rm nuna-tools:test python --version
-```
+
+```bash
 
 **Release Workflow Issues:**
 - Ensure tag follows `v*.*.*` pattern
@@ -442,7 +466,9 @@ docker run --rm nuna-tools:test python --version
 - Check Docker registry login
 
 **VPS Deployment Failing:**
+
 ```bash
+
 # Test SSH connection
 ssh -v $VPS_USER@$VPS_HOST
 
@@ -452,9 +478,12 @@ export VPS_USER="your-user"
 bash -x scripts/deploy-vps.sh
 
 # Check GitHub Actions secrets are configured
+
 # Required: VPS_HOST, VPS_USER, VPS_SSH_KEY
+
 # Variable: VPS_DEPLOYMENT_ENABLED=true
-```
+
+```bash
 
 For detailed VPS troubleshooting, see [VPS_DEPLOYMENT.md](../VPS_DEPLOYMENT.md#troubleshooting).
 

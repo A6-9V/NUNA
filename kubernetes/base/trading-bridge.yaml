@@ -25,7 +25,8 @@ spec:
             name: nuna-secrets
         volumeMounts:
         - name: config-volume
-          mountPath: /app/config
+          mountPath: /app/config/symbols.json
+          subPath: symbols.json
         - name: logs-volume
           mountPath: /app/logs
         - name: data-volume

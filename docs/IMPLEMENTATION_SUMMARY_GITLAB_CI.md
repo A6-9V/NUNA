@@ -48,6 +48,7 @@ This document summarizes the GitLab CI/CD integration implemented for the NUNA p
 
 #### GITLAB_RUNNER_SETUP.md
 Complete setup guide covering:
+
 - Runner installation (Linux, macOS, Windows)
 - Registration (automatic and interactive)
 - Configuration examples
@@ -56,6 +57,7 @@ Complete setup guide covering:
 
 #### GITLAB_CI_QUICK_REF.md
 Quick reference covering:
+
 - Common commands
 - Pipeline stages and jobs
 - Monitoring and troubleshooting
@@ -64,6 +66,7 @@ Quick reference covering:
 
 #### SECURITY_GITLAB_CI.md
 Security documentation covering:
+
 - Token handling best practices
 - Dependency security
 - CI/CD pipeline security
@@ -71,6 +74,7 @@ Security documentation covering:
 - Monitoring and auditing
 
 #### Updated README.md
+
 - Added link to GitLab Runner Setup Guide
 - Integrated with existing documentation
 
@@ -79,6 +83,7 @@ Security documentation covering:
 **File**: `scripts/setup-gitlab-runner.sh`
 
 Features:
+
 - Automatic runner registration
 - Docker executor support
 - Environment variable support (GITLAB_RUNNER_TOKEN)
@@ -87,14 +92,17 @@ Features:
 - Comprehensive error handling
 
 **Usage**:
+
 ```bash
+
 # With environment variable (recommended)
 export GITLAB_RUNNER_TOKEN="your-token"
 ./scripts/setup-gitlab-runner.sh
 
 # With default token
 ./scripts/setup-gitlab-runner.sh
-```
+
+```bash
 
 ## Runner Configuration
 
@@ -117,6 +125,7 @@ export GITLAB_RUNNER_TOKEN="your-token"
 ### Test Commands
 
 ```bash
+
 # Validate GitLab CI configuration
 python -c "import yaml; yaml.safe_load(open('.gitlab-ci.yml'))"
 
@@ -127,7 +136,8 @@ python -m unittest discover -s . -p "test_*.py" -v
 python gdrive_cleanup.py --help
 python trading_data_manager.py --help
 python main.py --help
-```
+
+```bash
 
 ## How to Use
 
@@ -188,14 +198,17 @@ python main.py --help
 ### Repository Sync
 
 The NUNA project is synchronized between:
+
 - **GitHub** (primary): https://github.com/A6-9V/NUNA
 - **forge.mql5.io** (GitLab): https://forge.mql5.io/LengKundee/NUNA
 
 **Sync Command**:
+
 ```bash
 git push origin main  # Push to GitHub
 git push forge main   # Push to forge.mql5.io
-```
+
+```bash
 
 ### CI/CD Platforms
 
@@ -207,6 +220,7 @@ Both platforms now support automated testing and deployment.
 ## Files Created/Modified
 
 ### Created Files
+
 - `.gitlab-ci.yml` - GitLab CI/CD configuration
 - `GITLAB_RUNNER_SETUP.md` - Complete setup guide
 - `GITLAB_CI_QUICK_REF.md` - Quick reference
@@ -215,6 +229,7 @@ Both platforms now support automated testing and deployment.
 - `IMPLEMENTATION_SUMMARY_GITLAB_CI.md` - This file
 
 ### Modified Files
+
 - `requirements.txt` - Added Google, MSAL, Firebase dependencies
 - `README.md` - Added GitLab CI/CD documentation links
 
@@ -240,17 +255,20 @@ Both platforms now support automated testing and deployment.
 ## Support and Resources
 
 ### Documentation
+
 - [GITLAB_RUNNER_SETUP.md](GITLAB_RUNNER_SETUP.md) - Complete setup guide
 - [GITLAB_CI_QUICK_REF.md](GITLAB_CI_QUICK_REF.md) - Quick reference
 - [SECURITY_GITLAB_CI.md](SECURITY_GITLAB_CI.md) - Security guide
 - [FORGE_MQL5_SETUP.md](FORGE_MQL5_SETUP.md) - forge.mql5.io integration
 
 ### External Resources
+
 - GitLab CI/CD Documentation: https://docs.gitlab.com/ee/ci/
 - GitLab Runner Documentation: https://docs.gitlab.com/runner/
 - forge.mql5.io: https://forge.mql5.io/
 
 ### Getting Help
+
 1. Review documentation files
 2. Check GitLab pipeline logs
 3. Consult GitLab CI/CD documentation
@@ -259,6 +277,7 @@ Both platforms now support automated testing and deployment.
 ## Conclusion
 
 The GitLab CI/CD integration has been successfully implemented with:
+
 - ✅ Complete pipeline configuration
 - ✅ Automated testing and building
 - ✅ Comprehensive documentation
@@ -267,6 +286,7 @@ The GitLab CI/CD integration has been successfully implemented with:
 - ✅ All tests passing
 
 The NUNA project can now leverage automated CI/CD on forge.mql5.io for:
+
 - Continuous testing of Python code
 - Automated Docker builds
 - Quality assurance

@@ -7,23 +7,28 @@ Quick reference for using GitLab CI/CD with the NUNA project on forge.mql5.io.
 ### 1. Setup Runner (One-time)
 
 ```bash
+
 # Linux/macOS
 ./scripts/setup-gitlab-runner.sh
 
 # Windows PowerShell (as Administrator)
+
 # Follow instructions in GITLAB_RUNNER_SETUP.md
-```
+
+```bash
 
 ### 2. Push Code
 
 ```bash
+
 # Push to forge.mql5.io
 git push forge main
 
 # Or push to both GitHub and forge
 git push origin main
 git push forge main
-```
+
+```bash
 
 ### 3. View Pipeline
 
@@ -33,9 +38,10 @@ Visit: https://forge.mql5.io/LengKundee/NUNA/-/pipelines
 
 **⚠️ SECURITY WARNING**: Treat this as sensitive information.
 
-```
+```bash
 d7tzwkGG974FKv6zb5m9IO4xHy99Br6cZPuCddwN
-```
+
+```bash
 
 **Security**: This token is used to register runners. Keep it secure. Consider using environment variable `GITLAB_RUNNER_TOKEN` when using the setup script.
 
@@ -52,7 +58,8 @@ d7tzwkGG974FKv6zb5m9IO4xHy99Br6cZPuCddwN
 
 ```bash
 sudo gitlab-runner status
-```
+
+```bash
 
 ### Start/Stop Runner
 
@@ -60,25 +67,29 @@ sudo gitlab-runner status
 sudo gitlab-runner start
 sudo gitlab-runner stop
 sudo gitlab-runner restart
-```
+
+```bash
 
 ### View Runner Logs
 
 ```bash
 sudo gitlab-runner --debug run
-```
+
+```bash
 
 ### List Registered Runners
 
 ```bash
 sudo gitlab-runner list
-```
+
+```bash
 
 ### Verify Runner Configuration
 
 ```bash
 sudo gitlab-runner verify
-```
+
+```bash
 
 ## Pipeline Jobs
 
@@ -101,6 +112,7 @@ sudo gitlab-runner verify
 ### Local Testing
 
 ```bash
+
 # Install dependencies
 pip install -r requirements.txt
 
@@ -111,11 +123,13 @@ python -m unittest discover -s . -p "test_*.py" -v
 python gdrive_cleanup.py --help
 python trading_data_manager.py --help
 python main.py --help
-```
+
+```bash
 
 ### CI/CD Execution
 
 Python code is automatically executed by GitLab CI/CD on:
+
 - Every push to any branch
 - Every merge request
 - Manual pipeline triggers
@@ -132,17 +146,21 @@ Edit `.gitlab-ci.yml` to add or modify jobs:
 my-custom-job:
   stage: test
   script:
+
     - echo "Running custom job"
     - python my_script.py
   tags:
+
     - docker
-```
+
+```bash
 
 ### Environment Variables
 
 Set in GitLab UI: **Settings > CI/CD > Variables**
 
 Common variables:
+
 - `EXNESS_LOGIN` - MT5 account login
 - `EXNESS_PASSWORD` - MT5 password (masked)
 - `EXNESS_SERVER` - MT5 server name
@@ -153,6 +171,7 @@ Common variables:
 ### Runner Not Picking Up Jobs
 
 ```bash
+
 # Check runner status
 sudo gitlab-runner verify
 
@@ -161,7 +180,8 @@ sudo gitlab-runner list
 
 # Restart runner
 sudo gitlab-runner restart
-```
+
+```bash
 
 ### Pipeline Failing
 
@@ -172,10 +192,12 @@ sudo gitlab-runner restart
 ### Docker Issues
 
 ```bash
+
 # Add gitlab-runner to docker group
 sudo usermod -aG docker gitlab-runner
 sudo systemctl restart gitlab-runner
-```
+
+```bash
 
 ## File Locations
 
@@ -201,6 +223,7 @@ sudo systemctl restart gitlab-runner
 ## Support
 
 For help:
+
 1. Check `GITLAB_RUNNER_SETUP.md` for detailed instructions
 2. Review GitLab CI/CD documentation
 3. Open an issue on GitHub
