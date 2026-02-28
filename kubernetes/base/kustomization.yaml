@@ -1,0 +1,9 @@
+resources:
+- trading-bridge.yaml
+- postgres.yaml
+- redis.yaml
+- influxdb.yaml
+- grafana.yaml
+- configmap.yaml
+- secret.yaml
+- pvc.yaml

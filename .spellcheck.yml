@@ -1,0 +1,17 @@
+matrix:
+- name: Markdown
+  sources:
+  - "**/*.md"
+  aspell:
+    lang: en
+  dictionary:
+    wordlists:
+    - .github/wordlist.txt
+    output: .github/spelling_output.txt
+  pipeline:
+  - pyspelling.filters.markdown:
+  - pyspelling.filters.html:
+      comments: false
+      attributes:
+      - title
+      - alt

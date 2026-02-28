@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trading-bridge
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trading-bridge
+  template:
+    metadata:
+      labels:
+        app: trading-bridge
+    spec:
+      containers:
+      - name: trading-bridge
+        image: trading-bridge:latest
+        ports:
+        - containerPort: 5555
+        - containerPort: 8000
+        envFrom:
+        - configMapRef:
+            name: nuna-config
+        - secretRef:
+            name: nuna-secrets
+        volumeMounts:
+        - name: config-volume
+          mountPath: /app/config/symbols.json
+          subPath: symbols.json
+        - name: logs-volume
+          mountPath: /app/logs
+        - name: data-volume
+          mountPath: /app/data
+      volumes:
+      - name: config-volume
+        configMap:
+          name: bridge-config
+      - name: logs-volume
+        emptyDir: {}
+      - name: data-volume
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: trading-bridge
+spec:
+  selector:
+    app: trading-bridge
+  ports:
+  - name: bridge
+    port: 5555
+    targetPort: 5555
+  - name: api
+    port: 8000
+    targetPort: 8000

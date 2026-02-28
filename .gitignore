@@ -4,3 +4,5 @@
 # Cloned repositories
 MQL5-Google-Onedrive/
 cli/
+__pycache__/
+kubernetes/base/secret.yaml

@@ -2,14 +2,16 @@
 
 ## ✅ Restructure Completed
 
-The EXNESS Docker project has been successfully restructured for better organization, security, and maintainability.
+The EXNESS Docker project has been successfully restructured for better
+organization, security, and maintainability.
 
 ## What Changed
 
 ### 1. Directory Structure Reorganized
 
 **New Structure:**
-```
+
+```bash
 exness-docker/
 ├── docker/trading-bridge/    # Dockerfile and requirements
 ├── config/                    # Configuration files
@@ -19,7 +21,7 @@ exness-docker/
 ├── logs/                      # Application logs
 ├── data/                      # Application data
 └── docker-compose.yml         # Service orchestration
-```
+```bash
 
 ### 2. Security Improvements
 
@@ -61,30 +63,35 @@ exness-docker/
 ### For Existing Users
 
 1. **Backup your configuration**:
-   ```powershell
+
+```powershell
    # Your .env file and docker-compose.yml are important
-   ```
+```bash
 
 2. **Run migration script**:
-   ```powershell
-   .\scripts\migrate-to-new-structure.ps1
-   ```
+
+```powershell
+.\scripts\migrate-to-new-structure.ps1
+```bash
 
 3. **Update your .env file**:
+
    - Copy `.env.example` to `.env` if needed
    - Update with your credentials
    - Verify `MT5_PATH` is correct
 
 4. **Test the setup**:
-   ```powershell
-   .\scripts\launch-docker.ps1
-   ```
+
+```powershell
+.\scripts\launch-docker.ps1
+```bash
 
 ## New Features
 
 ### Environment Variables
 
 All configuration now uses environment variables:
+
 - `EXNESS_LOGIN` - Account number
 - `EXNESS_PASSWORD` - Account password
 - `EXNESS_SERVER` - MT5 server
@@ -95,9 +102,10 @@ All configuration now uses environment variables:
 ### Hybrid Symbols Configuration
 
 **Simple (env var)**:
+
 ```env
 SYMBOLS=EURUSD,GBPUSD,USDJPY
-```
+```bash
 
 **Detailed (JSON)**:
 Edit `config/symbols.json` for risk management per symbol.
@@ -108,23 +116,26 @@ Use both - env var for quick list, JSON for detailed settings.
 ## Updated Commands
 
 ### Launch Services
+
 ```powershell
 .\scripts\launch-docker.ps1
 # or
 .\scripts\launch-docker.bat
-```
+```bash
 
 ### Check Status
+
 ```powershell
 .\scripts\check-status.ps1
 # or
 .\scripts\STATUS.bat
-```
+```bash
 
 ### Setup Environment
+
 ```powershell
 .\scripts\setup-env.ps1
-```
+```bash
 
 ## Files Created
 
@@ -167,4 +178,3 @@ Use both - env var for quick list, JSON for detailed settings.
 
 **Restructure Date**: 2025-12-29
 **Status**: ✅ Complete
-
